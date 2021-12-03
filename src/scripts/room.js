@@ -56,7 +56,7 @@ remoteVideo.addEventListener('loadedmetadata', function () {
 async function startMediaSharing() {
 
     const mediaConstraints_toSend = { audio: true, video: false };
-    const mediaConstraints_toDisplay = { audio: false, video: false };
+    const mediaConstraints_toDisplay = { audio: true, video: false };
 
     let localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
     let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
