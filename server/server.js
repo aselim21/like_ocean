@@ -52,6 +52,9 @@ app.post('/oceans', (req, res) => {
 
   if (searchedQueue) {
     searchedQueue.participants.user2_id = req_userId;
+    newQueue.participants.user1_id = null;
+    newQueue.participants.user1_offer = null;
+    newQueue.participants.user2_answer = null;
     logs.info.push(getTime(), " - Existing queue updated - ", searchedQueue)
   } else {
     const newQueue = Object.create(Queue);
