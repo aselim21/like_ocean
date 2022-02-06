@@ -24,14 +24,14 @@ peerConnection.onconnectionstatechange = function (event) {
     console.log('State changed ' + peerConnection.connectionState);
 }
 
-// setTimeout(() => {
-//     if (peerConnection.connectionState != 'connected') {
-//         alert("Your match left.");
-//         deleteMatchInfo_req();
-//         closeVideoCall();
-//     }
-//     // 10 seconds
-// }, 10000);
+setTimeout(() => {
+    if (peerConnection.connectionState != 'connected') {
+        alert("Your match left.");
+        deleteMatchInfo_req();
+        closeVideoCall();
+    }
+    // 30 seconds
+}, 30000);
 
 //Duraion of the Call
 // setTimeout(() => {
@@ -92,6 +92,7 @@ await startMediaSharing();
 //--------------------------------------------------------------------------------------
 const participantsInfo = await getParticipantsInfo();
 
+console.log(participantsInfo)
 if (the_userId == participantsInfo.user1_id) {
     console.log('Its user 1');
     await createOffer_user1(updateParticipantsInfo);

@@ -69,6 +69,7 @@ app.get('/oceans/:oceanID', (req, res) => {
 });
 
 
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~participants~~~~~~~~~~~~~~~~~~~~~~~~~~
 // //Define only 1 Topic
 // const topic1Queue = Object.create(Queue);
@@ -111,7 +112,14 @@ app.put('/participants/:oceanId', (req, res) => {
   res.status(200).send(JSON.stringify(result));
 });
 
-
+app.delete('/participants/:oceanID', (req, res) => {
+  const oceanId = req.params.oceanId;
+  const index = Queues.elements.indexOf(Queues.getQueueFromId(oceanId));
+if (index > -1) {
+  Queues.elements.splice(index, 1);
+}
+  res.status(200).send({});
+});
 
 app.post('/match', (req, res) => {
 
