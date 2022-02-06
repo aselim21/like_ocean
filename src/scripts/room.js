@@ -6,7 +6,7 @@ headers.append('Accept', 'application/json');
 headers.append("Access-Control-Allow-Credentials", "true");
 headers.append("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Credentials, Cookie, Set-Cookie, Authorization');
 headers.append('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS, HEAD');
-const the_match_id = window.location.pathname.slice(7);
+const the_ocean_id = window.location.pathname.slice(8);
 const the_userId = window.localStorage.userId;
 const configuration = {
     offerToReceiveAudio: true,
