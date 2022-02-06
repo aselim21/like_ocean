@@ -100,15 +100,14 @@ app.put('/participants/:oceanId', (req, res) => {
   console.log(req.body);
   if (req.body.user1_offer) {
     console.log("Its offer");
-    result = Queues.getQueue(oceanId).updateMatchOffer(req.body);
+    result = Queues.getQueueFromId(oceanId).updateParticipantsOffer(req.body);
   } else if (req.body.user2_answer) {
     console.log("Its answer");
-    result = Queues.getQueue(oceanId).updateMatchAnswer( req.body)
+    result = Queues.getQueueFromId(oceanId).updateParticipantsAnswer(req.body)
   } else if (req.body.connection_completed) {
     console.log("Its completed");
-    result = Queues.getQueue(oceanId).updateConnectionCompleted(req.body)
+    result = Queues.getQueueFromId(oceanId).updateConnectionCompleted(req.body)
   }
-  Queues.getQueue(oceanId).print()
   res.status(200).send(JSON.stringify(result));
 });
 

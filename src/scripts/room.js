@@ -1,5 +1,5 @@
-// const serverURL_oceans = 'http://localhost:3000';
-const serverURL_oceans = 'https://like-ocean.herokuapp.com';
+const serverURL_oceans = 'http://localhost:3000';
+// const serverURL_oceans = 'https://like-ocean.herokuapp.com';
 const headers = new Headers();
 headers.append('Content-Type', 'application/json');
 headers.append('Accept', 'application/json');
@@ -7,7 +7,7 @@ headers.append("Access-Control-Allow-Credentials", "true");
 headers.append("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Credentials, Cookie, Set-Cookie, Authorization');
 headers.append('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS, HEAD');
 const the_ocean_id = window.location.pathname.slice(8);
-const the_userId = window.localStorage.userId;
+const the_userId = window.localStorage.fish_id;
 const configuration = {
     offerToReceiveAudio: true,
     offerToReceiveVideo: false
@@ -82,15 +82,16 @@ await startMediaSharing();
 
 
 //--------------------------------------------------------------------------------------
-const matchInfo = await getParticipantsInfo();
+const participantsInfo = await getParticipantsInfo();
 
-if (the_userId == matchInfo.user1_id) {
-    console.log('User1-creating an offer');
-    await createOffer_user1(updateMatchInfo_req);
+if (the_userId == participantsInfo.user1_id) {
+    console.log('Its user 1');
+    await createOffer_user1(updateParticipantsInfo);
     processAnswerWhenReady_user1();
 }
 
-if (the_userId == matchInfo.user2_id) {
+if (the_userId == participantsInfo.user2_id) {
+    console.log('its user 2')
     processOfferWhenReady_user2();
 }
 
@@ -121,7 +122,7 @@ async function processAnswerWhenReady_user1() {
         if (user2_answer) {
             const remoteDesc = new RTCSessionDescription(user2_answer);
             await peerConnection.setRemoteDescription(remoteDesc);
-            await deleteMatchInfo_req();
+            // await deleteMatchInfo_req();
             return 0;
         } else {
 
@@ -140,7 +141,7 @@ async function processOfferWhenReady_user2() {
         const user1_offer = matchInfo.user1_offer;
         const user2_answer = matchInfo.user2_answer;
         if (user1_offer && !user2_answer) {
-            await createAnswerAndConnect_user2(user1_offer, updateMatchInfo_req);
+            await createAnswerAndConnect_user2(user1_offer, updateParticipantsInfo);
             return 0;
         } else {
             console.log('staring processOfferWhenReady_user2 again')
