@@ -6,40 +6,47 @@ headers.append('Accept', 'application/json');
 headers.append("Access-Control-Allow-Credentials", "true");
 headers.append("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Credentials, Cookie, Set-Cookie, Authorization');
 headers.append('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS, HEAD');
-const the_ocean_id = window.location.pathname.slice(8);
-const the_userId = window.localStorage.fish_id;
+const the_match_id = window.location.pathname.slice(7);
+const the_userId = window.localStorage.userId;
 const configuration = {
     offerToReceiveAudio: true,
-    offerToReceiveVideo: false
+    offerToReceiveVideo: true
 }
 const offerOptions = {
     offerToReceiveAudio: 1,
-    offerToReceiveVideo: false
+    offerToReceiveVideo: 1
 };
 
 let peerConnection = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
+
+//Monitor the state of the Peer Connection
 peerConnection.onconnectionstatechange = function (event) {
     console.log('State changed ' + peerConnection.connectionState);
 }
 
 // setTimeout(() => {
 //     if (peerConnection.connectionState != 'connected') {
-//     alert("Your match left.");
-//         deleteparticipantsInfo();
+//         alert("Your match left.");
+//         deleteMatchInfo_req();
 //         closeVideoCall();
 //     }
 //     // 10 seconds
 // }, 10000);
 
+//Duraion of the Call
 // setTimeout(() => {
 //     closeVideoCall();
 //     //1minute
-// }, 36000);
+// }, 108000);
 
+// const finish_call_btn = document.getElementById('js-finish-call');
+// finish_call_btn.addEventListener("click", async (e) => {
+//     deleteMatchInfo_req();
+//     closeVideoCall();
+// });
 
 let dataChannel;
-let im_user_1 = false;
-let im_user_2 = false;
+
 const localVideo = document.getElementById('webcamVideo');
 const remoteVideo = document.getElementById('remoteVideo');
 
@@ -57,8 +64,8 @@ remoteVideo.addEventListener('loadedmetadata', function () {
 
 async function startMediaSharing() {
 
-    const mediaConstraints_toSend = { audio: true, video: false };
-    const mediaConstraints_toDisplay = { audio: true, video: false };
+    const mediaConstraints_toSend = { audio: true, video: true };
+    const mediaConstraints_toDisplay = { audio: false, video: true };
 
     let localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
     let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
@@ -79,6 +86,7 @@ async function startMediaSharing() {
     }
 }
 await startMediaSharing();
+
 
 
 //--------------------------------------------------------------------------------------
