@@ -216,7 +216,12 @@ const Queue = {
     // const index = this.elements.findIndex((m) => m.match_id == the_match_id);
     // console.log(this.elements[index]);
     // if (index > -1) {
-      this.participants.connection_completed = data.connection_completed;
+      // this.participants.connection_completed = data.connection_completed;
+      this.participants.user1_id = null;
+      this.participants.user2_id = null;
+      this.participants.connection_completed = null;
+    this.participants.user1_offer = null;
+    this.participants.user2_answer = null;
       // console.log(this.elements[index]);
       return 1;
       // return this.elements[index];
