@@ -48,16 +48,21 @@ app.post('/oceans', (req, res) => {
   const req_userId = req.body.userId;
   const req_ocean_id = req.body.ocean_id;
   const searchedQueue = Queues.getQueue(req_ocean_id);
-  if (!searchedQueue) {
+  console.log(searchedQueue);
+
+  if (searchedQueue) {
+    searchedQueue.participants.user2_id = req_userId;
+    logs.info.push(getTime(), " - Existing queue updated - ", searchedQueue)
+  } else {
     const newQueue = Object.create(Queue);
     newQueue.id = uuidv4();
     newQueue.participants.user1_id = req_userId;
+    newQueue.participants.user2_id = null;
+    newQueue.participants.user1_offer = null;
+    newQueue.participants.user2_answer = null;
     newQueue.ocean = req_ocean_id;
     Queues.addQueue(newQueue);
     logs.info.push(getTime(), " - New queue created - ", newQueue)
-  } else {
-    searchedQueue.participants.user2_id = req_userId;
-    logs.info.push(getTime(), " - Existing queue updated - ", searchedQueue)
   }
 
   const res_queue_id = Queues.getQueue(req_ocean_id).id;
@@ -91,7 +96,7 @@ app.get('/participants/:oceanId', (req, res) => {
   const oceanId = req.params.oceanId;
   console.log(oceanId)
   const res_participantsInfo = Queues.getQueueFromId(oceanId).getParticipantsInfo();
-  console.log(res_participantsInfo)
+  // console.log(res_participantsInfo);
   res.status(200).send(JSON.stringify(res_participantsInfo));
 });
 
