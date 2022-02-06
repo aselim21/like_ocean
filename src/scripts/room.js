@@ -31,7 +31,7 @@ setTimeout(() => {
         closeVideoCall();
     }
     // 30 seconds
-}, 30000);
+}, 18880000);
 
 //Duraion of the Call
 // setTimeout(() => {
