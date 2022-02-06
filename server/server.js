@@ -5,10 +5,22 @@ app.use(express.json());
 app.use(express.static("src"));
 const { v4: uuidv4 } = require("uuid");
 const PORT = process.env.PORT || 3000;
+const logs = {
+  info: [],
+  warning: [],
+  error: []
+};
 
+function getTime() {
+  var today = new Date();
+  var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+  var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  return date + ' ' + time;
+
+}
 app.use((req, res, next) => {
   const corsWhitelist = [
-    'https://webrtc-englingo.herokuapp.com',
+    // 'https://webrtc-englingo.herokuapp.com',
     'http://127.0.0.1:3000',
     'http://localhost:3000'
   ];
@@ -26,40 +38,81 @@ app.use((req, res, next) => {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~RESTful Service - Methods~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 app.get('/', (req, res) => {
-  res.send("Go to Home");
-});
-
-app.get('/home', (req, res) => {
   res.sendFile(path.join(__dirname, '../src', 'index.html'));
-
 });
-app.get('/room', (req, res) => {
+app.get('/logs', (req, res) => {
+  res.send(JSON.stringify(logs));
+});
+
+app.post('/oceans', (req, res) => {
+  const req_userId = req.body.userId;
+  const req_ocean_id = req.body.ocean_id;
+  const searchedQueue = Queues.getQueue(req_ocean_id);
+  if (!searchedQueue) {
+    const newQueue = Object.create(Queue);
+    newQueue.id = uuidv4();
+    newQueue.participants.user1_id = req_userId;
+    newQueue.ocean = req_ocean_id;
+    Queues.addQueue(newQueue);
+    logs.info.push(getTime(), " - New queue created - ", newQueue)
+  } else {
+    searchedQueue.participants.user2_id = req_userId;
+    logs.info.push(getTime(), " - Existing queue updated - ", searchedQueue)
+  }
+
+  const res_queue_id = Queues.getQueue(req_ocean_id).id;
+  res.status(200).send(JSON.stringify(res_queue_id));
+});
+
+app.get('/oceans/:oceanID', (req, res) => {
   res.sendFile(path.join(__dirname, '../src', 'room.html'));
 });
 
-app.get('/room/:roomId', (req, res) => {
-  res.sendFile(path.join(__dirname, '../src', 'room.html'));
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~participants~~~~~~~~~~~~~~~~~~~~~~~~~~
+// //Define only 1 Topic
+// const topic1Queue = Object.create(Queue);
+// topic1Queue.topic = "";
+// topic1Queue.participants = [];
+// Queues.addQueue(topic1Queue);
+
+// app.get('/match', (req, res) => {
+//   const the_topic = req.body.topic;
+//   const the_user_id = req.body.userId;
+//   Queues.getQueue(the_topic).addParticipant({
+//     user_id: req.body.userId
+//   });
+//   const match_offer = participants.getMyMatch(the_user_id);
+//   res.status(200).send(JSON.stringify(match_offer));
+// });
+
+app.get('/participants/:oceanId', (req, res) => {
+  const oceanId = req.params.oceanId;
+  console.log(oceanId)
+  const res_participantsInfo = Queues.getQueueFromId(oceanId).getParticipantsInfo();
+  console.log(res_participantsInfo)
+  res.status(200).send(JSON.stringify(res_participantsInfo));
 });
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~Matches~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-app.get('/match', (req, res) => {
-  const the_topic = req.body.topic;
-  const the_user_id = req.body.userId;
-  Queues.getQueue(the_topic).addParticipant({
-    user_id: req.body.userId
-  });
-  const match_offer = Matches.getMyMatch(the_user_id);
-  res.status(200).send(JSON.stringify(match_offer));
+app.put('/participants/:oceanId', (req, res) => {
+  const oceanId = req.params.oceanId;
+  let result;
+  console.log(req.body);
+  if (req.body.user1_offer) {
+    console.log("Its offer");
+    result = Queues.getQueue(oceanId).updateMatchOffer(req.body);
+  } else if (req.body.user2_answer) {
+    console.log("Its answer");
+    result = Queues.getQueue(oceanId).updateMatchAnswer( req.body)
+  } else if (req.body.connection_completed) {
+    console.log("Its completed");
+    result = Queues.getQueue(oceanId).updateConnectionCompleted(req.body)
+  }
+  Queues.getQueue(oceanId).print()
+  res.status(200).send(JSON.stringify(result));
 });
 
-app.get('/match/:matchId', (req, res) => {
-  console.log('reading match info')
-  const matchId = req.params.matchId;
-  const the_match = Matches.getMatchInfo(matchId);
-  console.log(the_match)
-  res.status(200).send(JSON.stringify(the_match));
-});
+
 
 app.post('/match', (req, res) => {
 
@@ -68,7 +121,7 @@ app.post('/match', (req, res) => {
   Queues.getQueue(the_topic).addParticipant({
     user_id: req.body.userId
   });
-  const the_match_id = Matches.findMyMatchID(the_user_id);
+  const the_match_id = participants.findMyMatchID(the_user_id);
   res.status(200).send(JSON.stringify(the_match_id));
 });
 
@@ -78,32 +131,41 @@ app.put('/match/:matchId', (req, res) => {
   console.log(req.body)
   if (req.body.user1_offer) {
     console.log("Its offer");
-    result = Matches.updateMatchOffer(matchId, req.body);
+    result = participants.updateMatchOffer(matchId, req.body);
   } else if (req.body.user2_answer) {
     console.log("Its answer");
-    result = Matches.updateMatchAnswer(matchId, req.body)
+    result = participants.updateMatchAnswer(matchId, req.body)
   } else if (req.body.connection_completed) {
     console.log("Its completed");
-    result = Matches.updateConnectionCompleted(matchId, req.body)
+    result = participants.updateConnectionCompleted(matchId, req.body)
   }
   res.status(200).send(JSON.stringify(result));
 });
 
 app.delete('/match/:matchId', (req, res) => {
   const matchId = req.params.matchId;
-  Matches.deleteMatch(matchId);
+  participants.deleteMatch(matchId);
   res.status(200).send({});
 });
 
-
+//todo: Separathe the signaling part from the Queue
+//create an object SignalingDuo and follow their signaling, it should be like a lot of signalingDuos objects, like Queue in Queues
+// After this participants connect, this duo should be deleted.
 //~~~~~~~~~~~~~~~~~~~~~~~~~~Queue for a topic~~~~~~~~~~~~~~~~~~~~~~~~~~
 const Queue = {
-  topic: '',
-  participants: [],
+  id: '',
+  ocean: '',
+  participants: {
+    user1_id: null,
+    user1_offer: null,
+    user2_id: null,
+    user2_answer: null,
+    connection_completed: false
+  },
   addParticipant: function (new_participant) {
     const index = this.participants.findIndex((e) => e.user_id == new_participant.user_id);
-    const userExists = Matches.userAlreadyMatched(new_participant.user_id);
-    if (index > -1 || userExists) {
+    // const userExists = participants.userAlreadyMatched(new_participant.user_id);
+    if (index > -1) {
       return -1;
     } else {
       this.participants.push(new_participant);
@@ -118,6 +180,55 @@ const Queue = {
     }
     return -1;
   },
+  getParticipantsInfo: function () {
+    if (this.participants.length == 0) {
+      return 0
+    } else return this.participants
+  },
+  updateParticipantsOffer: function (data) {
+    // const index = this.elements.findIndex((m) => m.match_id == the_match_id);
+    // console.log(this.elements[index]);
+    // if (index > -1) {
+      this.participants.user1_offer = data.user1_offer;
+      // console.log(this.elements[index])
+      return 1;
+    // }
+    // return -1;
+  },
+  updateParticipantsAnswer: function (data) {
+    // console.log('updating match answer')
+    // const index = this.elements.findIndex((m) => m.match_id == the_match_id);
+    // if (index > -1) {
+      this.participants.user2_answer = data.user2_answer;
+      // console.log(this.elements[index]);
+      return 1;
+    // }
+    // return -1;
+  },
+  updateParticipantsCompleted: function (the_match_id, data) {
+    // const index = this.elements.findIndex((m) => m.match_id == the_match_id);
+    // console.log(this.elements[index]);
+    // if (index > -1) {
+      this.participants.connection_completed = data.connection_completed;
+      // console.log(this.elements[index]);
+      return 1;
+      // return this.elements[index];
+    // }
+    // return -1;
+  },
+  deleteParticipants: function (the_match_id) {
+    this.participants.connection_completed = null;
+    this.participants.user1_offer = null;
+    this.participants.user2_answer = null;
+    return 1;
+    // const index = this.elements.findIndex((m) => m.match_id == the_match_id);
+    // if (index > -1) {
+    //   const the_match = this.elements[index];
+    //   this.elements.splice(index, 1);
+    //   return the_match;
+    // }
+    // return -1;
+  },
   print: function () {
     console.log("-------------------QUEUE-------------------")
     console.log(JSON.stringify(this));
@@ -130,8 +241,12 @@ const Queues = {
   addQueue: function (new_queue) {
     this.elements.push(new_queue);
   },
-  getQueue: function (the_topic) {
-    if (this.elements.length > -1) return this.elements.find(e => e.topic == the_topic);
+  getQueue: function (the_ocean) {
+    if (this.elements.length > -1) return this.elements.find(e => e.ocean == the_ocean);
+    else return -1;
+  },
+  getQueueFromId: function (the_id) {
+    if (this.elements.length > -1) return this.elements.find(e => e.id == the_id);
     else return -1;
   },
   print: function () {
@@ -140,115 +255,111 @@ const Queues = {
   }
 }
 
-//Define only 1 Topic
-const topic1Queue = Object.create(Queue);
-topic1Queue.topic = "Topic1";
-topic1Queue.participants = [];
-Queues.addQueue(topic1Queue);
 
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~Matches~~~~~~~~~~~~~~~~~~~~~~~~~~
-const Matches = {
-  elements: [],
-  generateMatches: function (the_topic) {
-    console.log(Queues.getQueue(the_topic))
-    if (Queues.getQueue(the_topic).participants.length == 1) {
-      return -1;
-    }
-    else {
-      while (Queues.getQueue(the_topic).participants[1]) {
-        const participant1 = Queues.getQueue(the_topic).participants[0];
-        const participant2 = Queues.getQueue(the_topic).participants[1];
-        const new_match = {
-          match_id: uuidv4(),
-          topic: the_topic,
-          user1_id: participant1.user_id,
-          user1_offer: null,
-          user2_id: participant2.user_id,
-          user2_answer: null,
-          connection_completed: false
-        }
-        console.log(new_match);
-        this.elements.push(new_match);
-        Queues.getQueue(the_topic).removeParticipant(participant1.user_id);
-        Queues.getQueue(the_topic).removeParticipant(participant2.user_id);
-      }
-    }
-  },
-  findMyMatchID: function (the_user_id) {
-    console.log("find match ID for user " + the_user_id);
-    const index = this.elements.findIndex((m) => m.user1_id == the_user_id || m.user2_id == the_user_id);
-    if (index > -1) {
-      return this.elements[index].match_id;
-    } else return 'no match';
-  },
-  getMatchInfo: function (the_match_id) {
-    const index = this.elements.findIndex((m) => m.match_id == the_match_id);
-    if (index > -1) {
-      return this.elements[index];
-    }
-    return -1;
-  },
-  updateMatchOffer: function (the_match_id, data) {
-    const index = this.elements.findIndex((m) => m.match_id == the_match_id);
-    console.log(this.elements[index]);
-    if (index > -1) {
-      this.elements[index].user1_offer = data.user1_offer;
-      console.log(this.elements[index])
-      return this.elements[index];
-    }
-    return -1;
-  },
-  updateMatchAnswer: function (the_match_id, data) {
-    console.log('updating match answer')
-    const index = this.elements.findIndex((m) => m.match_id == the_match_id);
-    if (index > -1) {
-      this.elements[index].user2_answer = data.user2_answer;
-      console.log(this.elements[index]);
-      return this.elements[index];
-    }
-    return -1;
-  },
-  updateConnectionCompleted: function (the_match_id, data) {
-    const index = this.elements.findIndex((m) => m.match_id == the_match_id);
-    console.log(this.elements[index]);
-    if (index > -1) {
-      this.elements[index].connection_completed = data.connection_completed;
-      console.log(this.elements[index]);
-      return this.elements[index];
-    }
-    return -1;
-  },
-  deleteMatch: function (the_match_id) {
-    const index = this.elements.findIndex((m) => m.match_id == the_match_id);
-    if (index > -1) {
-      const the_match = this.elements[index];
-      this.elements.splice(index, 1);
-      return the_match;
-    }
-    return -1;
-  },
-  userAlreadyMatched: function (the_user_id) {
-    const index = this.elements.findIndex((m) => m.user1_id == the_user_id || m.user2_id == the_user_id);
-    if (index > -1) {
-      return true;
-    } else return false;
-  },
-  print: function () {
-    console.log("-------------------MATCHES-------------------");
-    console.log(JSON.stringify(this));
-  }
-};
 
-//Constantly generate Matches for a topic
-function constantlyGenerateMatches(the_topic) {
-  setTimeout(function () {
-    Matches.generateMatches(the_topic);
-    constantlyGenerateMatches(the_topic);
-  }, 5000);
-}
-//Start generation Matches for Topic 1
-constantlyGenerateMatches('Topic1');
+// //~~~~~~~~~~~~~~~~~~~~~~~~~~participants~~~~~~~~~~~~~~~~~~~~~~~~~~
+// const Participants = {
+//   elements: [],
+//   generateparticipants: function (the_topic) {
+//     console.log(Queues.getQueue(the_topic))
+//     if (Queues.getQueue(the_topic).participants.length == 1) {
+//       return -1;
+//     }
+//     else {
+//       while (Queues.getQueue(the_topic).participants[1]) {
+//         const participant1 = Queues.getQueue(the_topic).participants[0];
+//         const participant2 = Queues.getQueue(the_topic).participants[1];
+//         const new_match = {
+//           match_id: uuidv4(),
+//           topic: the_topic,
+//           user1_id: participant1.user_id,
+//           user1_offer: null,
+//           user2_id: participant2.user_id,
+//           user2_answer: null,
+//           connection_completed: false
+//         }
+//         console.log(new_match);
+//         this.elements.push(new_match);
+//         Queues.getQueue(the_topic).removeParticipant(participant1.user_id);
+//         Queues.getQueue(the_topic).removeParticipant(participant2.user_id);
+//       }
+//     }
+//   },
+//   // findMyMatchID: function (the_user_id) {
+//   //   console.log("find match ID for user " + the_user_id);
+//   //   const index = this.elements.findIndex((m) => m.user1_id == the_user_id || m.user2_id == the_user_id);
+//   //   if (index > -1) {
+//   //     return this.elements[index].match_id;
+//   //   } else return 'no match';
+//   // },
+//   getParticipantInfo: function (the_participant) {
+//     const index = this.elements.findIndex((m) => m.match_id == the_match_id);
+//     if (index > -1) {
+//       return this.elements[index];
+//     }
+//     return -1;
+//   },
+//   updateMatchOffer: function (data) {
+//     const index = this.elements.findIndex((m) => m.match_id == the_match_id);
+//     console.log(this.elements[index]);
+//     if (index > -1) {
+//       this.elements[index].user1_offer = data.user1_offer;
+//       console.log(this.elements[index])
+//       return this.elements[index];
+//     }
+//     return -1;
+//   },
+//   updateMatchAnswer: function (the_match_id, data) {
+//     console.log('updating match answer')
+//     const index = this.elements.findIndex((m) => m.match_id == the_match_id);
+//     if (index > -1) {
+//       this.elements[index].user2_answer = data.user2_answer;
+//       console.log(this.elements[index]);
+//       return this.elements[index];
+//     }
+//     return -1;
+//   },
+//   updateConnectionCompleted: function (the_match_id, data) {
+//     const index = this.elements.findIndex((m) => m.match_id == the_match_id);
+//     console.log(this.elements[index]);
+//     if (index > -1) {
+//       this.elements[index].connection_completed = data.connection_completed;
+//       console.log(this.elements[index]);
+//       return this.elements[index];
+//     }
+//     return -1;
+//   },
+//   deleteMatch: function (the_match_id) {
+//     const index = this.elements.findIndex((m) => m.match_id == the_match_id);
+//     if (index > -1) {
+//       const the_match = this.elements[index];
+//       this.elements.splice(index, 1);
+//       return the_match;
+//     }
+//     return -1;
+//   },
+//   userAlreadyMatched: function (the_user_id) {
+//     const index = this.elements.findIndex((m) => m.user1_id == the_user_id || m.user2_id == the_user_id);
+//     if (index > -1) {
+//       return true;
+//     } else return false;
+//   },
+//   print: function () {
+//     console.log("-------------------participants-------------------");
+//     console.log(JSON.stringify(this));
+//   }
+// };
+
+// //Constantly generate participants for a topic
+// function constantlyGenerateparticipants(the_topic) {
+//   setTimeout(function () {
+//     participants.generateparticipants(the_topic);
+//     constantlyGenerateparticipants(the_topic);
+//   }, 5000);
+// }
+// //Start generation participants for Topic 1
+// constantlyGenerateparticipants('Topic1');
 
 app.listen(PORT, () => {
   console.log(`Express server listening on port ${PORT}`);
