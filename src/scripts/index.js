@@ -1,5 +1,5 @@
-const serverURL_oceans = 'http://localhost:3000';
-// const serverURL_oceans = 'https://like-ocean.herokuapp.com';
+// const serverURL_oceans = 'http://localhost:3000';
+const serverURL_oceans = 'https://like-ocean.herokuapp.com';
 const headers = new Headers();
 headers.append('Content-Type', 'application/json');
 headers.append('Accept', 'application/json');
