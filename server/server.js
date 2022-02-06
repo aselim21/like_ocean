@@ -52,7 +52,6 @@ app.post('/oceans', (req, res) => {
 
   if (searchedQueue) {
     searchedQueue.participants.user2_id = req_userId;
-    newQueue.participants.user1_id = null;
     newQueue.participants.user1_offer = null;
     newQueue.participants.user2_answer = null;
     logs.info.push(getTime(), " - Existing queue updated - ", searchedQueue)
@@ -98,9 +97,15 @@ app.get('/oceans/:oceanID', (req, res) => {
 app.get('/participants/:oceanId', (req, res) => {
   const oceanId = req.params.oceanId;
   console.log(oceanId)
-  const res_participantsInfo = Queues.getQueueFromId(oceanId).getParticipantsInfo();
-  // console.log(res_participantsInfo);
+  const the_queue = Queues.getQueueFromId(oceanId);
+  if(the_queue){
+  const res_participantsInfo = the_queue.getParticipantsInfo();
   res.status(200).send(JSON.stringify(res_participantsInfo));
+  }else{
+    res.status(200).send()
+  }
+  // console.log(res_participantsInfo);
+  
 });
 
 app.put('/participants/:oceanId', (req, res) => {

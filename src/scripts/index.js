@@ -16,7 +16,7 @@ login_btn.addEventListener("click", async (e) => {
     const the_fish_id = window.localStorage.fish_id;
     const data = {
         userId: the_fish_id,
-        ocean_id: ocean_crd,
+        ocean_id: ocean_crd
     }
     getYourOceanID(data);
 });
