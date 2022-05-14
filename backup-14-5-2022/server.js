@@ -34,15 +34,8 @@ app.use((req, res, next) => {
   next();
 });
 
-let ocean_room_id = 0;
-let fishData = {
-  participants:0,
-  user1_id: null,
-  user1_offer: null,
-  user2_id: null,
-  user2_answer: null,
-  connection_completed: false
-}
+let ocean_room = [](2);
+
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~RESTful Service - Methods~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -56,15 +49,29 @@ app.get('/logs', (req, res) => {
 
 app.post('/oceans', (req, res) => {
   const req_userId = req.body.userId;
-  if(fishData.participants == 0){
-    fishData.user1_id = req_userId;
-  }else if(fishData.participants == 1 && fishData.user1_id != req_userId ){
-    fishData.user2_id = req_userId;
+  // const req_ocean_id = req.body.ocean_id;
+  const searchedQueue = Queues.getQueue(req_ocean_id);
+  console.log(searchedQueue);
+
+  if (searchedQueue) {
+    searchedQueue.participants.user2_id = req_userId;
+    newQueue.participants.user1_offer = null;
+    newQueue.participants.user2_answer = null;
+    logs.info.push(getTime(), " - Existing queue updated - ", searchedQueue)
+  } else {
+    const newQueue = Object.create(Queue);
+    newQueue.id = uuidv4();
+    newQueue.participants.user1_id = req_userId;
+    newQueue.participants.user2_id = null;
+    newQueue.participants.user1_offer = null;
+    newQueue.participants.user2_answer = null;
+    newQueue.ocean = req_ocean_id;
+    Queues.addQueue(newQueue);
+    logs.info.push(getTime(), " - New queue created - ", newQueue)
   }
-  if(ocean_room_id == 0){
-    ocean_room_id = uuidv4();
-  }
-  res.status(200).send(JSON.stringify(ocean_room_id));
+
+  const res_queue_id = Queues.getQueue(req_ocean_id).id;
+  res.status(200).send(JSON.stringify(res_queue_id));
 });
 
 app.get('/oceans/:oceanID', (req, res) => {
@@ -92,8 +99,16 @@ app.get('/oceans/:oceanID', (req, res) => {
 
 app.get('/participants/:oceanId', (req, res) => {
   const oceanId = req.params.oceanId;
-  if(oceanId != ocean_room_id) res.status(500).send();
-  res.status(200).send(JSON.stringify(fishData));
+  console.log(oceanId)
+  const the_queue = Queues.getQueueFromId(oceanId);
+  if(the_queue){
+  const res_participantsInfo = the_queue.getParticipantsInfo();
+  res.status(200).send(JSON.stringify(res_participantsInfo));
+  }else{
+    res.status(200).send()
+  }
+  // console.log(res_participantsInfo);
+  
 });
 
 app.put('/participants/:oceanId', (req, res) => {
@@ -102,28 +117,23 @@ app.put('/participants/:oceanId', (req, res) => {
   console.log(req.body);
   if (req.body.user1_offer) {
     console.log("Its offer");
-    fishData.user1_offer = req.body.user1_offer;
+    result = Queues.getQueueFromId(oceanId).updateParticipantsOffer(req.body);
   } else if (req.body.user2_answer) {
     console.log("Its answer");
-    fishData.user2_answer = req.body.user2_answer;
+    result = Queues.getQueueFromId(oceanId).updateParticipantsAnswer(req.body)
   } else if (req.body.connection_completed) {
     console.log("Its completed");
-    fishData.connection_completed = req.body.connection_completed;
+    result = Queues.getQueueFromId(oceanId).updateConnectionCompleted(req.body)
   }
   res.status(200).send(JSON.stringify(result));
 });
 
 app.delete('/participants/:oceanID', (req, res) => {
-  // const oceanId = req.params.oceanId;
-  ocean_room_id = 0;
-  fishData = {
-    participants:0,
-    user1_id: null,
-    user1_offer: null,
-    user2_id: null,
-    user2_answer: null,
-    connection_completed: false
-  }
+  const oceanId = req.params.oceanId;
+  const index = Queues.elements.indexOf(Queues.getQueueFromId(oceanId));
+if (index > -1) {
+  Queues.elements.splice(index, 1);
+}
   res.status(200).send({});
 });
 

@@ -16,6 +16,7 @@ const offerOptions = {
     offerToReceiveAudio: 1,
     offerToReceiveVideo: 1
 };
+const stop_btn = document.getElementById('js-stop-btn');
 
 let peerConnection = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
 
@@ -24,15 +25,19 @@ peerConnection.onconnectionstatechange = function (event) {
     console.log('State changed ' + peerConnection.connectionState);
 }
 
+//try to connect to the user
 setTimeout(() => {
     if (peerConnection.connectionState != 'connected') {
         alert("Your match left.");
-        deleteMatchInfo_req();
+        deleteParticipantsInfo();
         closeVideoCall();
     }
     // 30 seconds
 }, 18880000);
-
+stop_btn.addEventListener("click", async (e) => {
+    deleteParticipantsInfo();
+    closeVideoCall();
+});
 //Duraion of the Call
 // setTimeout(() => {
 //     closeVideoCall();
