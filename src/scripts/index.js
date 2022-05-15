@@ -15,7 +15,6 @@ const clean_btn = document.getElementById('js-clean-btn');
 clean_btn.addEventListener("click", async (e) => {
     const result = await deleteParticipantsInfo();
     console.log(result);
-
 });
 
 async function deleteParticipantsInfo() {

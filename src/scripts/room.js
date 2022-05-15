@@ -1,3 +1,5 @@
+const match = require("nodemon/lib/monitor/match");
+
 // const serverURL_oceans = 'http://localhost:3000';
 const serverURL_oceans = 'https://ocean-ag.herokuapp.com';
 const headers = new Headers();
@@ -133,6 +135,7 @@ async function processAnswerWhenReady_user1() {
     console.log('in processAnswerWhenReady_user1');
     setTimeout(async function () {
         const matchInfo = await getParticipantsInfo();
+        console.log(matchInfo);
         const user2_answer = matchInfo.user2_answer;
         if (user2_answer) {
             const remoteDesc = new RTCSessionDescription(user2_answer);
@@ -153,6 +156,7 @@ async function processOfferWhenReady_user2() {
     console.log('in processOfferWhenReady_user2');
     setTimeout(async function () {
         const matchInfo = await getParticipantsInfo();
+        console.log(matchInfo);
         const user1_offer = matchInfo.user1_offer;
         const user2_answer = matchInfo.user2_answer;
         if (user1_offer && !user2_answer) {
