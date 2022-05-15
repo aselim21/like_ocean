@@ -205,7 +205,7 @@ async function updateParticipantsInfo(data) {
 };
 
 async function deleteParticipantsInfo() {
-    const response = await fetch(`${serverURL_oceans}/participants/${the_ocean_id}`, {
+    const response = await fetch(`${serverURL_oceans}/oceans`, {
         method: 'DELETE',
         headers: headers,
     });

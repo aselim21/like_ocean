@@ -11,6 +11,20 @@ window.localStorage.setItem('fish_id', `${Math.floor(Math.random() * 10000000)}`
 let room_id;
 
 //listen btn click
+const clean_btn = document.getElementById('js-clean-btn');
+clean_btn.addEventListener("click", async (e) => {
+    deleteParticipantsInfo()
+
+});
+
+async function deleteParticipantsInfo() {
+    const response = await fetch(`${serverURL_oceans}/oceans`, {
+        method: 'DELETE',
+        headers: headers,
+    });
+    return response.json();
+};
+//listen btn click
 const room_btn = document.getElementById('js-room-btn');
 room_btn.addEventListener("click", async (e) => {
     const the_fish_id = window.localStorage.fish_id;

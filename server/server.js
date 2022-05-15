@@ -113,7 +113,7 @@ app.put('/participants/:oceanId', (req, res) => {
   res.status(200).send(JSON.stringify(result));
 });
 
-app.delete('/participants/:oceanID', (req, res) => {
+app.delete('/oceans', (req, res) => {
   // const oceanId = req.params.oceanId;
   ocean_room_id = 0;
   fishData = {
