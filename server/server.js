@@ -58,8 +58,10 @@ app.post('/oceans', (req, res) => {
   const req_userId = req.body.userId;
   if(fishData.participants == 0){
     fishData.user1_id = req_userId;
+    fishData.participants += 1;
   }else if(fishData.participants == 1 && fishData.user1_id != req_userId ){
     fishData.user2_id = req_userId;
+    fishData.participants += 1;
   }
   if(ocean_room_id == 0){
     ocean_room_id = uuidv4();
