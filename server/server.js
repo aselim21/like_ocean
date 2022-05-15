@@ -98,7 +98,6 @@ app.get('/participants/:oceanId', (req, res) => {
 
 app.put('/participants/:oceanId', (req, res) => {
   const oceanId = req.params.oceanId;
-  let result;
   console.log(req.body);
   if (req.body.user1_offer) {
     console.log("Its offer");
@@ -110,7 +109,7 @@ app.put('/participants/:oceanId', (req, res) => {
     console.log("Its completed");
     fishData.connection_completed = req.body.connection_completed;
   }
-  res.status(200).send(JSON.stringify(result));
+  res.status(200).send(fishData);
 });
 
 app.delete('/oceans', (req, res) => {
