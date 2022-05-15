@@ -194,7 +194,7 @@ async function getParticipantsInfo() {
         method: 'GET'
     });
     console.log(response);
-    console.log(response.json());//test
+    console.log(response.json());//test//tests
     return response;
 }
 async function updateParticipantsInfo(data) {
