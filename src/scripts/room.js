@@ -194,7 +194,9 @@ async function getParticipantsInfo() {
         method: 'GET',
         headers: headers,
     });
-    return response.json();
+    console.log(response);
+    console.log(response.json());
+    return response;
 }
 async function updateParticipantsInfo(data) {
     const response = await fetch(`${serverURL_oceans}/participants/${the_ocean_id}`, {
