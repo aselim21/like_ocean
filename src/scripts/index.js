@@ -32,7 +32,7 @@ room_btn.addEventListener("click", async (e) => {
         userId: the_fish_id
     };
     room_id = await sendUserId(data);
-    location.assign(`${serverURL_oceans}/${room_id}`);
+    location.assign(`${serverURL_oceans}/oceans/${room_id}`);
 
 });
 
