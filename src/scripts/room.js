@@ -191,7 +191,8 @@ async function createAnswerAndConnect_user2(offer, callback) {
 //Requests
 async function getParticipantsInfo() {
     const response = await fetch(`${serverURL_oceans}/participants/${the_ocean_id}`, {
-        method: 'GET'
+        method: 'GET',
+        headers: headers
     });
     console.log(response);
     console.log(response.json());//test//tests
