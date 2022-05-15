@@ -123,7 +123,7 @@ app.delete('/oceans', (req, res) => {
     user2_answer: null,
     connection_completed: false
   }
-  res.status(200).send({});
+  res.status(200).send(fishData);
 });
 
 app.post('/match', (req, res) => {

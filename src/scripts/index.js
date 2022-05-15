@@ -13,7 +13,8 @@ let room_id;
 //listen btn click
 const clean_btn = document.getElementById('js-clean-btn');
 clean_btn.addEventListener("click", async (e) => {
-    deleteParticipantsInfo()
+    const result = await deleteParticipantsInfo();
+    console.log(result);
 
 });
 
