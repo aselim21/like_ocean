@@ -7,6 +7,7 @@ headers.append("Access-Control-Allow-Credentials", "true");
 headers.append("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Credentials, Cookie, Set-Cookie, Authorization');
 headers.append('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS, HEAD');
 const the_ocean_id = window.location.pathname.slice(8);
+console.log(the_ocean_id);
 const the_userId = window.localStorage.fish_id;
 const configuration = {
     offerToReceiveAudio: true,
