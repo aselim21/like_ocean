@@ -18,7 +18,7 @@ function getTime() {
   return date + ' ' + time;
 
 }
-// app.use((req, res, next) => {
+app.use((req, res, next) => {
 //   // const corsWhitelist = [
 //   //   // 'https://webrtc-englingo.herokuapp.com',
 //   //   'http://127.0.0.1:3000',
@@ -27,12 +27,12 @@ function getTime() {
 //   // if (corsWhitelist.indexOf(req.headers.origin) !== -1) {
 //   //   res.header('Access-Control-Allow-Origin', req.headers.origin);
 //   // }
-//   res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', '*');
 //   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept,Access-Control-Allow-Headers, Access-Control-Allow-Credentials, Access-Control-Allow-Methods, Cookie, Set-Cookie, Authorization');
-//   res.header('Access-Control-Allow-Credentials', 'true');
-//   res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS, HEAD');
+  // res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS, HEAD');
 //   next();
-// });
+});
 
 let ocean_room_id = 0;
 let fishData = {
