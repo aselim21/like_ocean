@@ -1,5 +1,5 @@
-// const serverURL_oceans = 'http://localhost:3000';
-const serverURL_oceans = 'https://ocean-ag2022.herokuapp.com';
+const serverURL_oceans = 'http://localhost:3000';
+// const serverURL_oceans = 'https://ocean-ag2022.herokuapp.com';
 const headers = new Headers();
 headers.append('Content-Type', 'application/json');
 headers.append('Accept', 'application/json');
@@ -191,8 +191,7 @@ async function createAnswerAndConnect_user2(offer, callback) {
 //Requests
 async function getParticipantsInfo() {
     const response = await fetch(`${serverURL_oceans}/participants/${the_ocean_id}`, {
-        method: 'GET',
-        headers: headers,
+        method: 'GET'
     });
     console.log(response);
     console.log(response.json());
