@@ -92,7 +92,7 @@ app.get('/oceans/:oceanID', (req, res) => {
 
 app.get('/participants/:oceanId', (req, res) => {
   const oceanId = req.params.oceanId;
-  // if(oceanId != ocean_room_id){res.sendStatus(404);}
+  if(oceanId != ocean_room_id){res.sendStatus(404);}
   res.status(200).send(fishData);
 });
 
