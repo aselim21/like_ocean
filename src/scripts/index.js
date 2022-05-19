@@ -10,6 +10,28 @@ window.localStorage.setItem('fish_id', `${Math.floor(Math.random() * 10000000)}`
 
 let room_id;
 
+//web socket TEST
+const socket_URL = 'ws://localhost:8080';
+// const socket = new WebSocket('ws://localhost:8080');
+let socket = new WebSocket(serverURL_oceans);
+
+
+socket.addEventListener('open', function (event) {
+    socket.send('Hello Server!');
+});
+
+// Listen for messages
+socket.addEventListener('message', function (event) {
+    console.log('Message from server ', event.data);
+});
+
+
+
+
+
+
+
+
 //listen btn click
 const clean_btn = document.getElementById('js-clean-btn');
 clean_btn.addEventListener("click", async (e) => {
