@@ -26,8 +26,5 @@ wss.on('connection', function connection(ws) {
 //     client.on('event', data => { /* … */ });
 //     client.on('disconnect', () => { /* … */ });
 
-
-
-
 // });
 // server.listen(3000);
