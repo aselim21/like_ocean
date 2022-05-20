@@ -3,6 +3,37 @@ const socket_URL = 'wss://ocean-ag.herokuapp.com';
 let socket = new WebSocket(socket_URL);
 const the_oceanID = getCookie('oceanID');
 const the_fishID = window.localStorage.fish_id;
+
+const end_btn = document.getElementById('js-end-btn');
+end_btn.addEventListener("click", async (e) => {
+    const data = {
+        type : 'endCall',
+        _oceanID : the_oceanID
+    }
+    socket.send(JSON.stringify(data));
+});
+
+//fullscreen
+
+var remoteVideo = document.getElementById("remoteVideo");
+
+/* When the openFullscreen() function is executed, open the video in fullscreen.
+Note that we must include prefixes for different browsers, as they don't support the requestFullscreen method yet */
+function openFullscreen(_elem) {
+  if (_elem.requestFullscreen) {
+    _elem.requestFullscreen();
+  } else if (elem.webkitRequestFullscreen) { /* Safari */
+    _elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE11 */
+    _elem.msRequestFullscreen();
+  }
+}
+const remoteVideo_btn = document.getElementById('js-remote-fullscreen');
+end_btn.addEventListener("click", async (e) => {
+    openFullscreen(remoteVideo);
+});
+
+
 //SOCKET FUCNTIONS
 let oceanInfo;
 socket.addEventListener('open', function (event) {

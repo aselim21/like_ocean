@@ -226,12 +226,12 @@ class OCEAN {
     if (this.fishIDs.length > -1) return !!this.fishIDs.find(e => e.id == _id);
     else return false;
   }
-  saveWSforFish(_fishID, _ws){
-    const index = this.fishIDs.findIndex(f=> f.id == _fishID);
-    if(index > -1){
+  saveWSforFish(_fishID, _ws) {
+    const index = this.fishIDs.findIndex(f => f.id == _fishID);
+    if (index > -1) {
       this.fishIDs[index].ws = _ws
       return 1;
-    }return 0;
+    } return 0;
   }
 }
 
@@ -301,16 +301,16 @@ wss.on('connection', (ws) => {
         // check if there is an existing ocean already
         const existingOcean = ALL_OCEANS_DATA.getOceanByName(_data._oceanName);
         if (!!existingOcean) {
-          
+
           //try to add the fish to the existing ocean
           const FishAddSuccessful = existingOcean.addFish(_data._fishID, 0);
           if (!!FishAddSuccessful) {
             // if fish added to the ocean
             // console.log(ALL_OCEANS_DATA.getOceanByID(existingOcean.id).fishPairs)
             dataToSend = {
-            type: 'oceanID', //oceanID
-            message: existingOcean.id
-          }
+              type: 'oceanID', //oceanID
+              message: existingOcean.id
+            }
             // console.log( existingOcean.fishIDs);
             // existingOcean.fishIDs.forEach( f => {
             //   if(f.id != _data._fishID){
@@ -318,7 +318,7 @@ wss.on('connection', (ws) => {
             //     f.ws.send(JSON.stringify(dataToSend));
             //   }
             // })
-           
+
 
           } else {
             //if there is no free spot for this fish
@@ -355,73 +355,80 @@ wss.on('connection', (ws) => {
       }
       ws.send(JSON.stringify(dataToSend));
     } else if (_data.type == 'register') {
-        if (ALL_LOGIN_CREDENTIALS.oceanNameFree(_data._oceanName)) {
-          ALL_LOGIN_CREDENTIALS.addCredential(new LOGIN_CREDENTIAL(_data._oceanName, _data._pwd, _data._MaxFish));
+      if (ALL_LOGIN_CREDENTIALS.oceanNameFree(_data._oceanName)) {
+        ALL_LOGIN_CREDENTIALS.addCredential(new LOGIN_CREDENTIAL(_data._oceanName, _data._pwd, _data._MaxFish));
+        dataToSend = {
+          type: 1,
+          message: 'Ocean successfully created'
+        }
+      } else {
+        dataToSend = {
+          type: 0,
+          message: 'Ocean already exists'
+        }
+      }
+      ws.send(JSON.stringify(dataToSend));
+    } else
+
+      if (_data.type == 'clean') {
+        const LoginSuccessful = ALL_LOGIN_CREDENTIALS.credentialsTrue(_data._oceanName, _data._pwd);
+        if (LoginSuccessful == true) {
+          const the_ocean_id = ALL_OCEANS_DATA.getOceanByName(_data._oceanName).id;
+          ALL_OCEANS_DATA.deleteOceanByID(the_ocean_id);
           dataToSend = {
             type: 1,
-            message: 'Ocean successfully created'
+            message: 'Ocean successfully cleaned'
           }
         } else {
           dataToSend = {
             type: 0,
-            message: 'Ocean already exists'
+            message: 'Wrong login credentials!'
           }
         }
         ws.send(JSON.stringify(dataToSend));
       } else
 
-        if (_data.type == 'clean') {
-          const LoginSuccessful = ALL_LOGIN_CREDENTIALS.credentialsTrue(_data._oceanName, _data._pwd);
-          if (LoginSuccessful == true) {
-            const the_ocean_id = ALL_OCEANS_DATA.getOceanByName(_data._oceanName).id;
-            ALL_OCEANS_DATA.deleteOceanByID(the_ocean_id);
+        if (_data.type == 'StartSignaling') {
+          let fishExists;
+          try {
+            fishExists = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishExists(_data._fishID);
+          } catch (error) {
+            console.log(error);
+          }
+          if (fishExists) {
+            ALL_OCEANS_DATA.getOceanByID(_data._oceanID).saveWSforFish(_data._fishID, ws)
             dataToSend = {
-              type: 1,
-              message: 'Ocean successfully cleaned'
+              type: 'OceanInfoUpdated',
+              message: ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishPairs
             }
+            notifyFishAboutNewFish(_data._oceanID, _data._fishID, dataToSend);
           } else {
             dataToSend = {
               type: 0,
-              message: 'Wrong login credentials!'
+              message: 'You do NOT gave permission to be here'
             }
           }
           ws.send(JSON.stringify(dataToSend));
         } else
-
-          if (_data.type == 'StartSignaling') {
-            let fishExists;
-            try {
-              fishExists = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishExists(_data._fishID);
-            } catch (error) {
-              console.log(error);
-            }
-            if (fishExists) {
-              ALL_OCEANS_DATA.getOceanByID(_data._oceanID).saveWSforFish(_data._fishID, ws)
-              dataToSend = {
-                type: 'OceanInfoUpdated',
-                message: ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishPairs
-              }
-              notifyFishAboutNewFish(_data._oceanID, _data._fishID, dataToSend);
-            } else {
-              dataToSend = {
-                type: 0,
-                message: 'You do NOT gave permission to be here'
-              }
-            }
-            ws.send(JSON.stringify(dataToSend));
-          }else
-          if(_data.type == 'f1_offer'){
+          if (_data.type == 'f1_offer') {
             //send the offer to all the second users
             notifyF2FishAboutNewOffer(_data);
-          }else
-          if(_data.type == 'f2_answer'){
-            //send the offer to all the second users
-            notifyF1FishAboutAnswer(_data);
-          }
-          // if(_data.type == 'f1_connected'){
-          //   //send the offer to all the second users
-          //   changeStatusOfPeerConnection(_data);
-          // }
+          } else
+            if (_data.type == 'f2_answer') {
+              //send the offer to all the second users
+              notifyF1FishAboutAnswer(_data);
+            } else if (_data.type == 'endCall') {
+              ALL_OCEANS_DATA.deleteOceanByID(_data._oceanID);
+              dataToSend = {
+                type: 1,
+                message: 'Ocean successfully cleaned'
+              }
+              ws.send(JSON.stringify(dataToSend));
+            }
+    // if(_data.type == 'f1_connected'){
+    //   //send the offer to all the second users
+    //   changeStatusOfPeerConnection(_data);
+    // }
 
   })
   // ws.on('login', (_oceanName, _pwd, _fishID) => {
@@ -561,8 +568,8 @@ function notifyFishAboutNewFish(_oceanID, _exceptionFishId, _data) {
 function notifyF2FishAboutNewOffer(_data) {
   const ids = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishIDs;
   const pairs = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishPairs;
-  pairs.forEach(p=>{
-    if(p.f1 == _data._fishID && p.connected == false){
+  pairs.forEach(p => {
+    if (p.f1 == _data._fishID && p.connected == false) {
       //if i am the F1 then notify
       console.log("should send offer to", p.f2);
       _data._f2 = p.f2.id;
@@ -570,11 +577,11 @@ function notifyF2FishAboutNewOffer(_data) {
     }
   })
 }
-function notifyF1FishAboutAnswer(_data){
+function notifyF1FishAboutAnswer(_data) {
   const ids = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishIDs;
   const pairs = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishPairs;
-  pairs.forEach(p=>{
-    if(p.f2 == _data._fishID && p.connected == false){
+  pairs.forEach(p => {
+    if (p.f2 == _data._fishID && p.connected == false) {
       //if i am the F2 then notify
       console.log("should send answer to", p.f1);
       ids.find(f => p.f1 == f.id).ws.send(JSON.stringify(_data))
