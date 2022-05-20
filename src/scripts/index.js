@@ -28,7 +28,7 @@ socket.addEventListener('message', function (event) {
     if(_data.type == 'oceanID'){
         login_btn.disabled = true;
         document.cookie = `oceanID=${_data.message}`
-        window.location.assign(`/src/ocean.html`)
+        window.location.assign(`/ocean.html`)
         // window.location.assign(`//${_data.message}`);
     }
 });
