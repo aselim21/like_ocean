@@ -101,73 +101,64 @@ const wss = new Server({ server });
 wss.on('connection', (ws) => {
   console.log('Client connected');
   ws.on('close', () => console.log('Client disconnected'));
-});s
+});
 
-//REST server
-let ocean_room_id = 0;
-let fishData = {
-  participants:0,
-  user1_id: null,
-  user1_offer: null,
-  user2_id: null,
-  user2_answer: null,
-  connection_completed: false
-}
 
-// app.post('/oceans', (req, res) => {
-//   const req_userId = req.body.userId;
-//   if(fishData.participants == 0){
-//     fishData.user1_id = req_userId;
-//     fishData.participants += 1;
-//   }else if(fishData.participants == 1 && fishData.user1_id != req_userId ){
-//     fishData.user2_id = req_userId;
-//     fishData.participants += 1;
-//   }
-//   if(ocean_room_id == 0){
-//     ocean_room_id = uuidv4();
-//   }
-//   res.status(200).send(JSON.stringify(ocean_room_id));
-// });
 
-// app.get('/oceans/:oceanID', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../src', 'room.html'));
-// });
+app.post('/oceans', (req, res) => {
+  const req_userId = req.body.userId;
+  if(fishData.participants == 0){
+    fishData.user1_id = req_userId;
+    fishData.participants += 1;
+  }else if(fishData.participants == 1 && fishData.user1_id != req_userId ){
+    fishData.user2_id = req_userId;
+    fishData.participants += 1;
+  }
+  if(ocean_room_id == 0){
+    ocean_room_id = uuidv4();
+  }
+  res.status(200).send(JSON.stringify(ocean_room_id));
+});
 
-// app.get('/participants/:oceanId', (req, res) => {
-//   const oceanId = req.params.oceanId;
-//   if(oceanId != ocean_room_id){res.sendStatus(404);}
-//   res.status(200).send(fishData);
-// });
+app.get('/oceans/:oceanID', (req, res) => {
+  res.sendFile(path.join(__dirname, '../src', 'room.html'));
+});
 
-// app.put('/participants/:oceanId', (req, res) => {
-//   const oceanId = req.params.oceanId;
-//   console.log(req.body);
-//   if (req.body.user1_offer) {
-//     console.log("Its offer");
-//     fishData.user1_offer = req.body.user1_offer;
-//   } else if (req.body.user2_answer) {
-//     console.log("Its answer");
-//     fishData.user2_answer = req.body.user2_answer;
-//   } else if (req.body.connection_completed) {
-//     console.log("Its completed");
-//     fishData.connection_completed = req.body.connection_completed;
-//   }
-//   res.status(200).send(fishData);
-// });
+app.get('/participants/:oceanId', (req, res) => {
+  const oceanId = req.params.oceanId;
+  if(oceanId != ocean_room_id){res.sendStatus(404);}
+  res.status(200).send(fishData);
+});
 
-// app.delete('/oceans', (req, res) => {
-//   // const oceanId = req.params.oceanId;
-//   ocean_room_id = 0;
-//   fishData = {
-//     participants:0,
-//     user1_id: null,
-//     user1_offer: null,
-//     user2_id: null,
-//     user2_answer: null,
-//     connection_completed: false
-//   }
-//   res.status(200).send(fishData);
-// });
+app.put('/participants/:oceanId', (req, res) => {
+  const oceanId = req.params.oceanId;
+  console.log(req.body);
+  if (req.body.user1_offer) {
+    console.log("Its offer");
+    fishData.user1_offer = req.body.user1_offer;
+  } else if (req.body.user2_answer) {
+    console.log("Its answer");
+    fishData.user2_answer = req.body.user2_answer;
+  } else if (req.body.connection_completed) {
+    console.log("Its completed");
+    fishData.connection_completed = req.body.connection_completed;
+  }
+  res.status(200).send(fishData);
+});
+
+app.delete('/oceans', (req, res) => {
+  // const oceanId = req.params.oceanId;
+  ocean_room_id = 0;
+  fishData = {
+    participants:0,
+    user1_id: null,
+    user1_offer: null,
+    user2_id: null,
+    user2_answer: null,
+    connection_completed: false
+  }
+  res.status(200).send(fishData);
+});
 
 setInterval(() => {
   wss.clients.forEach((client) => {
