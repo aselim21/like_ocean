@@ -1,5 +1,5 @@
-// const serverURL_oceans = 'http://localhost:3000';
-const serverURL_oceans = 'https://ocean-ag.herokuapp.com';
+// const serverURL_oceans = 'http://localhost:8080';
+// const serverURL_oceans = 'https://ocean-ag.herokuapp.com';
 const headers = new Headers();
 headers.append('Content-Type', 'application/json');
 headers.append('Accept', 'application/json');
@@ -11,9 +11,10 @@ window.localStorage.setItem('fish_id', `${Math.floor(Math.random() * 10000000)}`
 let room_id;
 
 //web socket TEST
-const socket_URL = 'ws://localhost:8080';
+// const socket_URL = 'ws://localhost:8080';
+const socket_URL = 'ws://ocean-ag.herokuapp.com';
 // const socket = new WebSocket('ws://localhost:8080');
-let socket = new WebSocket(serverURL_oceans);
+let socket = new WebSocket(socket_URL);
 
 
 socket.addEventListener('open', function (event) {
@@ -22,15 +23,14 @@ socket.addEventListener('open', function (event) {
 
 // Listen for messages
 socket.addEventListener('message', function (event) {
-    console.log('Message from server ', event.data);
+    console.log('Message from server ');
+    console.log(event.data);
 });
 
+// //kyle TEST
+// const socket = io('/');
 
-
-
-
-
-
+// socket.emit('message', "HELLO FROM CLIENT");
 
 //listen btn click
 const clean_btn = document.getElementById('js-clean-btn');
