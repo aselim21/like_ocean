@@ -1,21 +1,21 @@
-const ws = require('ws');
-const express = require('express');
-const app = express();
-const path = require('path');
-app.use(express.json());
-app.use(express.static("src"));
-const { v4: uuidv4 } = require("uuid");
-const PORT = process.env.PORT || 8080;
+// const ws = require('ws');
+// const express = require('express');
+// const app = express();
+// const path = require('path');
+// app.use(express.json());
+// app.use(express.static("src"));
+// const { v4: uuidv4 } = require("uuid");
+// const PORT = process.env.PORT || 8080;
 
-const wss = new ws.WebSocketServer({ port: PORT });
+// const wss = new ws.WebSocketServer({ port: PORT });
 
-wss.on('connection', function connection(ws) {
-  ws.on('message', function message(data) {
-    console.log('received: %s', data);
-  });
+// wss.on('connection', function connection(ws) {
+//   ws.on('message', function message(data) {
+//     console.log('received: %s', data);
+//   });
 
-  ws.send('something');
-});
+//   ws.send('something');
+// });
 
 // const app = require('express')();
 // const server = require('http').createServer(app);
@@ -81,3 +81,30 @@ wss.on('connection', function connection(ws) {
 // });
 
 // server.listen(3000);
+
+//https://devcenter.heroku.com/articles/node-websockets
+
+'use strict';
+
+const express = require('express');
+const { Server } = require('ws');
+
+const PORT = process.env.PORT || 8080;
+// const INDEX = '/index.html';
+
+const server = express()
+  .use(express.static("src"))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const wss = new Server({ server });
+
+wss.on('connection', (ws) => {
+  console.log('Client connected');
+  ws.on('close', () => console.log('Client disconnected'));
+});
+
+setInterval(() => {
+  wss.clients.forEach((client) => {
+    client.send(new Date().toTimeString());
+  });
+}, 1000);
