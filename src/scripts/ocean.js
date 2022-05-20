@@ -7,8 +7,8 @@ const the_fishID = window.localStorage.fish_id;
 const end_btn = document.getElementById('js-end-btn');
 end_btn.addEventListener("click", async (e) => {
     const data = {
-        type : 'endCall',
-        _oceanID : the_oceanID
+        type: 'endCall',
+        _oceanID: the_oceanID
     }
     socket.send(JSON.stringify(data));
 });
@@ -18,17 +18,24 @@ end_btn.addEventListener("click", async (e) => {
 /* When the openFullscreen() function is executed, open the video in fullscreen.
 Note that we must include prefixes for different browsers, as they don't support the requestFullscreen method yet */
 function openFullscreen(_elem) {
-  if (_elem.requestFullscreen) {
-    _elem.requestFullscreen();
-  } else if (elem.webkitRequestFullscreen) { /* Safari */
-    _elem.webkitRequestFullscreen();
-  } else if (elem.msRequestFullscreen) { /* IE11 */
-    _elem.msRequestFullscreen();
-  }
+    if (_elem.requestFullscreen) {
+        _elem.requestFullscreen();
+    } else if (_elem.mozRequestFullScreen) {
+        _elem.mozRequestFullScreen();
+    } else if (_elem.webkitRequestFullscreen) {
+        _elem.webkitRequestFullscreen();
+    } else if (_elem.msRequestFullscreen) {
+        _elem.msRequestFullscreen();
+    }
 }
+
 const remoteVideo_btn = document.getElementById('js-remote-fullscreen');
-end_btn.addEventListener("click", async (e) => {
+const localVideo_btn = document.getElementById('js-local-fullscreen');
+remoteVideo_btn.addEventListener("click", async (e) => {
     openFullscreen(remoteVideo);
+});
+localVideo_btn.addEventListener("click", async (e) => {
+    openFullscreen(localVideo);
 });
 
 
