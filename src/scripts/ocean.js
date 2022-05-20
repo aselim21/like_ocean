@@ -178,7 +178,7 @@ async function startMediaSharing() {
         remoteVideo.srcObject = remoteStream;
     }
 }
-// await startMediaSharing();
+await startMediaSharing();
 
 
 
