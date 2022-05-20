@@ -12,7 +12,7 @@ let room_id;
 
 //web socket TEST
 // const socket_URL = 'ws://localhost:8080';
-const socket_URL = 'ws://ocean-ag.herokuapp.com';
+const socket_URL = 'wss://ocean-ag.herokuapp.com';
 // const socket = new WebSocket('ws://localhost:8080');
 let socket = new WebSocket(socket_URL);
 
