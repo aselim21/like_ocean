@@ -232,31 +232,30 @@ async function processAnswerWhenReady_user1(_answer, _f2) {
         type: 'f1_connected',
         _fishID: the_fishID,
         _oceanID: the_oceanID,
-        _offer: peerConnection.localDescription,
         _f1: the_fishID,
         _f2: _f2
     }
     socket.send(JSON.stringify(data));
 }
 // //~~~~~~~~~~~refactored~~~~~~~~~~~
-// async function processOfferWhenReady_user2() {
-//     console.log('in processOfferWhenReady_user2');
-//     setTimeout(async function () {
-//         const matchInfo = await getParticipantsInfo();
-//         console.log(matchInfo);
-//         const user1_offer = matchInfo.user1_offer;
-//         const user2_answer = matchInfo.user2_answer;
-//         if (user1_offer && !user2_answer) {
-//             await createAnswerAndConnect_user2(user1_offer, updateParticipantsInfo);
-//             return 0;
-//         } else {
-//             console.log('staring processOfferWhenReady_user2 again')
-//             await processOfferWhenReady_user2()
-//         }
-//     }, 1000)
-//     return -1;
+async function processOfferWhenReady_user2() {
+    console.log('in processOfferWhenReady_user2');
+    setTimeout(async function () {
+        const matchInfo = await getParticipantsInfo();
+        console.log(matchInfo);
+        const user1_offer = matchInfo.user1_offer;
+        const user2_answer = matchInfo.user2_answer;
+        if (user1_offer && !user2_answer) {
+            await createAnswerAndConnect_user2(user1_offer, updateParticipantsInfo);
+            return 0;
+        } else {
+            console.log('staring processOfferWhenReady_user2 again')
+            await processOfferWhenReady_user2()
+        }
+    }, 1000)
+    return -1;
 
-// }
+}
 
 async function createAnswerAndConnect_user2(_offer, _f1) {
     peerConnection.addEventListener('datachannel', event => {
