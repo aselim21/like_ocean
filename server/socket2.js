@@ -133,44 +133,44 @@ app.get('/oceans/:oceanID', (req, res) => {
   res.sendFile(path.join(__dirname, '../src', 'room.html'));
 });
 
-app.get('/participants/:oceanId', (req, res) => {
-  const oceanId = req.params.oceanId;
-  if(oceanId != ocean_room_id){res.sendStatus(404);}
-  res.status(200).send(fishData);
-});
+// app.get('/participants/:oceanId', (req, res) => {
+//   const oceanId = req.params.oceanId;
+//   if(oceanId != ocean_room_id){res.sendStatus(404);}
+//   res.status(200).send(fishData);
+// });
 
-app.put('/participants/:oceanId', (req, res) => {
-  const oceanId = req.params.oceanId;
-  console.log(req.body);
-  if (req.body.user1_offer) {
-    console.log("Its offer");
-    fishData.user1_offer = req.body.user1_offer;
-  } else if (req.body.user2_answer) {
-    console.log("Its answer");
-    fishData.user2_answer = req.body.user2_answer;
-  } else if (req.body.connection_completed) {
-    console.log("Its completed");
-    fishData.connection_completed = req.body.connection_completed;
-  }
-  res.status(200).send(fishData);
-});
+// app.put('/participants/:oceanId', (req, res) => {
+//   const oceanId = req.params.oceanId;
+//   console.log(req.body);
+//   if (req.body.user1_offer) {
+//     console.log("Its offer");
+//     fishData.user1_offer = req.body.user1_offer;
+//   } else if (req.body.user2_answer) {
+//     console.log("Its answer");
+//     fishData.user2_answer = req.body.user2_answer;
+//   } else if (req.body.connection_completed) {
+//     console.log("Its completed");
+//     fishData.connection_completed = req.body.connection_completed;
+//   }
+//   res.status(200).send(fishData);
+// });
 
-app.delete('/oceans', (req, res) => {
-  // const oceanId = req.params.oceanId;
-  ocean_room_id = 0;
-  fishData = {
-    participants:0,
-    user1_id: null,
-    user1_offer: null,
-    user2_id: null,
-    user2_answer: null,
-    connection_completed: false
-  }
-  res.status(200).send(fishData);
-});
+// app.delete('/oceans', (req, res) => {
+//   // const oceanId = req.params.oceanId;
+//   ocean_room_id = 0;
+//   fishData = {
+//     participants:0,
+//     user1_id: null,
+//     user1_offer: null,
+//     user2_id: null,
+//     user2_answer: null,
+//     connection_completed: false
+//   }
+//   res.status(200).send(fishData);
+// });
 
-// setInterval(() => {
-//   wss.clients.forEach((client) => {
-//     client.send(new Date().toTimeString());
-//   });
-// }, 1000);
+setInterval(() => {
+  wss.clients.forEach((client) => {
+    client.send(new Date().toTimeString());
+  });
+}, 1000);
