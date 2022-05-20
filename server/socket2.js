@@ -90,7 +90,6 @@ const express = require('express');
 const { Server } = require('ws');
 
 const PORT = process.env.PORT || 8080;
-// const INDEX = '/index.html';
 
 const server = express()
   .use(express.static("src"))

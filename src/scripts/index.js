@@ -1,5 +1,5 @@
 // const serverURL_oceans = 'http://localhost:8080';
-// const serverURL_oceans = 'https://ocean-ag.herokuapp.com';
+const serverURL_oceans = 'https://ocean-ag.herokuapp.com';
 const headers = new Headers();
 headers.append('Content-Type', 'application/json');
 headers.append('Accept', 'application/json');
