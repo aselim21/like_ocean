@@ -178,7 +178,7 @@ async function startMediaSharing() {
         remoteVideo.srcObject = remoteStream;
     }
 }
-await startMediaSharing();
+// await startMediaSharing();
 
 
 
@@ -207,6 +207,8 @@ async function createOffer_user1() {
     peerConnection.onicecandidate = function (e) {
         console.log("ICE candidate (peerConnection)", e);
     };
+    const offer = await peerConnection.createOffer(offerOptions);
+    await peerConnection.setLocalDescription(offer);
     setTimeout(() => {
         console.log('PUT OFFER');
         const data = {
@@ -218,45 +220,7 @@ async function createOffer_user1() {
         }
         socket.send(JSON.stringify(data));
     }, 2000)
-    const offer = await peerConnection.createOffer(offerOptions);
-    await peerConnection.setLocalDescription(offer);
-    return offer;
 }
-// //~~~~~~~~~~~refactored~~~~~~~~~~~
-async function processAnswerWhenReady_user1(_answer, _f2) {
-    console.log('in processAnswerWhenReady_user1');
-    const remoteDesc = new RTCSessionDescription(_answer);
-    await peerConnection.setRemoteDescription(remoteDesc);
-    console.log('ACCEPT ANSWER');
-    const data = {
-        type: 'f1_connected',
-        _fishID: the_fishID,
-        _oceanID: the_oceanID,
-        _f1: the_fishID,
-        _f2: _f2
-    }
-    socket.send(JSON.stringify(data));
-}
-// //~~~~~~~~~~~refactored~~~~~~~~~~~
-async function processOfferWhenReady_user2() {
-    console.log('in processOfferWhenReady_user2');
-    setTimeout(async function () {
-        const matchInfo = await getParticipantsInfo();
-        console.log(matchInfo);
-        const user1_offer = matchInfo.user1_offer;
-        const user2_answer = matchInfo.user2_answer;
-        if (user1_offer && !user2_answer) {
-            await createAnswerAndConnect_user2(user1_offer, updateParticipantsInfo);
-            return 0;
-        } else {
-            console.log('staring processOfferWhenReady_user2 again')
-            await processOfferWhenReady_user2()
-        }
-    }, 1000)
-    return -1;
-
-}
-
 async function createAnswerAndConnect_user2(_offer, _f1) {
     peerConnection.addEventListener('datachannel', event => {
         dataChannel = event.channel;
@@ -283,8 +247,43 @@ async function createAnswerAndConnect_user2(_offer, _f1) {
     await peerConnection.setRemoteDescription(remoteDesc);
     const answer = await peerConnection.createAnswer();
     await peerConnection.setLocalDescription(answer);
-    return answer;
 }
+// //~~~~~~~~~~~refactored~~~~~~~~~~~
+async function processAnswerWhenReady_user1(_answer, _f2) {
+    console.log('in processAnswerWhenReady_user1');
+    const remoteDesc = new RTCSessionDescription(_answer);
+    await peerConnection.setRemoteDescription(remoteDesc);
+    console.log('ACCEPT ANSWER');
+    // const data = {
+    //     type: 'f1_connected',
+    //     _fishID: the_fishID,
+    //     _oceanID: the_oceanID,
+    //     _f1: the_fishID,
+    //     _f2: _f2
+    // }
+    // socket.send(JSON.stringify(data));
+}
+// //~~~~~~~~~~~refactored~~~~~~~~~~~
+// async function processOfferWhenReady_user2() {
+//     console.log('in processOfferWhenReady_user2');
+//     setTimeout(async function () {
+//         const matchInfo = await getParticipantsInfo();
+//         console.log(matchInfo);
+//         const user1_offer = matchInfo.user1_offer;
+//         const user2_answer = matchInfo.user2_answer;
+//         if (user1_offer && !user2_answer) {
+//             await createAnswerAndConnect_user2(user1_offer, updateParticipantsInfo);
+//             return 0;
+//         } else {
+//             console.log('staring processOfferWhenReady_user2 again')
+//             await processOfferWhenReady_user2()
+//         }
+//     }, 1000)
+//     return -1;
+
+// }
+
+
 
 
 // //Requests

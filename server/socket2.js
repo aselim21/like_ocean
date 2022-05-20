@@ -132,9 +132,9 @@ const ALL_LOGIN_CREDENTIALS = {
 }
 
 
-ALL_LOGIN_CREDENTIALS.addCredential(new LOGIN_CREDENTIAL('okyanus', 'okyanus', 2));
-// console.log(ALL_LOGIN_CREDENTIALS.getCredentialByOceanName('okyanus'));
-console.log(ALL_LOGIN_CREDENTIALS.credentialsTrue('okyanus', 'okyanus'));
+// ALL_LOGIN_CREDENTIALS.addCredential(new LOGIN_CREDENTIAL('okyanus', 'okyanus', 2));
+// // console.log(ALL_LOGIN_CREDENTIALS.getCredentialByOceanName('okyanus'));
+// console.log(ALL_LOGIN_CREDENTIALS.credentialsTrue('okyanus', 'okyanus'));
 
 //hasing pwd https://security.stackexchange.com/questions/110948/password-hashing-on-frontend-or-backend
 class FishConnect {
@@ -252,7 +252,7 @@ const ALL_OCEANS_DATA = {
   getOceanByID: function (_id) {
     if (this.elements.length > -1) {
       const result = this.elements.find(e => e.id == _id);
-      console.log(result);
+      // console.log(result);
       if (!result) return 0;
       else return result;
     }
@@ -267,8 +267,8 @@ const ALL_OCEANS_DATA = {
     return 0;
   }
 }
-ALL_OCEANS_DATA.addOcean(new OCEAN('1234', "OCEAN1", 2));
-console.log(ALL_OCEANS_DATA.getOceanByID('1234').fishExists('Achelia'));
+// ALL_OCEANS_DATA.addOcean(new OCEAN('1234', "OCEAN1", 2));
+// console.log(ALL_OCEANS_DATA.getOceanByID('1234').fishExists('Achelia'));
 // console.log(ALL_OCEANS_DATA.deleteOceanByID('1234'));
 // console.log(ALL_OCEANS_DATA.getOceanByID('1234'));
 
@@ -289,7 +289,7 @@ wss.on('connection', (ws) => {
     } catch (error) {
       console.log('PROBLEM!!!! with PARSE')
     }
-    console.log(_data);
+    // console.log(_data);
 
     let dataToSend;
 
@@ -331,9 +331,9 @@ wss.on('connection', (ws) => {
         } else {
           // create a new ocean
           const the_ocean_id = uuidv4();
-          console.log(the_ocean_id);
+          // console.log(the_ocean_id);
           // ALL_OCEANS_DATA.getOceanByID(the_ocean_id);
-          console.log(ALL_LOGIN_CREDENTIALS.getMaxFishByOceanName(_data._oceanName));
+          // console.log(ALL_LOGIN_CREDENTIALS.getMaxFishByOceanName(_data._oceanName));
 
           const new_ocean = ALL_OCEANS_DATA.addOcean(new OCEAN(the_ocean_id, _data._oceanName, ALL_LOGIN_CREDENTIALS.getMaxFishByOceanName(_data._oceanName)));
 
@@ -413,15 +413,15 @@ wss.on('connection', (ws) => {
           if(_data.type == 'f1_offer'){
             //send the offer to all the second users
             notifyF2FishAboutNewOffer(_data);
-          }
+          }else
           if(_data.type == 'f2_answer'){
             //send the offer to all the second users
             notifyF1FishAboutAnswer(_data);
           }
-          if(_data.type == 'f1_connected'){
-            //send the offer to all the second users
-            changeStatusOfPeerConnection(_data);
-          }
+          // if(_data.type == 'f1_connected'){
+          //   //send the offer to all the second users
+          //   changeStatusOfPeerConnection(_data);
+          // }
 
   })
   // ws.on('login', (_oceanName, _pwd, _fishID) => {
@@ -576,18 +576,19 @@ function notifyF1FishAboutAnswer(_data){
   pairs.forEach(p=>{
     if(p.f2 == _data._fishID && p.connected == false){
       //if i am the F2 then notify
-      console.log("should send answer to", p.f2);
+      console.log("should send answer to", p.f1);
       ids.find(f => p.f1 == f.id).ws.send(JSON.stringify(_data))
-    }
-  })
-}
-function changeStatusOfPeerConnection(_data){
-  const pairs = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishPairs;
-  pairs.forEach(p=>{
-    if(p.f2 == _data._f2 && p.f1 == _data._f1 && p.connected == false){
-      console.log("change status of connection");
       p.connected = true;
     }
   })
-
 }
+// function changeStatusOfPeerConnection(_data){
+//   const pairs = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishPairs;
+//   pairs.forEach(p=>{
+//     if(p.f2 == _data._f2 && p.f1 == _data._f1 && p.connected == false){
+//       console.log("change status of connection");
+//       p.connected = true;
+//     }
+//   })
+
+// }
