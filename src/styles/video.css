@@ -1,5 +1,47 @@
-video{
+video {
     transform: rotateY(180deg);
-    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
-    -moz-transform:rotateY(180deg); /* Firefox */
+    -webkit-transform: rotateY(180deg);
+    /* Safari and Chrome */
+    -moz-transform: rotateY(180deg);
+    /* Firefox */
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    height: 100%;
+    width: 100%;
+    
+}
+#remoteVideoDIV{
+    transform: rotateY(180deg);
+    object-fit: cover;
+}
+
+/* Safari */
+:-webkit-full-screen {
+    height: 100%;
+    width: 100%;
+    transform: rotateY(180deg) !important;
+    -webkit-transform: rotateY(180deg) !important;
+    /* Safari and Chrome */
+    -moz-transform: rotateY(180deg) !important;
+    /* Firefox */
+}
+
+/* IE11 */
+:-ms-fullscreen {
+
+    transform: rotateY(180deg) !important;
+    -webkit-transform: rotateY(180deg) !important;
+    /* Safari and Chrome */
+    -moz-transform: rotateY(180deg) !important;
+    /* Firefox */
+}
+
+/* Standard syntax */
+:fullscreen {
+    transform: rotateY(180deg) !important;
+    -webkit-transform: rotateY(180deg) !important;
+    /* Safari and Chrome */
+    -moz-transform: rotateY(180deg) !important;
+    /* Firefox */
 }

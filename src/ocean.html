@@ -11,21 +11,27 @@
 </head>
 
 <body>
-<p id="js-message-box"></p>
+    <p id="js-message-box"></p>
     <div class="videos">
         <span>
             <h3>Local camera</h3>
-            <video id="webcamVideo" autoplay></video>
+            <div id="localVideoDIV">
+                <video id="webcamVideo" autoplay></video>
+            </div>
         </span>
         <span>
             <h3>Remote camera</h3>
-            <video id="remoteVideo" autoplay></video>
-        </span>
-        
+            <div id="remoteVideoDIV">
+                <video id="remoteVideo" autoplay></video>
+            </div>
+    </div>
+
+    </span>
+
     </div>
     <button type="button" id="js-remote-fullscreen">Remote Video Full Screen</button>
     <button type="button" id="js-local-fullscreen">Local Video Full Screen</button>
-    <button id="js-end-btn" >Stop Video Call</button>
+    <button id="js-end-btn">Stop Video Call</button>
 
 
 </body>
