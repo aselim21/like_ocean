@@ -442,7 +442,7 @@ async function createAnswerAndConnect_user2(_offer, _f1) {
             }
             socket.send(JSON.stringify(data));
             // user2_answer: peerConnection.localDescription
-        }, 2000)
+        }, 3000)
     };
     const remoteDesc = new RTCSessionDescription(_offer);
     await PEER_CONNECTIONS[PeerCon_COUNTER].setRemoteDescription(remoteDesc);
