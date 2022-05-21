@@ -25,9 +25,15 @@ video {
     align-items: center;
     overflow: hidden
 }
-#remoteVideoDIV :fullscreen{
-    /* height: 100vh; */
- 
+#localVideoDIV{
+    /* height: 100vh;
+    width: 100vw; */
+    transform: rotateY(180deg);
+    /* object-fit: cover; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden
 }
 
 /* Safari */
