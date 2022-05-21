@@ -130,8 +130,8 @@ socket.addEventListener('open', function (event) {
                     //also create a PeerCon
                     let new_connection_name = _data._f1 + '-' + _data._f2;
                     console.log(`New Connection name: ${new_connection_name}`);
-                    await startMediaSharing();
                     createPeerCon(new_connection_name);
+                     await startMediaSharing();
                     createAnswerAndConnect_user2(_data._offer, _data._f1);
                 } else
                     if (_data.type == 'f2_answer') {
@@ -293,6 +293,7 @@ async function startMediaSharing(_name) {
     const remoteVideoDIV = document.createElement('div', { class: 'remoteVideoDIV' });
     const remoteVideo = document.createElement('video', { id: _name, class: 'remoteVideo' });
     const remoteVideo_btn = document.createElement('button', { id: 'js-remote-fullscreen' });
+    remoteVideo_btn.innerHTML = "Remote Video Full Screen";
     remoteVideo_btn.addEventListener("click", async (e) => {
         openFullscreen(remoteVideoDIC);
     });
