@@ -105,10 +105,15 @@ socket.addEventListener('open', function (event) {
                             await startMediaSharing(new_connection_name);
                             await createOffer_user1();
                             return false;
+                        }else if(p.f2 == the_fishID && p.connected == false){
+                            createPeerCon(new_connection_name);
+                            await startMediaSharing();
+                            console.log('i should wait for connection');
                         }
-                        console.log('in the continue')
+                        console.log('in the continue');
                         // return true;
                     }
+                   
                 })
 
                 // oceanPairs.every(p => {
@@ -130,8 +135,8 @@ socket.addEventListener('open', function (event) {
                     //also create a PeerCon
                     let new_connection_name = _data._f1 + '-' + _data._f2;
                     console.log(`New Connection name: ${new_connection_name}`);
-                    createPeerCon(new_connection_name);
-                     await startMediaSharing();
+                    // createPeerCon(new_connection_name);
+                    //  await startMediaSharing();
                     createAnswerAndConnect_user2(_data._offer, _data._f1);
                 } else
                     if (_data.type == 'f2_answer') {
