@@ -99,13 +99,16 @@ socket.addEventListener('open', function (event) {
                         console.log('started');
                         if (p.f1 == the_fishID && p.connected == false) {
                             console.log("Should send an OFFER")
-                            let new_connection_name = p.f1 + '-' + p.f2;
+                            const new_connection_name = p.f1 + '-' + p.f2;
                             createPeerCon(new_connection_name);
                             createDataChn(new_connection_name);
-                            await startMediaSharing(new_connection_name);
-                            await createOffer_user1();
+                            startMediaSharing(new_connection_name).then(async function() {
+                                await createOffer_user1();
+                            });
+                            
                             return false;
                         }else if(p.f2 == the_fishID && p.connected == false){
+                            const new_connection_name = p.f1 + '-' + p.f2;
                             createPeerCon(new_connection_name);
                             await startMediaSharing();
                             console.log('i should wait for connection');
