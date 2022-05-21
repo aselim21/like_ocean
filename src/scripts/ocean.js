@@ -32,10 +32,10 @@ function openFullscreen(_elem) {
 const remoteVideo_btn = document.getElementById('js-remote-fullscreen');
 const localVideo_btn = document.getElementById('js-local-fullscreen');
 const localVideoDIC = document.getElementById('localVideoDIV');
-const remoteVideoDIC = document.getElementById('remoteVideoDIV');
-remoteVideo_btn.addEventListener("click", async (e) => {
-    openFullscreen(remoteVideoDIC);
-});
+// const remoteVideoDIC = document.getElementById('remoteVideoDIV');
+// remoteVideo_btn.addEventListener("click", async (e) => {
+//     openFullscreen(remoteVideoDIC);
+// });
 localVideo_btn.addEventListener("click", async (e) => {
     openFullscreen(localVideoDIC);
 });
