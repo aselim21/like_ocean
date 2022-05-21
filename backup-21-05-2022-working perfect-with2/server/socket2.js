@@ -572,8 +572,7 @@ function notifyF2FishAboutNewOffer(_data) {
     if (p.f1 == _data._fishID && p.connected == false) {
       //if i am the F1 then notify
       console.log("should send offer to", p.f2);
-      _data._f2 = p.f2;
-      console.log(_data);
+      _data._f2 = p.f2.id;
       ids.find(f => p.f2 == f.id).ws.send(JSON.stringify(_data))
     }
   })

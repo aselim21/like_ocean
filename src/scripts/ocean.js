@@ -3,7 +3,7 @@ const socket_URL = 'wss://ocean-ag.herokuapp.com';
 let socket = new WebSocket(socket_URL);
 const the_oceanID = getCookie('oceanID');
 const the_fishID = window.localStorage.fish_id;
-
+let messageBox = document.getElementById('js-message-box');
 const end_btn = document.getElementById('js-end-btn');
 end_btn.addEventListener("click", async (e) => {
     const data = {
@@ -64,7 +64,7 @@ socket.addEventListener('open', function (event) {
         console.log(_data)
 
         if (_data.type == 0 || _data.type == 1) {
-            document.getElementById('js-message-box').innerHTML = _data.message;
+            messageBox.innerHTML = _data.message;
         } else
             // if (_data.type == 'OceanInfo') {
             //     oceanInfo = _data.message;
@@ -92,24 +92,54 @@ socket.addEventListener('open', function (event) {
             // }else 
             if (_data.type == 'OceanInfoUpdated') {
                 const oceanPairs = _data.message;
-                oceanPairs.every(p => {
-                    if (p.f1 == the_fishID) {
-                        console.log("Should send an OFFER")
-                        createOffer_user1();
-                        return false;
+                // fist check the Connection Number 
+                updatePeerCon_COUNTER(oceanPairs).then(async function (){
+                    console.log('in theafter');
+                    for (const p of oceanPairs) {
+                        console.log('started');
+                        if (p.f1 == the_fishID && p.connected == false) {
+                            console.log("Should send an OFFER")
+                            let new_connection_name = p.f1 + '-' + p.f2;
+                            createPeerCon(new_connection_name);
+                            createDataChn(new_connection_name);
+                            await startMediaSharing(new_connection_name);
+                            await createOffer_user1();
+                            return false;
+                        }
+                        console.log('in the continue')
+                        // return true;
                     }
-                    return true;
                 })
+
+                // oceanPairs.every(p => {
+                //     if (p.f1 == the_fishID && p.connected == false) {
+                //         console.log("Should send an OFFER")
+                //         let new_connection_name = p.f1 + '-' + p.f2;
+                //         createPeerCon(new_connection_name);
+                //         createDataChn(new_connection_name);
+                //         await startMediaSharing(new_connection_name);
+                //         createOffer_user1();
+                //         return false;
+                //     }
+                //     return true;
+                // })
 
             } else
                 if (_data.type == 'f1_offer') {
                     //Im user 2
+                    //also create a PeerCon
+                    let new_connection_name = _data._f1 + '-' + _data._f2;
+                    console.log(`New Connection name: ${new_connection_name}`);
+                    await startMediaSharing();
+                    createPeerCon(new_connection_name);
                     createAnswerAndConnect_user2(_data._offer, _data._f1);
                 } else
                     if (_data.type == 'f2_answer') {
                         //Im user 1
                         processAnswerWhenReady_user1(_data._answer, _data._f2);
+
                     }
+
 
 
 
@@ -141,34 +171,60 @@ const offerOptions = {
     offerToReceiveAudio: 1,
     offerToReceiveVideo: 1
 };
-// const stop_btn = document.getElementById('js-stop-btn');
 
-let peerConnection = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
+let PEER_CONNECTIONS = [];
+let PeerCon_COUNTER = 0;
+let DATA_CHANNELS = [];
 
-//Monitor the state of the Peer Connection
-peerConnection.onconnectionstatechange = function (event) {
-    document.getElementById('js-message-box').innerHTML = 'State changed ' + peerConnection.connectionState;
-    console.log('State changed ' + peerConnection.connectionState);
+function createPeerCon(_name) {
+
+    let peerConnection = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
+    peerConnection.onconnectionstatechange = function (event) {
+        document.getElementById('js-message-box').innerHTML = 'State changed of: ' + _name + ' = ' + peerConnection.connectionState;
+        console.log('State changed of: ' + _name + ' = ' + peerConnection.connectionState);
+    }
+    PEER_CONNECTIONS[PeerCon_COUNTER] = peerConnection;
 }
 
-// //try to connect to the user
-// setTimeout(() => {
-//     if (peerConnection.connectionState != 'connected') {
-//         alert("Your match left.");
-//         deleteParticipantsInfo();
-//         closeVideoCall();
-//     }
-//     // 30 seconds
-// }, 18880000);
-// stop_btn.addEventListener("click", async (e) => {
-//     deleteParticipantsInfo();
-//     closeVideoCall();
-// });
-//Duraion of the Call
-// setTimeout(() => {
-//     closeVideoCall();
-//     //1minute
-// }, 108000);
+function createDataChn(_name) {
+    let dataChannel = PEER_CONNECTIONS[PeerCon_COUNTER].createDataChannel(_name);
+    dataChannel.onmessage = e => console.log('Got a message: ' + e.data);
+    dataChannel.onopen = e => console.log('Connection opened');
+    PEER_CONNECTIONS[PeerCon_COUNTER].onicecandidate = function (e) {
+        console.log("ICE candidate (peerConnection)", e);
+    };
+    DATA_CHANNELS[PeerCon_COUNTER] = dataChannel;
+}
+
+async function updatePeerCon_COUNTER(_pairs) {
+    return new Promise(function (resolve, reject) {
+        let connectionsCounter = 0;
+    _pairs.forEach(p => {
+        if ((p.f1 == the_fishID || p.f2 == the_fishID) && p.connected == true)
+            connectionsCounter++;
+    })
+    const newDoneConnections = connectionsCounter - PeerCon_COUNTER;
+    PeerCon_COUNTER += newDoneConnections;
+    if (newDoneConnections > 1) {
+        messageBox.innerHTML = "Something went wrong with your connections."
+        reject(newDoneConnections);
+    }else {
+        console.log('NEW PEERCOUNTER = ',PeerCon_COUNTER );
+        resolve(newDoneConnections);
+    }
+    })
+    
+}
+
+// let peerConnection = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
+
+//Monitor the state of the Peer Connection
+// peerConnection.onconnectionstatechange = function (event) {
+//     document.getElementById('js-message-box').innerHTML = 'State changed ' + peerConnection.connectionState;
+//     console.log('State changed ' + peerConnection.connectionState);
+// }
+// let dataChannel;
+
 
 // const finish_call_btn = document.getElementById('js-finish-call');
 // finish_call_btn.addEventListener("click", async (e) => {
@@ -176,39 +232,88 @@ peerConnection.onconnectionstatechange = function (event) {
 //     closeVideoCall();
 // });
 
-let dataChannel;
 
+
+// const localVideo = document.getElementById('webcamVideo');
+// // const remoteVideo = document.getElementById('remoteVideo');
+
+// //Event-Listeners for the videos
+// localVideo.addEventListener('loadedmetadata', function () {
+//     console.log(`Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+// });
+
+// remoteVideo.addEventListener('loadedmetadata', function () {
+//     console.log(`Remote video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+// });
+
+
+//1. First start sharing media
+
+// async function startMediaSharing() {
+
+//     const mediaConstraints_toSend = { audio: true, video: true };
+//     const mediaConstraints_toDisplay = { audio: false, video: true };
+
+//     let localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
+//     let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
+//     let remoteStream = new MediaStream();
+
+//     localStream.getTracks().forEach((track) => {
+//         console.log("tracks sent");
+//         peerConnection.addTrack(track, localStream);
+//     });
+//     localVideo.srcObject = localStream_toDisplay;
+
+//     peerConnection.ontrack = function (event) {
+//         console.log('track received');
+//         event.streams[0].getTracks().forEach(track => {
+//             remoteStream.addTrack(track);
+//         })
+//         remoteVideo.srcObject = remoteStream;
+//     }
+// }
 const localVideo = document.getElementById('webcamVideo');
-const remoteVideo = document.getElementById('remoteVideo');
+// const remoteVideo = document.getElementById('remoteVideo');
 
 //Event-Listeners for the videos
 localVideo.addEventListener('loadedmetadata', function () {
     console.log(`Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
 });
+const mediaConstraints_toSend = { audio: true, video: true };
+const mediaConstraints_toDisplay = { audio: false, video: true };
 
-remoteVideo.addEventListener('loadedmetadata', function () {
-    console.log(`Remote video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
-});
+let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
+localVideo.srcObject = localStream_toDisplay;
 
-
-//1. First start sharing media
-
-async function startMediaSharing() {
-
-    const mediaConstraints_toSend = { audio: true, video: true };
-    const mediaConstraints_toDisplay = { audio: false, video: true };
+async function startMediaSharing(_name) {
 
     let localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
-    let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
+
+    //create the remote video element
+    const remoteVideoDIV = document.createElement('div', { class: 'remoteVideoDIV' });
+    const remoteVideo = document.createElement('video', { id: _name, class: 'remoteVideo' });
+    const remoteVideo_btn = document.createElement('button', { id: 'js-remote-fullscreen' });
+    remoteVideo_btn.addEventListener("click", async (e) => {
+        openFullscreen(remoteVideoDIC);
+    });
+    remoteVideo.addEventListener('loadedmetadata', function () {
+        console.log(`Remote video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+    });
+
+    remoteVideoDIV.appendChild(remoteVideo);
+    remoteVideoDIV.appendChild(remoteVideo_btn);
+
+    const videosCluster = document.getElementById("videos");
+    videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
+
     let remoteStream = new MediaStream();
 
     localStream.getTracks().forEach((track) => {
         console.log("tracks sent");
-        peerConnection.addTrack(track, localStream);
+        PEER_CONNECTIONS[PeerCon_COUNTER].addTrack(track, localStream);
     });
-    localVideo.srcObject = localStream_toDisplay;
 
-    peerConnection.ontrack = function (event) {
+    PEER_CONNECTIONS[PeerCon_COUNTER].ontrack = function (event) {
         console.log('track received');
         event.streams[0].getTracks().forEach(track => {
             remoteStream.addTrack(track);
@@ -216,9 +321,6 @@ async function startMediaSharing() {
         remoteVideo.srcObject = remoteStream;
     }
 }
-await startMediaSharing();
-
-
 
 //--------------------------------------------------------------------------------------
 // const participantsInfo = await getParticipantsInfo();
@@ -237,35 +339,87 @@ await startMediaSharing();
 
 // //WebRTC Functions
 // //~~~~~~~~~~~refactored~~~~~~~~~~~
-async function createOffer_user1() {
+// async function createOffer_user1(_channelName) {
+
+//     //should create a new peer connection, new data channel with the peer information
+//     console.log("in createOffer_user1")
+//     dataChannel = peerConnection.createDataChannel('channel1');
+//     dataChannel.onmessage = e => console.log('Got a message: ' + e.data);
+//     dataChannel.onopen = e => console.log('Connection opened');
+//     peerConnection.onicecandidate = function (e) {
+//         console.log("ICE candidate (peerConnection)", e);
+//     };
+//     const offer = await peerConnection.createOffer(offerOptions);
+//     await peerConnection.setLocalDescription(offer);
+//     setTimeout(() => {
+//         console.log('PUT OFFER');
+//         const data = {
+//             type: 'f1_offer',
+//             _fishID: the_fishID,
+//             _oceanID: the_oceanID,
+//             _offer: peerConnection.localDescription,
+//             _f1: the_fishID
+//         }
+//         socket.send(JSON.stringify(data));
+//     }, 2000)
+// }
+
+async function createOffer_user1(_channelName) {
+
+    //should create a new peer connection, new data channel with the peer information
     console.log("in createOffer_user1")
-    dataChannel = peerConnection.createDataChannel('channel1');
-    dataChannel.onmessage = e => console.log('Got a message: ' + e.data);
-    dataChannel.onopen = e => console.log('Connection opened');
-    peerConnection.onicecandidate = function (e) {
-        console.log("ICE candidate (peerConnection)", e);
-    };
-    const offer = await peerConnection.createOffer(offerOptions);
-    await peerConnection.setLocalDescription(offer);
+
+    const offer = await PEER_CONNECTIONS[PeerCon_COUNTER].createOffer(offerOptions);
+    await PEER_CONNECTIONS[PeerCon_COUNTER].setLocalDescription(offer);
     setTimeout(() => {
         console.log('PUT OFFER');
         const data = {
             type: 'f1_offer',
             _fishID: the_fishID,
             _oceanID: the_oceanID,
-            _offer: peerConnection.localDescription,
+            _offer: PEER_CONNECTIONS[PeerCon_COUNTER].localDescription,
             _f1: the_fishID
         }
         socket.send(JSON.stringify(data));
     }, 2000)
 }
+
+// async function createAnswerAndConnect_user2(_offer, _f1) {
+//     peerConnection.addEventListener('datachannel', event => {
+//         dataChannel = event.channel;
+//         dataChannel.onopen = e => console.log('Connection opened');
+//         dataChannel.onmessage = e => console.log('Got a message: ' + e.data);
+//     });
+//     peerConnection.onicecandidate = function (e) {
+//         console.log("ICE candidate (peerConnection)", e);
+//         setTimeout(() => {
+//             console.log("PUT ANSWER");
+//             const data = {
+//                 type: 'f2_answer',
+//                 _fishID: the_fishID,
+//                 _oceanID: the_oceanID,
+//                 _answer: peerConnection.localDescription,
+//                 _f1: _f1,
+//                 _f2: the_fishID
+//             }
+//             socket.send(JSON.stringify(data));
+//             // user2_answer: peerConnection.localDescription
+//         }, 2000)
+//     };
+//     const remoteDesc = new RTCSessionDescription(_offer);
+//     await peerConnection.setRemoteDescription(remoteDesc);
+//     const answer = await peerConnection.createAnswer();
+//     await peerConnection.setLocalDescription(answer);
+// }
+
+
 async function createAnswerAndConnect_user2(_offer, _f1) {
-    peerConnection.addEventListener('datachannel', event => {
-        dataChannel = event.channel;
-        dataChannel.onopen = e => console.log('Connection opened');
-        dataChannel.onmessage = e => console.log('Got a message: ' + e.data);
+    PEER_CONNECTIONS[PeerCon_COUNTER].addEventListener('datachannel', event => {
+        DATA_CHANNELS[PeerCon_COUNTER] = event.channel;
+        DATA_CHANNELS[PeerCon_COUNTER].onopen = e => console.log('Connection opened from datachannel: ', event.channel.label);
+        DATA_CHANNELS[PeerCon_COUNTER].onmessage = e => console.log('Got a message: ' + e.data);
     });
-    peerConnection.onicecandidate = function (e) {
+    PEER_CONNECTIONS[PeerCon_COUNTER].onicecandidate = function (e) {
         console.log("ICE candidate (peerConnection)", e);
         setTimeout(() => {
             console.log("PUT ANSWER");
@@ -273,7 +427,7 @@ async function createAnswerAndConnect_user2(_offer, _f1) {
                 type: 'f2_answer',
                 _fishID: the_fishID,
                 _oceanID: the_oceanID,
-                _answer: peerConnection.localDescription,
+                _answer: PEER_CONNECTIONS[PeerCon_COUNTER].localDescription,
                 _f1: _f1,
                 _f2: the_fishID
             }
@@ -282,15 +436,18 @@ async function createAnswerAndConnect_user2(_offer, _f1) {
         }, 2000)
     };
     const remoteDesc = new RTCSessionDescription(_offer);
-    await peerConnection.setRemoteDescription(remoteDesc);
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
+    await PEER_CONNECTIONS[PeerCon_COUNTER].setRemoteDescription(remoteDesc);
+    const answer = await PEER_CONNECTIONS[PeerCon_COUNTER].createAnswer();
+    await PEER_CONNECTIONS[PeerCon_COUNTER].setLocalDescription(answer);
+
+    //READY FOR NEW CONNECTION
+    // PeerCon_COUNTER++;
 }
 // //~~~~~~~~~~~refactored~~~~~~~~~~~
 async function processAnswerWhenReady_user1(_answer, _f2) {
     console.log('in processAnswerWhenReady_user1');
     const remoteDesc = new RTCSessionDescription(_answer);
-    await peerConnection.setRemoteDescription(remoteDesc);
+    await PEER_CONNECTIONS[PeerCon_COUNTER].setRemoteDescription(remoteDesc);
     console.log('ACCEPT ANSWER');
     // const data = {
     //     type: 'f1_connected',
@@ -300,6 +457,9 @@ async function processAnswerWhenReady_user1(_answer, _f2) {
     //     _f2: _f2
     // }
     // socket.send(JSON.stringify(data));
+
+    //READY FOR NEW CONNECTION
+    // PeerCon_COUNTER++;
 }
 // //~~~~~~~~~~~refactored~~~~~~~~~~~
 // async function processOfferWhenReady_user2() {

@@ -1,8 +1,8 @@
 if(!window.localStorage.fish_id) window.localStorage.setItem('fish_id', `${Math.floor(Math.random() * 10000000)}`);
 let room_id;
-// if (location.protocol !== 'https:') {
-//     location.replace(`https:${location.href.substring(location.protocol.length)}`);
-// }
+if (location.protocol !== 'https:') {
+    location.replace(`https:${location.href.substring(location.protocol.length)}`);
+}
 // const socket_URL = 'ws://localhost:8080';
 const socket_URL = 'wss://ocean-ag.herokuapp.com';
 let socket = new WebSocket(socket_URL);
