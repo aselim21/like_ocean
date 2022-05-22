@@ -36,7 +36,7 @@ video {
     max-width:100%;
     max-height:100%;
 }
-.localVideoDIV{
+#localVideoDIV{
     /* height: 100vh;
     width: 100vw; */
     /* transform: rotateY(180deg); */

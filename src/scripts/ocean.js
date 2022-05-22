@@ -29,15 +29,15 @@ function openFullscreen(_elem) {
     }
 }
 
-const remoteVideo_btn = document.getElementById('js-remote-fullscreen');
+// const remoteVideo_btn = document.getElementById('js-remote-fullscreen');
 const localVideo_btn = document.getElementById('js-local-fullscreen');
-const localVideoDIC = document.getElementById('localVideoDIV');
+const localVideoDIV = document.getElementById('localVideoDIV');
 // const remoteVideoDIC = document.getElementById('remoteVideoDIV');
 // remoteVideo_btn.addEventListener("click", async (e) => {
 //     openFullscreen(remoteVideoDIC);
 // });
 localVideo_btn.addEventListener("click", async (e) => {
-    openFullscreen(localVideoDIC);
+    openFullscreen(localVideoDIV);
 });
 
 
@@ -186,22 +186,26 @@ let DATA_CHANNELS = [];
 
 function createPeerCon(_name) {
 
-    let peerConnection = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
-    peerConnection.onconnectionstatechange = function (event) {
+    PEER_CONNECTIONS[PeerCon_COUNTER] = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
+    PEER_CONNECTIONS[PeerCon_COUNTER].onconnectionstatechange = function (event) {
         document.getElementById('js-message-box').innerHTML = 'State changed of: ' + _name + ' = ' + peerConnection.connectionState;
-        console.log('State changed of: ' + _name + ' = ' + peerConnection.connectionState);
+        console.log('State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[PeerCon_COUNTER].connectionState);
     }
-    PEER_CONNECTIONS[PeerCon_COUNTER] = peerConnection;
+    PEER_CONNECTIONS[PeerCon_COUNTER].oniceconnectionstatechange = function(){
+       console.log('==============ICE state: ', PEER_CONNECTIONS[PeerCon_COUNTER].iceConnectionState);
+    }
+    // PEER_CONNECTIONS[PeerCon_COUNTER] = peerConnection;
+    
 }
 
 function createDataChn(_name) {
-    let dataChannel = PEER_CONNECTIONS[PeerCon_COUNTER].createDataChannel(_name);
-    dataChannel.onmessage = e => console.log('Got a message: ' + e.data);
-    dataChannel.onopen = e => console.log('Connection opened');
+    DATA_CHANNELS[PeerCon_COUNTER] = PEER_CONNECTIONS[PeerCon_COUNTER].createDataChannel(_name);
+    DATA_CHANNELS[PeerCon_COUNTER].onmessage = e => console.log('Got a message: ' + e.data);
+    DATA_CHANNELS[PeerCon_COUNTER].onopen = e => console.log('Connection opened');
     PEER_CONNECTIONS[PeerCon_COUNTER].onicecandidate = function (e) {
         console.log("ICE candidate (peerConnection)", e);
     };
-    DATA_CHANNELS[PeerCon_COUNTER] = dataChannel;
+    // DATA_CHANNELS[PeerCon_COUNTER] = dataChannel;
 }
 
 async function updatePeerCon_COUNTER(_pairs) {
@@ -303,10 +307,10 @@ async function startMediaSharing(_name) {
     const remoteVideo_btn = document.createElement('button', { id: 'js-remote-fullscreen' });
     remoteVideo_btn.innerHTML = "Remote Video Full Screen";
     remoteVideo_btn.addEventListener("click", async (e) => {
-        openFullscreen(remoteVideoDIC);
+        openFullscreen(remoteVideoDIV);
     });
     remoteVideo.addEventListener('loadedmetadata', function () {
-        console.log(`Remote video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+        console.log(`Remote video video Width: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
     });
 
     remoteVideoDIV.appendChild(remoteVideo);
