@@ -147,6 +147,7 @@ socket.addEventListener('open', function (event) {
                 } else
                     if (_data.type == 'f2_answer') {
                         //Im user 1
+                        console.log("===============Received an answer");
                         const currentPeerCOUNTER = PeerCon_COUNTER;
                         await processAnswerWhenReady_user1(_data._answer, _data._f2, currentPeerCOUNTER);
 

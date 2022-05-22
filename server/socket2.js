@@ -429,6 +429,7 @@ wss.on('connection', (ws) => {
           } else
             if (_data.type == 'f2_answer') {
               //send the offer to all the second users
+              console.log('should notify ff1 for answer');
               notifyF1FishAboutAnswer(_data);
             } else if (_data.type == 'endCall') {
               ALL_OCEANS_DATA.deleteOceanByID(_data._oceanID);
@@ -613,6 +614,8 @@ function notifyF1FishAboutAnswer(_data) {
   const ids = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishIDs;
   const pairs = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishPairs;
   pairs.every(p => {
+    console.log('in the loop');
+    console.log(p);
     if (p.f2 == _data._fishID && p.connected == false) {
       //if i am the F2 then notify
       console.log("should send answer to", p.f1);
@@ -620,6 +623,7 @@ function notifyF1FishAboutAnswer(_data) {
       p.connected = true;
       return false;
     }
+    return true;
   })
 }
 // function changeStatusOfPeerConnection(_data){
