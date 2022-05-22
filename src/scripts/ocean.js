@@ -95,6 +95,7 @@ socket.addEventListener('open', function (event) {
                 oceanPairs.every(p => {
                     if (p.f1 == the_fishID) {
                         console.log("Should send an OFFER")
+                        await startMediaSharing();
                         createOffer_user1();
                         return false;
                     }
@@ -104,6 +105,7 @@ socket.addEventListener('open', function (event) {
             } else
                 if (_data.type == 'f1_offer') {
                     //Im user 2
+                    await startMediaSharing()
                     createAnswerAndConnect_user2(_data._offer, _data._f1);
                 } else
                     if (_data.type == 'f2_answer') {
@@ -216,7 +218,7 @@ async function startMediaSharing() {
         remoteVideo.srcObject = remoteStream;
     }
 }
-await startMediaSharing();
+// await startMediaSharing();
 
 
 
