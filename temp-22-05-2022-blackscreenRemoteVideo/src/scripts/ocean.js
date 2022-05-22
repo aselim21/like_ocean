@@ -283,7 +283,21 @@ async function updatePeerCon_COUNTER(_pairs) {
 //         remoteVideo.srcObject = remoteStream;
 //     }
 // }
-const localVideo = document.getElementById('webcamVideo');
+// const localVideo = document.getElementById('webcamVideo');
+// // const remoteVideo = document.getElementById('remoteVideo');
+
+// //Event-Listeners for the videos
+// localVideo.addEventListener('loadedmetadata', function () {
+//     console.log(`=============Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+// });
+
+// const mediaConstraints_toDisplay = { audio: false, video: true };
+
+// let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
+// localVideo.srcObject = localStream_toDisplay;
+
+async function startMediaSharing(_name) {
+    const localVideo = document.getElementById('webcamVideo');
 // const remoteVideo = document.getElementById('remoteVideo');
 
 //Event-Listeners for the videos
@@ -295,8 +309,6 @@ const mediaConstraints_toDisplay = { audio: false, video: true };
 
 let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
 localVideo.srcObject = localStream_toDisplay;
-
-async function startMediaSharing(_name) {
     const mediaConstraints_toSend = { audio: true, video: true };
     let localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
     let remoteStream = new MediaStream();
