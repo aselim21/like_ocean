@@ -306,9 +306,13 @@ async function startMediaSharing(_name) {
         PEER_CONNECTIONS[PeerCon_COUNTER].addTrack(track, localStream);
     });
     //create the remote video element
-    const remoteVideoDIV = document.createElement('div', { class: 'remoteVideoDIV' });
-    const remoteVideo = document.createElement('video', { id: _name, class: 'remoteVideo' });
-    const remoteVideo_btn = document.createElement('button', { id: 'js-remote-fullscreen' });
+    const remoteVideoDIV = document.createElement('div');
+    remoteVideoDIV.setAttribute('class', 'remoteVideoDIV');
+    const remoteVideo = document.createElement('video');
+    remoteVideo.setAttribute('id', _name);
+    remoteVideo.setAttribute('class', 'remoteVideo');
+    const remoteVideo_btn = document.createElement('button');
+    remoteVideo_btn.setAttribute('id', 'js-remote-fullscreen');
     remoteVideo_btn.innerHTML = "Remote Video Full Screen";
     remoteVideo_btn.addEventListener("click", async (e) => {
         openFullscreen(remoteVideoDIV);
