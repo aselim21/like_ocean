@@ -188,13 +188,22 @@ const offerOptions = {
 let PEER_CONNECTIONS = [];
 let PeerCon_COUNTER = 0;
 let DATA_CHANNELS = [];
-
+function disconnectedFishCleanScreen(_name){
+    // const remoteVideo = document.querySelector(`video[pair="${_name}"]`);
+    const remoteVideoDIV = document.querySelector(`div[pair="${_name}"]`);
+    const remoteVideo_btn = document.querySelector(`button[pair="${_name}"]`);
+    remoteVideoDIV.remove();
+    remoteVideo_btn.remove();
+}
 async function createPeerCon(_name, _PeerCOUNTER) {
 console.log('==============creating Offer=================')
     PEER_CONNECTIONS[_PeerCOUNTER] = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
     PEER_CONNECTIONS[_PeerCOUNTER].onconnectionstatechange = function (event) {
         document.getElementById('js-message-box').innerHTML = 'State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[_PeerCOUNTER].connectionState;
         console.log('State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[_PeerCOUNTER].connectionState);
+        if(PEER_CONNECTIONS[_PeerCOUNTER].connectionState == 'disconnected'){
+            disconnectedFishCleanScreen(_name);
+        }
     }
     PEER_CONNECTIONS[_PeerCOUNTER].oniceconnectionstatechange = function(){
        console.log('==============ICE state: ', PEER_CONNECTIONS[_PeerCOUNTER].iceConnectionState);
@@ -279,10 +288,10 @@ async function createRemoteVideoElement(_name) {
     remoteVideo_btn.innerHTML = "Remote Video Full Screen";
 
     remoteVideoDIV.appendChild(remoteVideo);
-    remoteVideoDIV.appendChild(remoteVideo_btn);
+    // remoteVideoDIV.appendChild(remoteVideo_btn);
 
     const videosCluster = document.getElementById("videos");
-    // videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
+    videosCluster.insertBefore(remoteVideo_btn, videosCluster.children[0]);
     videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
 }
 async function startMediaSharing(_name, _PeerCOUNTER) {
