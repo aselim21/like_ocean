@@ -100,19 +100,20 @@ socket.addEventListener('open', function (event) {
                         if (p.f1 == the_fishID && p.connected == false) {
                             console.log("Should send an OFFER")
                             const new_connection_name = p.f1 + '-' + p.f2;
-                            createPeerCon(new_connection_name);
-                            startMediaSharing(new_connection_name);
-                            createDataChn(new_connection_name);
+                            await createPeerCon(new_connection_name);
+                            await startMediaSharing(new_connection_name);
+                            await createDataChn(new_connection_name);
                             await createOffer_user1();
                            
                             
                             return false;
-                        }else if(p.f2 == the_fishID && p.connected == false){
-                            const new_connection_name = p.f1 + '-' + p.f2;
-                            createPeerCon(new_connection_name);
-                            await startMediaSharing();
-                            console.log('i should wait for connection');
                         }
+                        // else if(p.f2 == the_fishID && p.connected == false){
+                        //     const new_connection_name = p.f1 + '-' + p.f2;
+                        //     createPeerCon(new_connection_name);
+                        //     await startMediaSharing(new_connection_name);
+                        //     console.log('i should wait for connection');
+                        // }
                         console.log('in the continue');
                         // return true;
                     }
@@ -138,13 +139,13 @@ socket.addEventListener('open', function (event) {
                     //also create a PeerCon
                     let new_connection_name = _data._f1 + '-' + _data._f2;
                     console.log(`New Connection name: ${new_connection_name}`);
-                    // createPeerCon(new_connection_name);
-                    //  await startMediaSharing();
-                    createAnswerAndConnect_user2(_data._offer, _data._f1);
+                    await createPeerCon(new_connection_name);
+                    await startMediaSharing(new_connection_name);
+                    await createAnswerAndConnect_user2(_data._offer, _data._f1);
                 } else
                     if (_data.type == 'f2_answer') {
                         //Im user 1
-                        processAnswerWhenReady_user1(_data._answer, _data._f2);
+                        await processAnswerWhenReady_user1(_data._answer, _data._f2);
 
                     }
 
@@ -184,7 +185,7 @@ let PEER_CONNECTIONS = [];
 let PeerCon_COUNTER = 0;
 let DATA_CHANNELS = [];
 
-function createPeerCon(_name) {
+async function createPeerCon(_name) {
 
     PEER_CONNECTIONS[PeerCon_COUNTER] = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
     PEER_CONNECTIONS[PeerCon_COUNTER].onconnectionstatechange = function (event) {
@@ -198,7 +199,7 @@ function createPeerCon(_name) {
     
 }
 
-function createDataChn(_name) {
+async function createDataChn(_name) {
     DATA_CHANNELS[PeerCon_COUNTER] = PEER_CONNECTIONS[PeerCon_COUNTER].createDataChannel(_name);
     DATA_CHANNELS[PeerCon_COUNTER].onmessage = e => console.log('Got a message: ' + e.data);
     DATA_CHANNELS[PeerCon_COUNTER].onopen = e => console.log('Connection opened');
@@ -329,7 +330,7 @@ async function startMediaSharing(_name) {
         event.streams[0].getTracks().forEach(track => {
             remoteStream.addTrack(track);
         })
-        remoteVideo.srcObject = remoteStream;
+        document.getElementById(_name).srcObject = remoteStream;
     }
 }
 
