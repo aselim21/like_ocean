@@ -105,6 +105,9 @@ socket.addEventListener('open', function (event) {
                             await createDataChn(new_connection_name);
                             await createOffer_user1();         
                             return false;
+                        }if(p.f1 != the_fishID && p.connected == false){
+                            //wait the next update
+                            return false;
                         }
                         // else if(p.f2 == the_fishID && p.connected == false){
                         //     const new_connection_name = p.f1 + '-' + p.f2;
@@ -521,14 +524,14 @@ async function processAnswerWhenReady_user1(_answer, _f2) {
     const remoteDesc = new RTCSessionDescription(_answer);
     await PEER_CONNECTIONS[PeerCon_COUNTER].setRemoteDescription(remoteDesc);
     console.log('ACCEPT ANSWER');
-    // const data = {
-    //     type: 'f1_connected',
-    //     _fishID: the_fishID,
-    //     _oceanID: the_oceanID,
-    //     _f1: the_fishID,
-    //     _f2: _f2
-    // }
-    // socket.send(JSON.stringify(data));
+    const data = {
+        type: 'f1_connected',
+        _fishID: the_fishID,
+        _oceanID: the_oceanID,
+        _f1: the_fishID,
+        _f2: _f2
+    }
+    socket.send(JSON.stringify(data));
 
     //READY FOR NEW CONNECTION
     // PeerCon_COUNTER++;

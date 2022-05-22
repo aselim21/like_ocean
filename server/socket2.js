@@ -437,6 +437,13 @@ wss.on('connection', (ws) => {
                 message: 'Ocean successfully cleaned'
               }
               ws.send(JSON.stringify(dataToSend));
+            }else if(_data.type == 'f1_connected'){
+              dataToSend = {
+                type: 'OceanInfoUpdated',
+                message: ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishPairs
+              }
+              notifyFishAboutChanges(_data._oceanID, dataToSend);
+            
             }
     // if(_data.type == 'f1_connected'){
     //   //send the offer to all the second users
@@ -577,6 +584,17 @@ function notifyFishAboutNewFish(_oceanID, _exceptionFishId, _data) {
     }
   })
 }
+function notifyFishAboutChanges(_oceanID, _data) {
+  const ids = ALL_OCEANS_DATA.getOceanByID(_oceanID).fishIDs;
+  console.log('==============notifying============');
+
+  ids.forEach(f => {
+    // if (f.id != _exceptionFishId && f.ms != 0) {
+      console.log("should send to", f.id)
+      f.ws.send(JSON.stringify(_data));
+    // }
+  })
+}
 
 function notifyF2FishAboutNewOffer(_data) {
   const ids = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishIDs;
@@ -594,12 +612,13 @@ function notifyF2FishAboutNewOffer(_data) {
 function notifyF1FishAboutAnswer(_data) {
   const ids = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishIDs;
   const pairs = ALL_OCEANS_DATA.getOceanByID(_data._oceanID).fishPairs;
-  pairs.forEach(p => {
+  pairs.every(p => {
     if (p.f2 == _data._fishID && p.connected == false) {
       //if i am the F2 then notify
       console.log("should send answer to", p.f1);
       ids.find(f => p.f1 == f.id).ws.send(JSON.stringify(_data))
       p.connected = true;
+      return false;
     }
   })
 }
