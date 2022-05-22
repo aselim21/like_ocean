@@ -259,17 +259,9 @@ localVideo.addEventListener('loadedmetadata', function () {
 
 
 //1. First start sharing media
-
-async function startMediaSharing(_name) {
-
-    const mediaConstraints_toSend = { audio: true, video: true };
-    const mediaConstraints_toDisplay = { audio: false, video: true };
-
-    let localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
-    let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
-    let remoteStream = new MediaStream();
-
+async function createRemoteVideoElement(_name) {
     const remoteVideoDIV = document.createElement('div');
+    remoteVideoDIV.setAttribute('id', _name);
     remoteVideoDIV.setAttribute('class', 'remoteVideoDIV');
     const remoteVideo = document.createElement('video');
     remoteVideo.setAttribute('id', _name);
@@ -278,18 +270,31 @@ async function startMediaSharing(_name) {
     remoteVideo_btn.setAttribute('id', _name);
     remoteVideo_btn.setAttribute('class', 'js-remote-fullscreen');
     remoteVideo_btn.innerHTML = "Remote Video Full Screen";
-    remoteVideo_btn.addEventListener("click", async (e) => {
-        openFullscreen(remoteVideoDIV);
-    });
-    remoteVideo.addEventListener('loadedmetadata', function () {
-        console.log(`=============Remote video video Width: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
-    });
 
     remoteVideoDIV.appendChild(remoteVideo);
     remoteVideoDIV.appendChild(remoteVideo_btn);
 
     const videosCluster = document.getElementById("videos");
     videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
+}
+async function startMediaSharing(_name) {
+    await createRemoteVideoElement(_name);
+    const remoteVideo = document.getElementById(_name);
+    const remoteVideoDIV = document.getElementById(_name);
+    const remoteVideo_btn = document.getElementById(_name);
+    const mediaConstraints_toSend = { audio: true, video: true };
+    const mediaConstraints_toDisplay = { audio: false, video: true };
+
+    let localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
+    let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
+    let remoteStream = new MediaStream();
+    
+    remoteVideo_btn.addEventListener("click", async (e) => {
+        openFullscreen(remoteVideoDIV);
+    });
+    remoteVideo.addEventListener('loadedmetadata', function () {
+        console.log(`=============Remote video video Width: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+    });
 
     localStream.getTracks().forEach((track) => {
         console.log("tracks sent");
@@ -302,7 +307,7 @@ async function startMediaSharing(_name) {
         event.streams[0].getTracks().forEach(track => {
             remoteStream.addTrack(track);
         })
-        document.getElementById(_name).srcObject = remoteStream;
+        remoteVideo.srcObject = remoteStream;
     }
 }
 // const localVideo = document.getElementById('webcamVideo');
