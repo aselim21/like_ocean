@@ -302,7 +302,7 @@ async function startMediaSharing(_name) {
         event.streams[0].getTracks().forEach(track => {
             remoteStream.addTrack(track);
         })
-        document.getElementById(_name).srcObject.srcObject = remoteStream;
+        document.getElementById(_name).srcObject = remoteStream;
     }
 }
 // const localVideo = document.getElementById('webcamVideo');
