@@ -261,14 +261,14 @@ localVideo.addEventListener('loadedmetadata', function () {
 //1. First start sharing media
 async function createRemoteVideoElement(_name) {
     const remoteVideoDIV = document.createElement('div');
-    remoteVideoDIV.setAttribute('id', _name);
+    remoteVideoDIV.setAttribute('pair', _name);
     remoteVideoDIV.setAttribute('class', 'remoteVideoDIV');
     const remoteVideo = document.createElement('video');
     remoteVideo.setAttribute('id', _name);
     remoteVideo.setAttribute('class', 'remoteVideo');
     remoteVideo.setAttribute('autoplay','');
     const remoteVideo_btn = document.createElement('button');
-    remoteVideo_btn.setAttribute('id', _name);
+    remoteVideo_btn.setAttribute('pair', _name);
     remoteVideo_btn.setAttribute('class', 'js-remote-fullscreen');
     remoteVideo_btn.innerHTML = "Remote Video Full Screen";
 
