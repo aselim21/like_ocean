@@ -264,7 +264,7 @@ async function createRemoteVideoElement(_name) {
     remoteVideoDIV.setAttribute('pair', _name);
     remoteVideoDIV.setAttribute('class', 'remoteVideoDIV');
     const remoteVideo = document.createElement('video');
-    remoteVideo.setAttribute('id', _name);
+    remoteVideo.setAttribute('pair', _name);
     remoteVideo.setAttribute('class', 'remoteVideo');
     remoteVideo.setAttribute('autoplay','');
     const remoteVideo_btn = document.createElement('button');
@@ -280,11 +280,13 @@ async function createRemoteVideoElement(_name) {
     videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
 }
 async function startMediaSharing(_name) {
-    await createRemoteVideoElement(_name);
-    const remoteVideo = document.getElementById(_name);
-    const remoteVideoTEST = document.getElementById('TEST');
-    const remoteVideoDIV = document.getElementById(_name);
-    const remoteVideo_btn = document.getElementById(_name);
+    if(!document.querySelector('video[pair="404247-4832758"]')){
+        await createRemoteVideoElement(_name);
+    }
+    
+    const remoteVideo = document.querySelector('video[pair="404247-4832758"]');
+    const remoteVideoDIV = document.querySelector('div[pair="404247-4832758"]');
+    const remoteVideo_btn = document.querySelector('button[pair="404247-4832758"]');
     const mediaConstraints_toSend = { audio: true, video: true };
     const mediaConstraints_toDisplay = { audio: false, video: true };
 
@@ -312,7 +314,7 @@ async function startMediaSharing(_name) {
             })
             console.log(remoteVideo);
             remoteVideo.srcObject = remoteStream;
-            remoteVideoTEST.srcObject = remoteStream;
+            // remoteVideoTEST.srcObject = remoteStream;
     
         }
     
