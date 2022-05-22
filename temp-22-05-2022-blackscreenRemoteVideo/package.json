@@ -1,0 +1,32 @@
+{
+  "name": "like_ocean",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "bufferutil": "^4.0.6",
+    "express": "^4.17.2",
+    "https": "^1.0.0",
+    "mongoose": "^6.0.12",
+    "nodemon": "^2.0.16",
+    "socket.io": "^4.5.1",
+    "utf-8-validate": "^5.0.9",
+    "uuid": "^8.3.2",
+    "ws": "^8.6.0"
+  },
+  "scripts": {
+    "devStart": "nodemon server/socket2.js",
+    "start": "node server/socket2.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aselim21/like_ocean.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aselim21/like_ocean/issues"
+  },
+  "homepage": "https://github.com/aselim21/like_ocean#readme"
+}
