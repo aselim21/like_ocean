@@ -92,7 +92,7 @@ socket.addEventListener('open', function (event) {
             // }else 
             if (_data.type == 'OceanInfoUpdated') {
                 const oceanPairs = _data.message;
-                for (p of oceanPairs){
+                for (const p of oceanPairs){
                 if (p.f1 == the_fishID) {
                         console.log("Should send an OFFER")
                         await startMediaSharing();
