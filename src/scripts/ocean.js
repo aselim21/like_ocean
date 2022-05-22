@@ -275,11 +275,13 @@ async function createRemoteVideoElement(_name) {
     remoteVideoDIV.appendChild(remoteVideo_btn);
 
     const videosCluster = document.getElementById("videos");
+    // videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
     videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
 }
 async function startMediaSharing(_name) {
     await createRemoteVideoElement(_name);
     const remoteVideo = document.getElementById(_name);
+    const remoteVideoTEST = document.getElementById('TEST');
     const remoteVideoDIV = document.getElementById(_name);
     const remoteVideo_btn = document.getElementById(_name);
     const mediaConstraints_toSend = { audio: true, video: true };
@@ -308,6 +310,8 @@ async function startMediaSharing(_name) {
             remoteStream.addTrack(track);
         })
         remoteVideo.srcObject = remoteStream;
+        remoteVideoTEST.srcObject = remoteStream;
+
     }
 }
 // const localVideo = document.getElementById('webcamVideo');
