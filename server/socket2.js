@@ -206,18 +206,31 @@ class OCEAN {
       let swtch = 0;
       this.fishIDs.push({ id: _id, ws: _ws });
       if (this.fishIDs.length != 1) {
-        for (let i = 0; i < this.fishIDs.length - 1; i++) {
-          // This is where you'll capture that last value
-          for (let j = i + 1; j < this.fishIDs.length; j++) {
-            if (swtch == 0) {
-              this.fishPairs.push({ f1: this.fishIDs[i].id, f2: this.fishIDs[j].id, connected: false });
-              swtch = 1;
-            } else {
-              this.fishPairs.push({ f1: this.fishIDs[j].id, f2: this.fishIDs[i].id, connected: false });
-              swtch = 0;
-            }
+        //if there are more then 1 fish, the pairs can be made
+        for(let i = this.fishIDs.length-2 ; i>=0 ; i--){ 
+          // create pairs backwards starting from the new fishid
+          
+          if (swtch == 0) {
+            this.fishPairs.push({ f1:_id , f2: this.fishIDs[i].id, connected: false });
+            swtch = 1;
+          } else {
+            this.fishPairs.push({ f1: this.fishIDs[i].id, f2: _id, connected: false });
+            swtch = 0;
           }
         }
+        // for (let i = 0; i < this.fishIDs.length - 1; i++) {
+        //   // This is where you'll capture that last value
+        //   for (let j = i + 1; j < this.fishIDs.length; j++) {
+        //     // if(this.fishPairs.f1 ==)
+        //     if (swtch == 0) {
+        //       this.fishPairs.push({ f1: this.fishIDs[i].id, f2: this.fishIDs[j].id, connected: false });
+        //       swtch = 1;
+        //     } else {
+        //       this.fishPairs.push({ f1: this.fishIDs[j].id, f2: this.fishIDs[i].id, connected: false });
+        //       swtch = 0;
+        //     }
+        //   }
+        // }
         return this.fishPairs;
       } return 1;
     } else return 0;
