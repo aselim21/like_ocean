@@ -271,11 +271,11 @@ async function startMediaSharing() {
 
     localStream.getTracks().forEach((track) => {
         console.log("tracks sent");
-        peerConnection.addTrack(track, localStream);
+        PEER_CONNECTIONS[PeerCon_COUNTER].addTrack(track, localStream);
     });
     localVideo.srcObject = localStream_toDisplay;
 
-    peerConnection.ontrack = function (event) {
+    PEER_CONNECTIONS[PeerCon_COUNTER].ontrack = function (event) {
         console.log('track received');
         event.streams[0].getTracks().forEach(track => {
             remoteStream.addTrack(track);
