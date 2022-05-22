@@ -266,6 +266,7 @@ async function createRemoteVideoElement(_name) {
     const remoteVideo = document.createElement('video');
     remoteVideo.setAttribute('id', _name);
     remoteVideo.setAttribute('class', 'remoteVideo');
+    remoteVideo.setAttribute('autoplay');
     const remoteVideo_btn = document.createElement('button');
     remoteVideo_btn.setAttribute('id', _name);
     remoteVideo_btn.setAttribute('class', 'js-remote-fullscreen');
@@ -277,10 +278,9 @@ async function createRemoteVideoElement(_name) {
     const videosCluster = document.getElementById("videos");
     // videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
     videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
-    return 1;
 }
 async function startMediaSharing(_name) {
-    const answer = await createRemoteVideoElement(_name);
+    await createRemoteVideoElement(_name);
     const remoteVideo = document.getElementById(_name);
     const remoteVideoTEST = document.getElementById('TEST');
     const remoteVideoDIV = document.getElementById(_name);
@@ -305,18 +305,18 @@ async function startMediaSharing(_name) {
     });
     localVideo.srcObject = localStream_toDisplay;
 
-    if(answer == 1) {
         PEER_CONNECTIONS[PeerCon_COUNTER].ontrack = function (event) {
             console.log('track received');
             event.streams[0].getTracks().forEach(track => {
                 remoteStream.addTrack(track);
             })
+            console.log(remoteVideo);
             remoteVideo.srcObject = remoteStream;
             remoteVideoTEST.srcObject = remoteStream;
     
         }
-    }
     
+
     // navigator.mediaDevices.getUserMedia(constraints)
     // .then(function(mediaStream) {
     //   var video = document.querySelector('video');
