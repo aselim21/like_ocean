@@ -143,15 +143,16 @@ socket.addEventListener('open', function (event) {
                     //Im user 2
                     let new_connection_name = _data._f1 + '-' + _data._f2;
                     console.log(`Received an offer from: ${new_connection_name}`);
-                    messageBox.innerHTML = `New Connection name: ${new_connection_name}`;
+                    messageBox.innerHTML = `Received an offer from: ${new_connection_name}`;
                     await createPeerCon(new_connection_name, currentPeerCOUNTER);
                     await startMediaSharing(new_connection_name, currentPeerCOUNTER);
                     await createAnswerAndConnect_user2(_data._offer, _data._f1, currentPeerCOUNTER);
                 } else
                     if (_data.type == 'f2_answer') {
                         //Im user 1
+                        let new_connection_name = _data._f1 + '-' + _data._f2;
                         console.log("Received an answer from: ", _data._f2);
-                        messageBox.innerHTML = `New Connection name: ${new_connection_name}`;
+                        messageBox.innerHTML = `Received an answer from: ${new_connection_name}`;
                         const currentPeerCOUNTER = PeerCon_COUNTER;
                         await processAnswerWhenReady_user1(_data._answer, _data._f2, currentPeerCOUNTER);
                     }
