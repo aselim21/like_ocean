@@ -188,7 +188,7 @@ function createPeerCon(_name) {
 
     PEER_CONNECTIONS[PeerCon_COUNTER] = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
     PEER_CONNECTIONS[PeerCon_COUNTER].onconnectionstatechange = function (event) {
-        document.getElementById('js-message-box').innerHTML = 'State changed of: ' + _name + ' = ' + peerConnection.connectionState;
+        document.getElementById('js-message-box').innerHTML = 'State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[PeerCon_COUNTER].connectionState;
         console.log('State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[PeerCon_COUNTER].connectionState);
     }
     PEER_CONNECTIONS[PeerCon_COUNTER].oniceconnectionstatechange = function(){
@@ -525,29 +525,29 @@ async function processAnswerWhenReady_user1(_answer, _f2) {
 // };
 
 
-function closeVideoCall() {
-    console.log('++++++video closed');
+// function closeVideoCall() {
+//     console.log('++++++video closed');
 
-    if (peerConnection) {
-        peerConnection.ontrack = null;
-        peerConnection.onremovetrack = null;
-        peerConnection.onremovestream = null;
-        peerConnection.onicecandidate = null;
-        peerConnection.oniceconnectionstatechange = null;
-        peerConnection.onsignalingstatechange = null;
-        peerConnection.onicegatheringstatechange = null;
-        peerConnection.onnegotiationneeded = null;
+//     if (peerConnection) {
+//         peerConnection.ontrack = null;
+//         peerConnection.onremovetrack = null;
+//         peerConnection.onremovestream = null;
+//         peerConnection.onicecandidate = null;
+//         peerConnection.oniceconnectionstatechange = null;
+//         peerConnection.onsignalingstatechange = null;
+//         peerConnection.onicegatheringstatechange = null;
+//         peerConnection.onnegotiationneeded = null;
 
-        if (remoteVideo.srcObject) {
-            remoteVideo.srcObject.getTracks().forEach(track => track.stop());
-        }
+//         if (remoteVideo.srcObject) {
+//             remoteVideo.srcObject.getTracks().forEach(track => track.stop());
+//         }
 
-        if (localVideo.srcObject) {
-            localVideo.srcObject.getTracks().forEach(track => track.stop());
-        }
+//         if (localVideo.srcObject) {
+//             localVideo.srcObject.getTracks().forEach(track => track.stop());
+//         }
 
-        alert('Call ended.');
-        peerConnection.close();
-        peerConnection = null;
-    }
-}
+//         alert('Call ended.');
+//         peerConnection.close();
+//         peerConnection = null;
+//     }
+// }
