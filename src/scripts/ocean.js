@@ -93,17 +93,17 @@ socket.addEventListener('open', function (event) {
             if (_data.type == 'OceanInfoUpdated') {
                 const oceanPairs = _data.message;
                 // fist check the Connection Number 
-                updatePeerCon_COUNTER(oceanPairs).then(async function (){
+                updatePeerCon_COUNTER(oceanPairs).then(async function (_newPeerCOUNTER){
                     console.log('in theafter');
                     for (const p of oceanPairs) {
                         console.log('started');
                         if (p.f1 == the_fishID && p.connected == false) {
                             console.log("Should send an OFFER")
                             const new_connection_name = p.f1 + '-' + p.f2;
-                            await createPeerCon(new_connection_name);
-                            await startMediaSharing(new_connection_name);
-                            await createDataChn(new_connection_name);
-                            await createOffer_user1();         
+                            await createPeerCon(new_connection_name, _newPeerCOUNTER);
+                            await startMediaSharing(new_connection_name, _newPeerCOUNTER);
+                            await createDataChn(new_connection_name, _newPeerCOUNTER);
+                            await createOffer_user1(_newPeerCOUNTER);         
                             return false;
                         }if(p.f1 != the_fishID && p.connected == false){
                             //wait the next update
@@ -136,17 +136,19 @@ socket.addEventListener('open', function (event) {
 
             } else
                 if (_data.type == 'f1_offer') {
+                    const currentPeerCOUNTER = PeerCon_COUNTER;
                     //Im user 2
                     //also create a PeerCon
                     let new_connection_name = _data._f1 + '-' + _data._f2;
                     console.log(`New Connection name: ${new_connection_name}`);
-                    await createPeerCon(new_connection_name);
-                    await startMediaSharing(new_connection_name);
-                    await createAnswerAndConnect_user2(_data._offer, _data._f1);
+                    await createPeerCon(new_connection_name, currentPeerCOUNTER);
+                    await startMediaSharing(new_connection_name, currentPeerCOUNTER);
+                    await createAnswerAndConnect_user2(_data._offer, _data._f1, currentPeerCOUNTER);
                 } else
                     if (_data.type == 'f2_answer') {
                         //Im user 1
-                        await processAnswerWhenReady_user1(_data._answer, _data._f2);
+                        const currentPeerCOUNTER = PeerCon_COUNTER;
+                        await processAnswerWhenReady_user1(_data._answer, _data._f2, currentPeerCOUNTER);
 
                     }
 
@@ -186,25 +188,25 @@ let PEER_CONNECTIONS = [];
 let PeerCon_COUNTER = 0;
 let DATA_CHANNELS = [];
 
-async function createPeerCon(_name) {
+async function createPeerCon(_name, _PeerCOUNTER) {
 console.log('==============creating Offer=================')
-    PEER_CONNECTIONS[PeerCon_COUNTER] = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
-    PEER_CONNECTIONS[PeerCon_COUNTER].onconnectionstatechange = function (event) {
-        document.getElementById('js-message-box').innerHTML = 'State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[PeerCon_COUNTER].connectionState;
-        console.log('State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[PeerCon_COUNTER].connectionState);
+    PEER_CONNECTIONS[_PeerCOUNTER] = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
+    PEER_CONNECTIONS[_PeerCOUNTER].onconnectionstatechange = function (event) {
+        document.getElementById('js-message-box').innerHTML = 'State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[_PeerCOUNTER].connectionState;
+        console.log('State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[_PeerCOUNTER].connectionState);
     }
-    PEER_CONNECTIONS[PeerCon_COUNTER].oniceconnectionstatechange = function(){
-       console.log('==============ICE state: ', PEER_CONNECTIONS[PeerCon_COUNTER].iceConnectionState);
+    PEER_CONNECTIONS[_PeerCOUNTER].oniceconnectionstatechange = function(){
+       console.log('==============ICE state: ', PEER_CONNECTIONS[_PeerCOUNTER].iceConnectionState);
     }
     // PEER_CONNECTIONS[PeerCon_COUNTER] = peerConnection;
     
 }
 
-async function createDataChn(_name) {
-    DATA_CHANNELS[PeerCon_COUNTER] = PEER_CONNECTIONS[PeerCon_COUNTER].createDataChannel(_name);
-    DATA_CHANNELS[PeerCon_COUNTER].onmessage = e => console.log('Got a message: ' + e.data);
-    DATA_CHANNELS[PeerCon_COUNTER].onopen = e => console.log('Connection opened');
-    PEER_CONNECTIONS[PeerCon_COUNTER].onicecandidate = function (e) {
+async function createDataChn(_name, _PeerCOUNTER) {
+    DATA_CHANNELS[_PeerCOUNTER] = PEER_CONNECTIONS[_PeerCOUNTER].createDataChannel(_name);
+    DATA_CHANNELS[_PeerCOUNTER].onmessage = e => console.log('Got a message: ' + e.data);
+    DATA_CHANNELS[_PeerCOUNTER].onopen = e => console.log('Connection opened');
+    PEER_CONNECTIONS[_PeerCOUNTER].onicecandidate = function (e) {
         console.log("ICE candidate (peerConnection)", e);
     };
     // DATA_CHANNELS[PeerCon_COUNTER] = dataChannel;
@@ -224,7 +226,7 @@ async function updatePeerCon_COUNTER(_pairs) {
         reject(newDoneConnections);
     }else {
         console.log('NEW PEERCOUNTER = ',PeerCon_COUNTER );
-        resolve(newDoneConnections);
+        resolve(PeerCon_COUNTER);
     }
     })
     
@@ -282,7 +284,7 @@ async function createRemoteVideoElement(_name) {
     // videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
     videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
 }
-async function startMediaSharing(_name) {
+async function startMediaSharing(_name, _PeerCOUNTER) {
     if(!document.querySelector('video[pair="404247-4832758"]')){
         await createRemoteVideoElement(_name);
     }
@@ -306,11 +308,11 @@ async function startMediaSharing(_name) {
 
     localStream.getTracks().forEach((track) => {
         console.log("tracks sent");
-        PEER_CONNECTIONS[PeerCon_COUNTER].addTrack(track, localStream);
+        PEER_CONNECTIONS[_PeerCOUNTER].addTrack(track, localStream);
     });
     localVideo.srcObject = localStream_toDisplay;
 
-        PEER_CONNECTIONS[PeerCon_COUNTER].ontrack = function (event) {
+        PEER_CONNECTIONS[_PeerCOUNTER].ontrack = function (event) {
             console.log('track received');
             event.streams[0].getTracks().forEach(track => {
                 remoteStream.addTrack(track);
@@ -439,20 +441,20 @@ async function startMediaSharing(_name) {
 //     }, 2000)
 // }
 
-async function createOffer_user1(_channelName) {
+async function createOffer_user1(_PeerCOUNTER) {
 
     //should create a new peer connection, new data channel with the peer information
     console.log("in createOffer_user1")
 
-    const offer = await PEER_CONNECTIONS[PeerCon_COUNTER].createOffer(offerOptions);
-    await PEER_CONNECTIONS[PeerCon_COUNTER].setLocalDescription(offer);
+    const offer = await PEER_CONNECTIONS[_PeerCOUNTER].createOffer(offerOptions);
+    await PEER_CONNECTIONS[_PeerCOUNTER].setLocalDescription(offer);
     setTimeout(() => {
         console.log('PUT OFFER');
         const data = {
             type: 'f1_offer',
             _fishID: the_fishID,
             _oceanID: the_oceanID,
-            _offer: PEER_CONNECTIONS[PeerCon_COUNTER].localDescription,
+            _offer: PEER_CONNECTIONS[_PeerCOUNTER].localDescription,
             _f1: the_fishID
         }
         socket.send(JSON.stringify(data));
@@ -488,13 +490,13 @@ async function createOffer_user1(_channelName) {
 // }
 
 
-async function createAnswerAndConnect_user2(_offer, _f1) {
-    PEER_CONNECTIONS[PeerCon_COUNTER].addEventListener('datachannel', event => {
-        DATA_CHANNELS[PeerCon_COUNTER] = event.channel;
-        DATA_CHANNELS[PeerCon_COUNTER].onopen = e => console.log('Connection opened from datachannel: ', event.channel.label);
-        DATA_CHANNELS[PeerCon_COUNTER].onmessage = e => console.log('Got a message: ' + e.data);
+async function createAnswerAndConnect_user2(_offer, _f1, _PeerCOUNTER) {
+    PEER_CONNECTIONS[_PeerCOUNTER].addEventListener('datachannel', event => {
+        DATA_CHANNELS[_PeerCOUNTER] = event.channel;
+        DATA_CHANNELS[_PeerCOUNTER].onopen = e => console.log('Connection opened from datachannel: ', event.channel.label);
+        DATA_CHANNELS[_PeerCOUNTER].onmessage = e => console.log('Got a message: ' + e.data);
     });
-    PEER_CONNECTIONS[PeerCon_COUNTER].onicecandidate = function (e) {
+    PEER_CONNECTIONS[_PeerCOUNTER].onicecandidate = function (e) {
         console.log("ICE candidate (peerConnection)", e);
         setTimeout(() => {
             console.log("PUT ANSWER");
@@ -502,7 +504,7 @@ async function createAnswerAndConnect_user2(_offer, _f1) {
                 type: 'f2_answer',
                 _fishID: the_fishID,
                 _oceanID: the_oceanID,
-                _answer: PEER_CONNECTIONS[PeerCon_COUNTER].localDescription,
+                _answer: PEER_CONNECTIONS[_PeerCOUNTER].localDescription,
                 _f1: _f1,
                 _f2: the_fishID
             }
@@ -511,18 +513,18 @@ async function createAnswerAndConnect_user2(_offer, _f1) {
         }, 3000)
     };
     const remoteDesc = new RTCSessionDescription(_offer);
-    await PEER_CONNECTIONS[PeerCon_COUNTER].setRemoteDescription(remoteDesc);
-    const answer = await PEER_CONNECTIONS[PeerCon_COUNTER].createAnswer();
-    await PEER_CONNECTIONS[PeerCon_COUNTER].setLocalDescription(answer);
+    await PEER_CONNECTIONS[_PeerCOUNTER].setRemoteDescription(remoteDesc);
+    const answer = await PEER_CONNECTIONS[_PeerCOUNTER].createAnswer();
+    await PEER_CONNECTIONS[_PeerCOUNTER].setLocalDescription(answer);
 
     //READY FOR NEW CONNECTION
     // PeerCon_COUNTER++;
 }
 // //~~~~~~~~~~~refactored~~~~~~~~~~~
-async function processAnswerWhenReady_user1(_answer, _f2) {
+async function processAnswerWhenReady_user1(_answer, _f2, _PeerCOUNTER) {
     console.log('in processAnswerWhenReady_user1');
     const remoteDesc = new RTCSessionDescription(_answer);
-    await PEER_CONNECTIONS[PeerCon_COUNTER].setRemoteDescription(remoteDesc);
+    await PEER_CONNECTIONS[_PeerCOUNTER].setRemoteDescription(remoteDesc);
     console.log('ACCEPT ANSWER');
     const data = {
         type: 'f1_connected',
