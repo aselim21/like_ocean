@@ -101,10 +101,10 @@ socket.addEventListener('open', function (event) {
                             console.log("Should send an OFFER")
                             const new_connection_name = p.f1 + '-' + p.f2;
                             createPeerCon(new_connection_name);
+                            startMediaSharing(new_connection_name);
                             createDataChn(new_connection_name);
-                            startMediaSharing(new_connection_name).then(async function() {
-                                await createOffer_user1();
-                            });
+                            await createOffer_user1();
+                           
                             
                             return false;
                         }else if(p.f2 == the_fishID && p.connected == false){
