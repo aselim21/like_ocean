@@ -92,15 +92,18 @@ socket.addEventListener('open', function (event) {
             // }else 
             if (_data.type == 'OceanInfoUpdated') {
                 const oceanPairs = _data.message;
-                oceanPairs.every(p => {
-                    if (p.f1 == the_fishID) {
+                for (p of oceanPairs){
+                if (p.f1 == the_fishID) {
                         console.log("Should send an OFFER")
                         await startMediaSharing();
                         createOffer_user1();
                         return false;
                     }
                     return true;
-                })
+                }
+               
+                   
+                
 
             } else
                 if (_data.type == 'f1_offer') {
