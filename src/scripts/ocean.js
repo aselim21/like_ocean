@@ -291,16 +291,21 @@ const localVideo = document.getElementById('webcamVideo');
 localVideo.addEventListener('loadedmetadata', function () {
     console.log(`Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
 });
-const mediaConstraints_toSend = { audio: true, video: true };
+
 const mediaConstraints_toDisplay = { audio: false, video: true };
 
 let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
 localVideo.srcObject = localStream_toDisplay;
 
 async function startMediaSharing(_name) {
-
+    const mediaConstraints_toSend = { audio: true, video: true };
     let localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
+    let remoteStream = new MediaStream();
 
+    localStream.getTracks().forEach((track) => {
+        console.log("tracks sent");
+        PEER_CONNECTIONS[PeerCon_COUNTER].addTrack(track, localStream);
+    });
     //create the remote video element
     const remoteVideoDIV = document.createElement('div', { class: 'remoteVideoDIV' });
     const remoteVideo = document.createElement('video', { id: _name, class: 'remoteVideo' });
@@ -319,15 +324,8 @@ async function startMediaSharing(_name) {
     const videosCluster = document.getElementById("videos");
     videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
 
-    let remoteStream = new MediaStream();
-
-    localStream.getTracks().forEach((track) => {
-        console.log("tracks sent");
-        PEER_CONNECTIONS[PeerCon_COUNTER].addTrack(track, localStream);
-    });
-
     PEER_CONNECTIONS[PeerCon_COUNTER].ontrack = function (event) {
-        console.log('track received');
+        console.log('!!!!!!!!!!!!!!!!track received!!!!!!!!!!');
         event.streams[0].getTracks().forEach(track => {
             remoteStream.addTrack(track);
         })
