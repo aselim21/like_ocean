@@ -103,9 +103,7 @@ socket.addEventListener('open', function (event) {
                             await createPeerCon(new_connection_name);
                             await startMediaSharing(new_connection_name);
                             await createDataChn(new_connection_name);
-                            await createOffer_user1();
-                           
-                            
+                            await createOffer_user1();         
                             return false;
                         }
                         // else if(p.f2 == the_fishID && p.connected == false){
@@ -290,7 +288,7 @@ const localVideo = document.getElementById('webcamVideo');
 
 //Event-Listeners for the videos
 localVideo.addEventListener('loadedmetadata', function () {
-    console.log(`Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+    console.log(`=============Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
 });
 
 const mediaConstraints_toDisplay = { audio: false, video: true };
@@ -304,7 +302,7 @@ async function startMediaSharing(_name) {
     let remoteStream = new MediaStream();
 
     localStream.getTracks().forEach((track) => {
-        console.log("tracks sent");
+        console.log("=============tracks sent=============");
         PEER_CONNECTIONS[PeerCon_COUNTER].addTrack(track, localStream);
     });
     //create the remote video element
@@ -316,7 +314,7 @@ async function startMediaSharing(_name) {
         openFullscreen(remoteVideoDIV);
     });
     remoteVideo.addEventListener('loadedmetadata', function () {
-        console.log(`Remote video video Width: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+        console.log(`=============Remote video video Width: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
     });
 
     remoteVideoDIV.appendChild(remoteVideo);
@@ -326,7 +324,7 @@ async function startMediaSharing(_name) {
     videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
 
     PEER_CONNECTIONS[PeerCon_COUNTER].ontrack = function (event) {
-        console.log('!!!!!!!!!!!!!!!!track received!!!!!!!!!!');
+        console.log('=============track received=============');
         event.streams[0].getTracks().forEach(track => {
             remoteStream.addTrack(track);
         })
