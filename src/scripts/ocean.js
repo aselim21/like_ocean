@@ -277,9 +277,10 @@ async function createRemoteVideoElement(_name) {
     const videosCluster = document.getElementById("videos");
     // videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
     videosCluster.insertBefore(remoteVideoDIV, videosCluster.children[0]);
+    return 1;
 }
 async function startMediaSharing(_name) {
-    await createRemoteVideoElement(_name);
+    const answer = await createRemoteVideoElement(_name);
     const remoteVideo = document.getElementById(_name);
     const remoteVideoTEST = document.getElementById('TEST');
     const remoteVideoDIV = document.getElementById(_name);
@@ -304,15 +305,26 @@ async function startMediaSharing(_name) {
     });
     localVideo.srcObject = localStream_toDisplay;
 
-    PEER_CONNECTIONS[PeerCon_COUNTER].ontrack = function (event) {
-        console.log('track received');
-        event.streams[0].getTracks().forEach(track => {
-            remoteStream.addTrack(track);
-        })
-        remoteVideo.srcObject = remoteStream;
-        remoteVideoTEST.srcObject = remoteStream;
-
+    if(answer == 1) {
+        PEER_CONNECTIONS[PeerCon_COUNTER].ontrack = function (event) {
+            console.log('track received');
+            event.streams[0].getTracks().forEach(track => {
+                remoteStream.addTrack(track);
+            })
+            remoteVideo.srcObject = remoteStream;
+            remoteVideoTEST.srcObject = remoteStream;
+    
+        }
     }
+    
+    // navigator.mediaDevices.getUserMedia(constraints)
+    // .then(function(mediaStream) {
+    //   var video = document.querySelector('video');
+    //   video.srcObject = mediaStream;
+    //   video.onloadedmetadata = function(e) {
+    //     video.play();
+    //   };
+    // })
 }
 // const localVideo = document.getElementById('webcamVideo');
 // // const remoteVideo = document.getElementById('remoteVideo');
