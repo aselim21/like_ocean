@@ -284,9 +284,9 @@ async function startMediaSharing(_name) {
         await createRemoteVideoElement(_name);
     }
     
-    const remoteVideo = document.querySelector('video[pair="404247-4832758"]');
-    const remoteVideoDIV = document.querySelector('div[pair="404247-4832758"]');
-    const remoteVideo_btn = document.querySelector('button[pair="404247-4832758"]');
+    const remoteVideo = document.querySelector(`video[pair="${_name}"]`);
+    const remoteVideoDIV = document.querySelector(`div[pair="${_name}"]`);
+    const remoteVideo_btn = document.querySelector(`button[pair="${_name}"]`);
     const mediaConstraints_toSend = { audio: true, video: true };
     const mediaConstraints_toDisplay = { audio: false, video: true };
 
