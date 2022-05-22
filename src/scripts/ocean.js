@@ -260,7 +260,7 @@ localVideo.addEventListener('loadedmetadata', function () {
 
 //1. First start sharing media
 
-async function startMediaSharing() {
+async function startMediaSharing(_name) {
 
     const mediaConstraints_toSend = { audio: true, video: true };
     const mediaConstraints_toDisplay = { audio: false, video: true };
