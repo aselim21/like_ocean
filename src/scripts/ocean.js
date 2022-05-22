@@ -266,7 +266,7 @@ async function createRemoteVideoElement(_name) {
     const remoteVideo = document.createElement('video');
     remoteVideo.setAttribute('id', _name);
     remoteVideo.setAttribute('class', 'remoteVideo');
-    remoteVideo.setAttribute('autoplay');
+    remoteVideo.setAttribute('autoplay','');
     const remoteVideo_btn = document.createElement('button');
     remoteVideo_btn.setAttribute('id', _name);
     remoteVideo_btn.setAttribute('class', 'js-remote-fullscreen');
