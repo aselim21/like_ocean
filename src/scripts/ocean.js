@@ -163,8 +163,8 @@ const localVideo = document.getElementById('webcamVideo');
 window.addEventListener('DOMContentLoaded', async (event) => {
     console.log('DOM fully loaded and parsed');
 
-    setOrientationSmallVideoC();
-    setOrientationBigVideoC();
+    // setOrientationSmallVideoC();
+    // setOrientationBigVideoC();
     
 
     localVideo.addEventListener('loadedmetadata', function () {
@@ -279,34 +279,34 @@ function getCookie(cname) {
     }
     return "";
 }
-function setOrientationSmallVideoC() {
-    const _el = document.getElementById('small-video-container');
-    let width = _el.clientWidth;
-    let height = _el.clientHeight;
-    let width_20p = width * (20 / 100);
-    let height_20p = height * (20 / 100);
-    console.log(width, height)
+// function setOrientationSmallVideoC() {
+//     const _el = document.getElementById('small-video-container');
+//     let width = _el.clientWidth;
+//     let height = _el.clientHeight;
+//     let width_20p = width * (20 / 100);
+//     let height_20p = height * (20 / 100);
+//     console.log(width, height)
 
-    if (width >= height) {
-        _el.setAttribute("orientsmall-landscape", "")
-    } else {
-        _el.setAttribute("orientsmall-portrait", "")
-    }
-}
-function setOrientationBigVideoC() {
-    const _el = document.getElementById('big-videos-container');
-    let width = _el.clientWidth;
-    let height = _el.clientHeight;
-    let width_20p = width * (20 / 100);
-    let height_20p = height * (20 / 100);
-    console.log(width, height)
+//     if (width >= height) {
+//         _el.setAttribute("orientsmall-landscape", "")
+//     } else {
+//         _el.setAttribute("orientsmall-portrait", "")
+//     }
+// }
+// function setOrientationBigVideoC() {
+//     const _el = document.getElementById('big-videos-container');
+//     let width = _el.clientWidth;
+//     let height = _el.clientHeight;
+//     let width_20p = width * (20 / 100);
+//     let height_20p = height * (20 / 100);
+//     console.log(width, height)
 
-    if (width >= height) {
-        _el.setAttribute("orientbig-landscape", "")
-    } else {
-        _el.setAttribute("orientbig-portrait", "")
-    }
-}
+//     if (width >= height) {
+//         _el.setAttribute("orientbig-landscape", "")
+//     } else {
+//         _el.setAttribute("orientbig-portrait", "")
+//     }
+// }
 
 function disconnectedFishCleanScreen(_name) {
     // const remoteVideo = document.querySelector(`video[pair="${_name}"]`);

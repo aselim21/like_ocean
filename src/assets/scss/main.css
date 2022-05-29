@@ -730,25 +730,33 @@ body #main-ocean-container #videos-container #big-videos-container {
 
 body #main-ocean-container #videos-container #small-video-container {
   position: absolute;
-  display: block;
+  display: -ms-grid;
+  display: grid;
   border: 1.8px solid #012E40;
   -webkit-box-shadow: 0px 0px 12px -2px rgba(0, 0, 0, 0.5);
           box-shadow: 0px 0px 12px -2px rgba(0, 0, 0, 0.5);
   right: 0;
   overflow: hidden;
-  display: block;
   right: 1rem;
   bottom: 10rem;
 }
 
-body #main-ocean-container #videos-container div[orientsmall-landscape] {
-  width: 20%;
-  border: 20px solid #012E40;
+@media (orientation: landscape) {
+  body #main-ocean-container #control-panel-container i {
+    font-size: 2rem;
+  }
+  body #main-ocean-container #small-video-container {
+    width: 20%;
+  }
 }
 
-body #main-ocean-container #videos-container div[orientsmall-portrait] {
-  height: 20%;
-  border: 20px solid #012E40;
+@media (orientation: portrait) {
+  body #main-ocean-container #control-panel-container i {
+    font-size: 1rem;
+  }
+  body #main-ocean-container #small-video-container {
+    height: 20%;
+  }
 }
 
 body #main-ocean-container #control-panel-container {
@@ -775,7 +783,6 @@ body #main-ocean-container #control-panel-container {
 
 body #main-ocean-container #control-panel-container i {
   color: #F2E3D5;
-  font-size: clamp(1rem, 5rem, 5rem);
   padding: 1rem;
 }
 

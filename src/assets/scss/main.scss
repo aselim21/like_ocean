@@ -127,7 +127,7 @@ body{
             }
             #small-video-container{
                 position: absolute;
-                display: block;
+                display: grid;
                 border: 1.8px solid $color-darkest;
                 box-shadow: 0px 0px 12px -2px rgba(0,0,0,0.5);
                 // top: 80px;
@@ -137,21 +137,20 @@ body{
                 // height: 20%;
                 // transform: translateY(20%);
                 overflow:hidden;
-                display: block;
                 right: $size-m;
                 bottom: 10rem;
             }
-            div[orientsmall-landscape]{
-                // height: 20%;
-                width: 20%;
-                border: 20px solid $color-darkest;
-            }
-            div[orientsmall-portrait]{
-                    // width: 20%;
-                    height: 20%;
-                    border: 20px solid $color-darkest;
+            // div[orientsmall-landscape]{
+            //     // height: 20%;
+            //     width: 20%;
+            //     // border: 20px solid $color-darkest;
+            // }
+            // div[orientsmall-portrait]{
+            //         // width: 20%;
+            //         height: 20%;
+            //         // border: 20px solid $color-darkest;
                 
-            }
+            // }
             
             // div[orientBigVC=landscape]{
               
@@ -159,7 +158,29 @@ body{
             // div[orientBigVC=portrait]{
             // }
         }
-       
+        @media (orientation: landscape) {
+            #control-panel-container{
+                i{
+                    font-size: $size-l;
+                }
+            }
+            #small-video-container{
+                width: 20%;
+            }
+
+        }
+        
+        @media (orientation: portrait) {
+             #control-panel-container{
+                 i{
+                    font-size: $size-m;
+                 }
+             }
+             #small-video-container{
+                height: 20%;
+             }
+
+        }
         #control-panel-container{
             display: flex;
             flex-direction: row;
@@ -173,7 +194,7 @@ body{
             box-shadow: 0px 0px 12px -2px rgba(0,0,0,0.5);
             i{
                 color: $color-lightest;
-                font-size: clamp($size-m, $size-xxl, $size-xxl);
+                // font-size: clamp($size-m, $size-xl, $size-xxl);
                 padding: 1rem;
             
             }
