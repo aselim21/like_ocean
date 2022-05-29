@@ -741,6 +741,16 @@ body #main-ocean-container #videos-container #small-video-container {
   bottom: 10rem;
 }
 
+body #main-ocean-container #videos-container div[orientsmall-landscape] {
+  height: 20%;
+  width: 20%;
+  border: 20px solid #012E40;
+}
+
+body #main-ocean-container #videos-container div[orientsmall-portrait] {
+  border: 20px solid #012E40;
+}
+
 body #main-ocean-container #control-panel-container {
   display: -webkit-box;
   display: -ms-flexbox;
