@@ -60,7 +60,7 @@ vm.component("ocean-content-component", {
         </div>
         
         <div id="control-panel-container">
-                <!--i @click="" class="fas fa-trash"></i--->
+                <i @click="cleanOcean()" style="color:#BE6833" class="fas fa-skull-crossbones"></i>
                 
                 <i @click="openFullscreen(); expanded = !expanded" v-if="expanded ? false : true" class="fas fa-expand"></i>
                 <i @click="closeFullscreen(); expanded = !expanded" v-if="expanded ? true : false" class="fas fa-compress"></i>
