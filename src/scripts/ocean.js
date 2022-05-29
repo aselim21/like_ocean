@@ -207,7 +207,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
                                 console.log("Will send offer to ", p.f2);
                                 await createPeerCon(new_connection_name, _newPeerCOUNTER);
-                                // await startMediaSharing(new_connection_name, _newPeerCOUNTER);
+                                await startMediaSharing(new_connection_name, _newPeerCOUNTER);
                                 await createDataChn(new_connection_name, _newPeerCOUNTER);
                                 await createOffer_user1(_newPeerCOUNTER);
                                 return false;
@@ -225,7 +225,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                         // messageBox.innerHTML = `Received an offer from: ${new_connection_name}`;
                         console.log(`Received an offer from: ${new_connection_name}`)
                         await createPeerCon(new_connection_name, currentPeerCOUNTER);
-                        // await startMediaSharing(new_connection_name, currentPeerCOUNTER);
+                        await startMediaSharing(new_connection_name, currentPeerCOUNTER);
                         await createAnswerAndConnect_user2(_data.offer, _data.f1, currentPeerCOUNTER);
                     } else
                         if (_data.type == 'f2_answer') {
