@@ -125,13 +125,14 @@ vm.component("ocean-content-component", {
         muteVideos(){
             const _elCluster = document.getElementById("big-videos-container").childNodes;
             _elCluster.forEach((el)=>{
-                el.setAttribute("muted","")
+                el.setAttribute("muted","true")
             })
         },
         unmuteVideos(){
             const _elCluster = document.getElementById("big-videos-container").childNodes;
             _elCluster.forEach((el)=>{
-                el.removeAttribute("muted")
+                el.setAttribute("muted","false")
+                // el.removeAttribute("muted")
             })
         }
         

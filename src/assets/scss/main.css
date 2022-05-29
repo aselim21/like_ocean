@@ -733,6 +733,10 @@ body #main-ocean-container #videos-container #big-videos-container {
           justify-content: space-evenly;
 }
 
+body #main-ocean-container #videos-container #big-videos-container * {
+  border: 1.8px solid #012E40;
+}
+
 body #main-ocean-container #videos-container #small-video-container {
   position: absolute;
   display: -ms-grid;
