@@ -138,17 +138,17 @@ body{
                 // transform: translateY(20%);
                 overflow:hidden;
                 right: $size-m;
-                // bottom: 10rem;
+                bottom: $size-xxl;
             }
             div[orientsmall-landscape]{
                 // height: 20%;
                 width: 20%;
-                border: 20px solid $color-darkest;
+                // border: 20px solid $color-darkest;
             }
             div[orientsmall-portrait]{
                     // width: 20%;
                     height: 20%;
-                    border: 20px solid $color-darkest;
+                    // border: 20px solid $color-darkest;
                 
             }
             
@@ -164,9 +164,9 @@ body{
                     font-size: $size-l;
                 }
             }
-            #small-video-container{
-                bottom: $size-xl;
-            }
+            // #small-video-container{
+            //     bottom: $size-xl;
+            // }
           }
           @media (orientation: portrait) {
              #control-panel-container{
@@ -174,9 +174,9 @@ body{
                     font-size: $size-m;
                  }
              }
-             #small-video-container{
-                bottom: $size-xxl;
-            }
+            //  #small-video-container{
+            //     bottom: $size-xxl;
+            // }
           }
         #control-panel-container{
             display: flex;

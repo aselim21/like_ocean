@@ -7,14 +7,9 @@
     "bufferutil": "^4.0.6",
     "express": "^4.17.2",
     "https": "^1.0.0",
-    "mongoose": "^6.0.12",
     "nodemon": "^2.0.16",
     "scss-reset": "^1.2.2",
-    "socket.io": "^4.5.1",
-    "utf-8-validate": "^5.0.9",
-    "uuid": "^8.3.2",
-    "vue": "^3.2.36",
-    "ws": "^8.6.0"
+    "vue": "^3.2.36"
   },
   "scripts": {
     "devStart": "nodemon server/server.js",
