@@ -55,7 +55,7 @@ vm.component("ocean-content-component", {
             </div>
 
             <div v-if="localVideoDisplayed" id="small-video-container">
-                <video id="webcamVideo"></video>
+                <video id="webcamVideo" autoplay></video>
             </div>
         </div>
         
@@ -320,7 +320,7 @@ async function createRemoteVideoElement(_name) {
     const remoteVideo = document.createElement('video');
     remoteVideo.setAttribute('pair', _name);
     remoteVideo.setAttribute('class', 'remoteVideo');
-    // remoteVideo.setAttribute('autoplay','');
+    remoteVideo.setAttribute('autoplay','');
     // const remoteVideo_btn = document.createElement('button');
     // remoteVideo_btn.setAttribute('pair', _name);
     // remoteVideo_btn.setAttribute('class', 'js-remote-fullscreen');
