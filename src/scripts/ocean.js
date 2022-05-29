@@ -165,7 +165,7 @@ const localVideo = document.getElementById('webcamVideo');
 
 window.addEventListener('DOMContentLoaded', async (event) => {
     console.log('DOM fully loaded and parsed');
-    
+    showMsg("Waiting for other Fish to join...")
     setOrientationSmallVideoC();
     setOrientationBigVideoC();
     
