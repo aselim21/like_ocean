@@ -712,6 +712,19 @@ body #start-page input[type=button]:hover, body #start-page input[type=button]:a
   background: #038696;
 }
 
+body #main-ocean-container #ocean-msg-box {
+  display: fixed;
+}
+
+body #main-ocean-container #ocean-msg-box position:relative
+#js-msg-text {
+  position: absolute;
+}
+
+body #main-ocean-container * {
+  border: 1.8px solid #024959;
+}
+
 body #main-ocean-container img {
   position: static;
 }

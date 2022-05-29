@@ -92,8 +92,15 @@ body{
         }
     }
     #main-ocean-container{
+        #ocean-msg-box{
+            display: fixed;
+            position:relative
+            #js-msg-text{
+                position: absolute;
+            }
+        }
         *{
-            // border: 1.8px solid $color-darker;
+            border: 1.8px solid $color-darker;
         }
         img{
             position: static;

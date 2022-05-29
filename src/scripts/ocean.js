@@ -33,7 +33,9 @@ const vm = Vue.createApp({
 //     }
 // });
 vm.component("ocean-content-component", {
-    props: [],
+    props:{
+        msgShow : Boolean
+    },
     data() {
         return {
             expanded: false,
@@ -41,17 +43,16 @@ vm.component("ocean-content-component", {
             remoteSoundsOff: false,
             localVideoOff: false,
             localVideoPortrait: false,
-            message: "Test the component works",
-            localVideoDisplayed: true
+            localVideoDisplayed: true,
+
         }
     },
     template: `
     <div id="main-ocean-container">
+        
         <div id="videos-container">
             <div id="big-videos-container">
         
-               
-
             </div>
 
             <div v-show="localVideoDisplayed" id="small-video-container">
@@ -153,6 +154,7 @@ const offerOptions = {
     offerToReceiveAudio: 1,
     offerToReceiveVideo: 1
 };
+let msgs = [];
 // let messageBox = document.getElementById('js-message-box');
 const localVideo = document.getElementById('webcamVideo');
 
@@ -163,7 +165,7 @@ const localVideo = document.getElementById('webcamVideo');
 
 window.addEventListener('DOMContentLoaded', async (event) => {
     console.log('DOM fully loaded and parsed');
-
+    
     setOrientationSmallVideoC();
     setOrientationBigVideoC();
     
@@ -190,7 +192,8 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                 console.log('Error of JSON.Parse')
             }
             console.log(_data);
-            if (_data.type == 0 || _data.type == 1) {
+            if (_data.type == "message" || _data.type == "error") {
+                showMsg(_data.message)
                 // messageBox.innerHTML = _data.message;
                 console.log(_data.message)
             } else
@@ -205,7 +208,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                                 const new_connection_name = p.f1 + '-' + p.f2;
                                 console.log(`New Connection name: ${new_connection_name}`);
                                 // messageBox.innerHTML = `New Connection name: ${new_connection_name}. Will send an offer.`;
-
+                                showMsg(`New Connection name: ${new_connection_name}. Will send an offer.`)
                                 console.log("Will send offer to ", p.f2);
                                 await createPeerCon(new_connection_name, _newPeerCOUNTER);
                                 await startMediaSharing(new_connection_name, _newPeerCOUNTER);
@@ -224,6 +227,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                         let new_connection_name = _data.f1 + '-' + _data.f2;
                         console.log(`Received an offer from: ${new_connection_name}`);
                         // messageBox.innerHTML = `Received an offer from: ${new_connection_name}`;
+                        showMsg(`Received an offer from: ${new_connection_name}`)
                         console.log(`Received an offer from: ${new_connection_name}`)
                         await createPeerCon(new_connection_name, currentPeerCOUNTER);
                         await startMediaSharing(new_connection_name, currentPeerCOUNTER);
@@ -234,6 +238,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                             let new_connection_name = _data.f1 + '-' + _data.f2;
                             console.log("Received an answer from: ", _data.f2);
                             // messageBox.innerHTML = `Received an answer from: ${new_connection_name}`;
+                            showMsg(`Received an answer from: ${new_connection_name}`)
                             console.log(`Received an answer from: ${new_connection_name}`)
                             const currentPeerCOUNTER = PeerCon_COUNTER;
                             await processAnswerWhenReady_user1(_data.answer, _data.f2, currentPeerCOUNTER);
@@ -262,9 +267,19 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
 });
 
+let msg_timeout = 5000; 
 
 //Helping Fucntions
-
+function showMsg(_msg){
+    msg_timeout += 4000;
+    const el = document.getElementById("ocean-msg-box");   
+    el.firstChild.innerHTML = _msg;
+    el.style.display = "fixed"
+    setTimeout(() => {
+        el.style.display = "none"
+        //5sec
+    }, msg_timeout);
+}
 function getCookie(cname) {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
@@ -338,6 +353,7 @@ async function createRemoteVideoElement(_name) {
 async function createPeerCon(_name, _PeerCOUNTER) {
     PEER_CONNECTIONS[_PeerCOUNTER] = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
     PEER_CONNECTIONS[_PeerCOUNTER].onconnectionstatechange = function (event) {
+        showMsg(`State changed of:  ${_name} = ${PEER_CONNECTIONS[_PeerCOUNTER].connectionState}`);
         // document.getElementById('js-message-box').innerHTML = 'State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[_PeerCOUNTER].connectionState;
         console.log('State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[_PeerCOUNTER].connectionState);
         if (PEER_CONNECTIONS[_PeerCOUNTER].connectionState == 'disconnected') {
@@ -369,6 +385,7 @@ async function updatePeerCon_COUNTER(_pairs) {
         PeerCon_COUNTER += newDoneConnections;
         if (newDoneConnections > 1) {
             // messageBox.innerHTML = "Something went wrong with your connections."
+            showMsg("Something went wrong with your connections.")
             console.log("Something went wrong with your connections.")
             reject(newDoneConnections);
         } else {
