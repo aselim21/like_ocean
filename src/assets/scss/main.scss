@@ -142,12 +142,13 @@ body{
                 bottom: 10rem;
             }
             div[orientsmall-landscape]{
-                height: 20%;
+                // height: 20%;
                 width: 20%;
                 border: 20px solid $color-darkest;
             }
             div[orientsmall-portrait]{
                     // width: 20%;
+                    height: 20%;
                     border: 20px solid $color-darkest;
                 
             }

@@ -742,12 +742,12 @@ body #main-ocean-container #videos-container #small-video-container {
 }
 
 body #main-ocean-container #videos-container div[orientsmall-landscape] {
-  height: 20%;
   width: 20%;
   border: 20px solid #012E40;
 }
 
 body #main-ocean-container #videos-container div[orientsmall-portrait] {
+  height: 20%;
   border: 20px solid #012E40;
 }
 
