@@ -181,7 +181,7 @@ vm.component("main-content-component", {
                 this.message = response.data.message;
                 if (response.data.type === 'message') {
                     window.localStorage.setItem('ocean_id', response.data.oceanID);
-                    window.location.assign(`/src/ocean.html`);
+                    window.location.assign(`/ocean.html`);
                 }
             } else {
                 this.message = "Please first register as a Fish!"
