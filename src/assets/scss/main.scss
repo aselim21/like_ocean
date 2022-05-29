@@ -140,17 +140,17 @@ body{
                 right: $size-m;
                 bottom: 10rem;
             }
-            // div[orientsmall-landscape]{
-            //     // height: 20%;
-            //     width: 20%;
-            //     // border: 20px solid $color-darkest;
-            // }
-            // div[orientsmall-portrait]{
-            //         // width: 20%;
-            //         height: 20%;
-            //         // border: 20px solid $color-darkest;
+            div[orientsmall-landscape]{
+                // height: 20%;
+                width: 20%;
+                border: 20px solid $color-darkest;
+            }
+            div[orientsmall-portrait]{
+                    // width: 20%;
+                    height: 20%;
+                    border: 20px solid $color-darkest;
                 
-            // }
+            }
             
             // div[orientBigVC=landscape]{
               
@@ -164,23 +164,14 @@ body{
                     font-size: $size-l;
                 }
             }
-            #small-video-container{
-                width: 20%;
-            }
-
-        }
-        
-        @media (orientation: portrait) {
+          }
+          @media (orientation: portrait) {
              #control-panel-container{
                  i{
                     font-size: $size-m;
                  }
              }
-             #small-video-container{
-                height: 20%;
-             }
-
-        }
+          }
         #control-panel-container{
             display: flex;
             flex-direction: row;
