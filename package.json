@@ -17,8 +17,8 @@
     "ws": "^8.6.0"
   },
   "scripts": {
-    "devStart": "nodemon server/socket2.js",
-    "start": "node server/socket2.js",
+    "devStart": "nodemon server/server.js",
+    "start": "node server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
