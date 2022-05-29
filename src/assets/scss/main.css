@@ -738,7 +738,6 @@ body #main-ocean-container #videos-container #small-video-container {
   right: 0;
   overflow: hidden;
   right: 1rem;
-  bottom: 10rem;
 }
 
 body #main-ocean-container #videos-container div[orientsmall-landscape] {
@@ -755,11 +754,17 @@ body #main-ocean-container #videos-container div[orientsmall-portrait] {
   body #main-ocean-container #control-panel-container i {
     font-size: 2rem;
   }
+  body #main-ocean-container #small-video-container {
+    bottom: 3rem;
+  }
 }
 
 @media (orientation: portrait) {
   body #main-ocean-container #control-panel-container i {
     font-size: 1rem;
+  }
+  body #main-ocean-container #small-video-container {
+    bottom: 5rem;
   }
 }
 
