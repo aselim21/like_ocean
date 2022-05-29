@@ -4,8 +4,8 @@ const headers = new Headers();
 headers.append('Content-Type', 'application/json');
 headers.append('Accept', 'application/json');
 
-const socket_URL = 'ws://localhost:8080';
-// const socket_URL = 'wss://ocean-rtc-socket.herokuapp.com';
+// const socket_URL = 'ws://localhost:8080';
+const socket_URL = 'wss://ocean-rtc-socket.herokuapp.com';
 let socket = new WebSocket(socket_URL);
 const the_ocean_id = window.localStorage.ocean_id;
 const the_fish_id = window.localStorage.fish_id;
