@@ -716,6 +716,11 @@ body #main-ocean-container img {
   position: static;
 }
 
+body #main-ocean-container #videos-container img, body #main-ocean-container #videos-container video {
+  -webkit-transform: scaleX(-1);
+          transform: scaleX(-1);
+}
+
 body #main-ocean-container #videos-container #big-videos-container {
   position: relative;
   display: -webkit-box;
