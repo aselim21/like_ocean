@@ -125,7 +125,7 @@ vm.component("main-content-component", {
                 fishName: the_form.elements[0].value,
                 pwd: the_form.elements[1].value
             }
-            const response = await axios.post(`${URL_OceanService}/fishlogin`, data);
+            const response = await axios.post(`${URL_OceanService}/fishlogin`, data, {withCredentials: true});
             this.message = response.data.message;
             if (response.data.type === 'message') {
                 window.localStorage.setItem('fish_id', response.data.fishID);
@@ -142,7 +142,7 @@ vm.component("main-content-component", {
                 fishName: the_form.elements[0].value,
                 pwd: the_form.elements[1].value
             }
-            const response = await axios.post(`${URL_OceanService}/fish`, data);
+            const response = await axios.post(`${URL_OceanService}/fish`, data, {withCredentials: true});
             this.message = response.data.message;
             if (response.data.type === 'message') {
                 this.showFormLoginFish = true;
@@ -159,7 +159,7 @@ vm.component("main-content-component", {
                 maxFish: the_form.elements[2].value,
                 requiredFish: []
             }
-            const response = await axios.post(`${URL_OceanService}/oceans`, data);
+            const response = await axios.post(`${URL_OceanService}/oceans`, data, {withCredentials: true});
             this.message = response.data.message;
             if (response.data.type === 'message') {
                 this.showFormEnter = true;
@@ -177,7 +177,7 @@ vm.component("main-content-component", {
                     pwd: the_form.elements[1].value,
                     fishID: window.localStorage.fish_id
                 }
-                const response = await axios.put(`${URL_OceanService}/login`, data);
+                const response = await axios.put(`${URL_OceanService}/login`, data, {withCredentials: true});
                 this.message = response.data.message;
                 if (response.data.type === 'message') {
                     window.localStorage.setItem('ocean_id', response.data.oceanID);

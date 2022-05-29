@@ -181,6 +181,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             ocean_id: the_ocean_id
         }
         socket.send(JSON.stringify(data));
+        console.log("Startingsignaling sent")
 
         socket.addEventListener('message', async function (event) {
             console.log('Message from server ');
