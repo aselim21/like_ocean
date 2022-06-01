@@ -125,10 +125,10 @@ vm.component("ocean-content-component", {
         muteVideos() {
             if (DATA_CHANNELS.length >= 0) {
 
-                DATA_CHANNELS.forEach(dc => {
+                DATA_CHANNELS.forEach(async function(dc) {
                     const dataToSend = {
                         message: "turnForeighnMicOff",
-                        responsible: my_name
+                        responsible: await req_getFishName(the_fish_id)
                     }
                     dc.send(JSON.stringify(dataToSend));
                 })
@@ -138,10 +138,10 @@ vm.component("ocean-content-component", {
         unmuteVideos() {
             if (DATA_CHANNELS.length >= 0) {
 
-                DATA_CHANNELS.forEach(dc => {
+                DATA_CHANNELS.forEach(async function(dc) {
                     const dataToSend = {
                         message: "turnForeighnMicOn",
-                        responsible: my_name
+                        responsible: await req_getFishName(the_fish_id)
                     }
                     dc.send(JSON.stringify(dataToSend));
                 })
@@ -154,6 +154,58 @@ vm.component("ocean-content-component", {
 //--------------------------------VUE-Mount--------------------------------
 vm.mount('#video-call-page');
 
+//--------------------------------Global Variables--------------------------------
+const socket_URL = 'wss://ocean-rtc-socket.herokuapp.com';
+// const socket_URL = 'ws://localhost:8080';
+let socket = new WebSocket(socket_URL);
+const the_ocean_id = window.localStorage.ocean_id;
+const the_fish_id = window.localStorage.fish_id;
+const URL_OceanService = 'https://ocean-service.herokuapp.com';
+// const URL_OceanService = 'http://localhost:3000';
+let msg_timeout = 5000;
+let PEER_CONNECTIONS = [];
+let PeerCon_COUNTER = 0;
+let DATA_CHANNELS = [];
+const mediaConstraints_toSend = { audio: true, video: true };
+const mediaConstraints_toDisplay = { audio: false, video: true };
+const localVideo = document.getElementById('webcamVideo');
+let localStream;
+let localStream_toDisplay;
+
+//--------------------------------Global Functions--------------------------------
+
+function showMsg(_msg) {
+    msg_timeout += 4000;
+    const el = document.getElementById("ocean-msg-box");
+    el.firstChild.innerHTML = _msg;
+    el.style.display = "fixed"
+    setTimeout(() => {
+        el.style.display = "none"
+        //5sec
+    }, msg_timeout);
+}
+
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+//----------------AJAX- Requests----------------
+async function req_getFishName(_id) {
+    const response = await $.get(`${URL_OceanService}/fish/${_id}`)
+    // console.log("req_getFishInfo => ", response);
+    return response.name;
+}
 
 
 
@@ -163,18 +215,8 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
     //--------------------------------Variables--------------------------------
 
-    // const socket_URL = 'ws://localhost:8080';
-    const socket_URL = 'wss://ocean-rtc-socket.herokuapp.com';
-    let socket = new WebSocket(socket_URL);
-    const the_ocean_id = window.localStorage.ocean_id;
-    const the_fish_id = window.localStorage.fish_id;
-    const URL_OceanService = 'https://ocean-service.herokuapp.com';
-    // const URL_OceanService = 'http://localhost:3000';
     const my_name = await req_getFishName(the_fish_id);
-    let msg_timeout = 5000;
-    let PEER_CONNECTIONS = [];
-    let PeerCon_COUNTER = 0;
-    let DATA_CHANNELS = [];
+
     const configuration = {
         offerToReceiveAudio: true,
         offerToReceiveVideo: true
@@ -184,11 +226,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         offerToReceiveVideo: 1
     };
     let msgs = [];
-    const localVideo = document.getElementById('webcamVideo');
-    let localStream;
-    let localStream_toDisplay;
-    const mediaConstraints_toSend = { audio: true, video: true };
-    const mediaConstraints_toDisplay = { audio: false, video: true };
+
 
     console.log('DOM fully loaded and parsed');
 
@@ -278,12 +316,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
     //--------------------------------Function Definitions--------------------------------
 
-    //----------------AJAX- Requests----------------
-    async function req_getFishName(_id) {
-        const response = await $.get(`${URL_OceanService}/fish/${_id}`)
-        // console.log("req_getFishInfo => ", response);
-        return response.name;
-    }
+
 
 
     //----------------Web RTC Functions----------------
@@ -444,32 +477,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     }
 
     //----------------Helping Functions----------------
-    function showMsg(_msg) {
-        msg_timeout += 4000;
-        const el = document.getElementById("ocean-msg-box");
-        el.firstChild.innerHTML = _msg;
-        el.style.display = "fixed"
-        setTimeout(() => {
-            el.style.display = "none"
-            //5sec
-        }, msg_timeout);
-    }
 
-    function getCookie(cname) {
-        let name = cname + "=";
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
-    }
     function setOrientationSmallVideoC() {
         const _el = document.getElementById('small-video-container');
         let width = _el.clientWidth;
