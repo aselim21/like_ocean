@@ -1,9 +1,7 @@
 //--------------------------------Variables--------------------------------
 const URL_OceanService = 'https://ocean-service.herokuapp.com';
 // const URL_OceanService = 'http://localhost:3000';
-const headers = new Headers();
-headers.append('Content-Type', 'application/json');
-headers.append('Accept', 'application/json');
+
 //set oceanID cookie to null
 window.localStorage.setItem('ocean_id', '');
 const the_fish_id = window.localStorage.fish_id;
