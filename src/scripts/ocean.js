@@ -72,8 +72,8 @@ vm.component("ocean-content-component", {
                 <i @click="muteVideos() ; remoteSoundsOff = !remoteSoundsOff" v-if="remoteSoundsOff ? false : true" class="fas fa-volume-xmark"></i>
                 <i @click="unmuteVideos() ; remoteSoundsOff = !remoteSoundsOff" v-if="remoteSoundsOff ? true : false" class="fas fa-volume-high"></i>
 
-                <i @click="turnVideoOff(); localVideoOff = !localVideoOff" v-if="localVideoOff ? false : true" class="fas fa-video-slash"></i>
-                <i @click="turnVideoOn(); localVideoOff = !localVideoOff" v-if="localVideoOff ? true : false" class="fas fa-video"></i>
+                <i @click="turnVideoOff()" v-if="localVideoOff ? false : true" class="fas fa-video-slash"></i>
+                <i @click="turnVideoOn()" v-if="localVideoOff ? true : false" class="fas fa-video"></i>
                 
                 <i @click="localVideoDisplayed = !localVideoDisplayed" class="fas fa-photo-film"></i>
                 
@@ -87,14 +87,14 @@ vm.component("ocean-content-component", {
             if (!!localStream) {
                 localStream.getVideoTracks()[0].enabled = false;
                 localStream_toDisplay.getVideoTracks()[0].enabled = false;
-                this.localMicOff = true;
+                this.localVideoOff = true;
             }
         },
         turnVideoOn(){
             if (!!localStream) {
                 localStream.getVideoTracks()[0].enabled = true;
                 localStream_toDisplay.getVideoTracks()[0].enabled = true;
-                this.localMicOff = false;
+                this.localVideoOff = false;
             }
         },
         muteLocalMic() {
