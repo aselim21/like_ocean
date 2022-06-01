@@ -155,7 +155,7 @@ vm.component("ocean-content-component", {
                 DATA_CHANNELS.forEach(async function(dc){
                     const dataToSend = {
                         message:"turnForeighnMicOff",
-                        responsible: my_name
+                        responsible: await req_getFishName(the_fish_id)
                     }
                     dc.send(JSON.stringify(dataToSend));
                 })
@@ -172,7 +172,7 @@ vm.component("ocean-content-component", {
                 DATA_CHANNELS.forEach(async function(dc){
                     const dataToSend = {
                         message:"turnForeighnMicOn",
-                        responsible: my_name
+                        responsible: await req_getFishName(the_fish_id)
                     }
                     dc.send(JSON.stringify(dataToSend));
                 })
