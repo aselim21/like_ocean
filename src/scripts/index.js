@@ -1,6 +1,6 @@
 //--------------------------------Variables--------------------------------
-// const URL_OceanService = 'https://ocean-service.herokuapp.com';
-const URL_OceanService = 'http://localhost:3000';
+const URL_OceanService = 'https://ocean-service.herokuapp.com';
+// const URL_OceanService = 'http://localhost:3000';
 const headers = new Headers();
 headers.append('Content-Type', 'application/json');
 headers.append('Accept', 'application/json');
@@ -188,7 +188,7 @@ vm.component("main-content-component", {
                 this.message = response.data.message;
                 if (response.data.type === 'message') {
                     window.localStorage.setItem('ocean_id', response.data.oceanID);
-                    window.location.assign(`/src/ocean.html`);
+                    window.location.assign(`/ocean.html`);
                 }
             } else {
                 this.message = "Please first register as a Fish!"
