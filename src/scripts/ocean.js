@@ -85,13 +85,15 @@ vm.component("ocean-content-component", {
     methods: {
         turnVideoOff(){
             if (!!localStream) {
-                mediaStream.getVideoTracks()[0].enabled = false;
+                localStream.getVideoTracks()[0].enabled = false;
+                localStream_toDisplay.getVideoTracks()[0].enabled = false;
                 this.localMicOff = true;
             }
         },
         turnVideoOn(){
             if (!!localStream) {
-                mediaStream.getVideoTracks()[0].enabled = true;
+                localStream.getVideoTracks()[0].enabled = true;
+                localStream_toDisplay.getVideoTracks()[0].enabled = false;
                 this.localMicOff = false;
             }
         },
@@ -184,6 +186,7 @@ let msgs = [];
 // let messageBox = document.getElementById('js-message-box');
 const localVideo = document.getElementById('webcamVideo');
 let localStream;
+let localStream_toDisplay;
 
 
 
@@ -435,7 +438,7 @@ async function startMediaSharing(_name, _PeerCOUNTER) {
     const mediaConstraints_toDisplay = { audio: false, video: true };
 
     localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
-    let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
+    localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
     let remoteStream = new MediaStream();
 
     // remoteVideo_btn.addEventListener("click", async (e) => {
