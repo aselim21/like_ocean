@@ -6,7 +6,7 @@ const the_ocean_id = window.localStorage.ocean_id;
 const the_fish_id = window.localStorage.fish_id;
 const URL_OceanService = 'https://ocean-service.herokuapp.com';
 // const URL_OceanService = 'http://localhost:3000';
-const my_name = await req_getFishName(the_fish_id);
+// const my_name = await req_getFishName(the_fish_id);
 
 //--------------------------------VUE--------------------------------
 const vm = Vue.createApp({
