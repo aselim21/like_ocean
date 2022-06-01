@@ -6,7 +6,7 @@ const the_ocean_id = window.localStorage.ocean_id;
 const the_fish_id = window.localStorage.fish_id;
 const URL_OceanService = 'https://ocean-service.herokuapp.com';
 // const URL_OceanService = 'http://localhost:3000';
-req_getFishInfo(the_fish_id);
+const my_name = await req_getFishName(the_fish_id);
 
 //--------------------------------VUE--------------------------------
 const vm = Vue.createApp({
@@ -154,8 +154,8 @@ vm.component("ocean-content-component", {
                 
                 DATA_CHANNELS.forEach(dc=>{
                     const dataToSend = {
-                        message:"turnForeighnMicOff"
-                        // responsible: $.get method
+                        message:"turnForeighnMicOff",
+                        responsible: my_name
                     }
                     dc.send(JSON.stringify(dataToSend));
                 })
@@ -171,7 +171,8 @@ vm.component("ocean-content-component", {
                 
                 DATA_CHANNELS.forEach(dc=>{
                     const dataToSend = {
-                        message:"turnForeighnMicOn"
+                        message:"turnForeighnMicOn",
+                        responsible: my_name
                     }
                     dc.send(JSON.stringify(dataToSend));
                 })
@@ -319,10 +320,10 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 let msg_timeout = 5000; 
 
 //Helping Fucntions
-async function req_getFishInfo(_id){
+async function req_getFishName(_id){
     const response = await $.get(`${URL_OceanService}/fish/${_id}`) 
-    console.log("req_getFishInfo => ", response);
-    return response;
+    // console.log("req_getFishInfo => ", response);
+    return response.name;
 }
 
 function showMsg(_msg){
@@ -385,12 +386,12 @@ function handleRTC_messages(_data){
         case 'turnForeighnMicOff':
             localStream.getAudioTracks()[0].enabled = false;
             this.localMicOff = true;
-            showMsg("Another Fish muted you.")
+            showMsg(`${_data.responsible} muted you.`);
             break;
         case 'turnForeighnMicOn':
             localStream.getAudioTracks()[0].enabled = true;
             this.localMicOff = false;
-            showMsg("Another Fish unmuted you.")
+            showMsg(`${_data.responsible} unmuted you.`);
             break;
     }
 }
