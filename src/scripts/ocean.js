@@ -6,7 +6,7 @@ const the_ocean_id = window.localStorage.ocean_id;
 const the_fish_id = window.localStorage.fish_id;
 const URL_OceanService = 'https://ocean-service.herokuapp.com';
 // const URL_OceanService = 'http://localhost:3000';
-let myName = req_getFishInfo(the_fish_id);
+req_getFishInfo(the_fish_id);
 
 //--------------------------------VUE--------------------------------
 const vm = Vue.createApp({
@@ -319,7 +319,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 let msg_timeout = 5000; 
 
 //Helping Fucntions
-function req_getFishInfo(_id){
+async function req_getFishInfo(_id){
     const response = await $.get(`${URL_OceanService}/fish/${_id}`) 
     console.log("req_getFishInfo => ", response);
     return response;
