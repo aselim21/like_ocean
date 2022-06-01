@@ -1,11 +1,12 @@
 //--------------------------------Variables--------------------------------
-const URL_OceanService = 'https://ocean-service.herokuapp.com';
+// const URL_OceanService = 'https://ocean-service.herokuapp.com';
+const URL_OceanService = 'http://localhost:3000';
 const headers = new Headers();
 headers.append('Content-Type', 'application/json');
 headers.append('Accept', 'application/json');
 //set oceanID cookie to null
 window.localStorage.setItem('ocean_id', '');
-
+const the_fish_id = window.localStorage.fish_id;
 
 //--------------------------------VUE--------------------------------
 var vm = Vue.createApp({
@@ -119,6 +120,12 @@ vm.component("main-content-component", {
             
         `,
     methods: {
+        async req_findFishName(){
+            const response = await axios.get(`${URL_OceanService}/fish/${the_fish_id}`, {withCredentials: true});
+            if (response.data.type != 'error') {
+                this.message = `Ahoy, ${response.data.name}`;
+            }
+        },
         async req_loginFish(){
             const the_form = document.querySelector('#js-login-fish-form');
             const data = {
@@ -181,14 +188,17 @@ vm.component("main-content-component", {
                 this.message = response.data.message;
                 if (response.data.type === 'message') {
                     window.localStorage.setItem('ocean_id', response.data.oceanID);
-                    window.location.assign(`/ocean.html`);
+                    window.location.assign(`/src/ocean.html`);
                 }
             } else {
                 this.message = "Please first register as a Fish!"
             }
 
         }
-    }
+    },
+    beforeMount(){
+        this.req_findFishName();
+     },
 });
 
 
