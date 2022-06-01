@@ -33,8 +33,8 @@ const vm = Vue.createApp({
 //     }
 // });
 vm.component("ocean-content-component", {
-    props: {
-        msgShow: Boolean
+    props:{
+        msgShow : Boolean
     },
     data() {
         return {
@@ -118,12 +118,12 @@ vm.component("ocean-content-component", {
                 document.msExitFullscreen();
             }
         },
-        cleanOcean() {
+        cleanOcean(){
             console.log("in the cleanOcean()")
-            if (PeerCon_COUNTER <= 0) {
+            if(PeerCon_COUNTER <= 0){
                 console.log("there is no connection");
                 return 1;
-            } else {
+            }else{
                 const data = {
                     type: 'clean',
                     fish_id: the_fish_id,
@@ -132,25 +132,25 @@ vm.component("ocean-content-component", {
                 socket.send(JSON.stringify(data));
             }
         },
-        HideShowMyVideo() {
+        HideShowMyVideo(){
             console.log(_el)
             const _elem = document.getElementById('small-video-container');
 
         },
-        muteVideos() {
+        muteVideos(){
             const _elCluster = document.getElementById("big-videos-container").childNodes;
-            _elCluster.forEach((el) => {
-                el.setAttribute("muted", "true")
+            _elCluster.forEach((el)=>{
+                el.setAttribute("muted","true")
             })
         },
-        unmuteVideos() {
+        unmuteVideos(){
             const _elCluster = document.getElementById("big-videos-container").childNodes;
-            _elCluster.forEach((el) => {
-                el.setAttribute("muted", "false")
+            _elCluster.forEach((el)=>{
+                el.setAttribute("muted","false")
                 // el.removeAttribute("muted")
             })
         }
-
+        
     }
 });
 
@@ -171,8 +171,8 @@ const offerOptions = {
 let msgs = [];
 // let messageBox = document.getElementById('js-message-box');
 const localVideo = document.getElementById('webcamVideo');
-const mediaConstraints_toDisplay = { audio: false, video: true };
-let localStream;
+
+
 
 
 
@@ -182,13 +182,12 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     showMsg("Waiting for other Fish to join...")
     setOrientationSmallVideoC();
     setOrientationBigVideoC();
-
-    let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
+    
 
     localVideo.addEventListener('loadedmetadata', function () {
         console.log(`Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
     });
-    localVideo.srcObject = localStream_toDisplay;
+
     socket.addEventListener('open', function (event) {
         const data = {
             type: 'StartSignaling',
@@ -283,12 +282,12 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
 });
 
-let msg_timeout = 5000;
+let msg_timeout = 5000; 
 
 //Helping Fucntions
-function showMsg(_msg) {
+function showMsg(_msg){
     msg_timeout += 4000;
-    const el = document.getElementById("ocean-msg-box");
+    const el = document.getElementById("ocean-msg-box");   
     el.firstChild.innerHTML = _msg;
     el.style.display = "fixed"
     setTimeout(() => {
@@ -352,7 +351,7 @@ async function createRemoteVideoElement(_name) {
     const remoteVideo = document.createElement('video');
     remoteVideo.setAttribute('pair', _name);
     remoteVideo.setAttribute('class', 'remoteVideo');
-    remoteVideo.setAttribute('autoplay', '');
+    remoteVideo.setAttribute('autoplay','');
     // const remoteVideo_btn = document.createElement('button');
     // remoteVideo_btn.setAttribute('pair', _name);
     // remoteVideo_btn.setAttribute('class', 'js-remote-fullscreen');
@@ -421,10 +420,10 @@ async function startMediaSharing(_name, _PeerCOUNTER) {
     // const remoteVideoDIV = document.querySelector(`div[pair="${_name}"]`);
     // const remoteVideo_btn = document.querySelector(`button[pair="${_name}"]`);
     const mediaConstraints_toSend = { audio: true, video: true };
-    // const mediaConstraints_toDisplay = { audio: false, video: true };
+    const mediaConstraints_toDisplay = { audio: false, video: true };
 
-    localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
-    // let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
+    let localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
+    let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
     let remoteStream = new MediaStream();
 
     // remoteVideo_btn.addEventListener("click", async (e) => {
@@ -434,7 +433,7 @@ async function startMediaSharing(_name, _PeerCOUNTER) {
         console.log(`Remote video video Width: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
     });
 
-    // localVideo.srcObject = localStream_toDisplay;
+    localVideo.srcObject = localStream_toDisplay;
     localStream.getTracks().forEach((track) => {
         console.log("tracks sent");
         PEER_CONNECTIONS[_PeerCOUNTER].addTrack(track, localStream);
