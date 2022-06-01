@@ -1,14 +1,12 @@
 //--------------------------------Variables--------------------------------
-const URL_OceanService = 'https://ocean-service.herokuapp.com';
-const headers = new Headers();
-headers.append('Content-Type', 'application/json');
-headers.append('Accept', 'application/json');
-
 // const socket_URL = 'ws://localhost:8080';
 const socket_URL = 'wss://ocean-rtc-socket.herokuapp.com';
 let socket = new WebSocket(socket_URL);
 const the_ocean_id = window.localStorage.ocean_id;
 const the_fish_id = window.localStorage.fish_id;
+const URL_OceanService = 'https://ocean-service.herokuapp.com';
+// const URL_OceanService = 'http://localhost:3000';
+let myName = req_getFishInfo(the_fish_id);
 
 //--------------------------------VUE--------------------------------
 const vm = Vue.createApp({
@@ -157,6 +155,7 @@ vm.component("ocean-content-component", {
                 DATA_CHANNELS.forEach(dc=>{
                     const dataToSend = {
                         message:"turnForeighnMicOff"
+                        // responsible: $.get method
                     }
                     dc.send(JSON.stringify(dataToSend));
                 })
@@ -184,7 +183,6 @@ vm.component("ocean-content-component", {
             //     // el.removeAttribute("muted")
             // })
         }
-        
     }
 });
 
@@ -321,6 +319,12 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 let msg_timeout = 5000; 
 
 //Helping Fucntions
+function req_getFishInfo(_id){
+    const response = await $.get(`${URL_OceanService}/fish/${_id}`) 
+    console.log("req_getFishInfo => ", response);
+    return response;
+}
+
 function showMsg(_msg){
     msg_timeout += 4000;
     const el = document.getElementById("ocean-msg-box");   
@@ -331,6 +335,7 @@ function showMsg(_msg){
         //5sec
     }, msg_timeout);
 }
+
 function getCookie(cname) {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
@@ -374,11 +379,22 @@ function setOrientationBigVideoC() {
         _el.setAttribute("orientbig-portrait", "")
     }
 }
-function handleRTC_messages(e){
-    const _data = e.data;
-    console.log('Got a message: ');
-    console.log(_data);
+
+function handleRTC_messages(_data){
+    switch(_data.message){
+        case 'turnForeighnMicOff':
+            localStream.getAudioTracks()[0].enabled = false;
+            this.localMicOff = true;
+            showMsg("Another Fish muted you.")
+            break;
+        case 'turnForeighnMicOn':
+            localStream.getAudioTracks()[0].enabled = true;
+            this.localMicOff = false;
+            showMsg("Another Fish unmuted you.")
+            break;
+    }
 }
+
 function disconnectedFishCleanScreen(_name) {
     // const remoteVideo = document.querySelector(`video[pair="${_name}"]`);
     const remoteVideoDIV = document.querySelector(`video[pair="${_name}"]`);
@@ -422,7 +438,7 @@ async function createPeerCon(_name, _PeerCOUNTER) {
 
 async function createDataChn(_name, _PeerCOUNTER) {
     DATA_CHANNELS[_PeerCOUNTER] = PEER_CONNECTIONS[_PeerCOUNTER].createDataChannel(_name);
-    DATA_CHANNELS[_PeerCOUNTER].onmessage = e => handleRTC_messages(e);
+    DATA_CHANNELS[_PeerCOUNTER].onmessage = e => handleRTC_messages(JSON.parse(e.data));
     // DATA_CHANNELS[_PeerCOUNTER].onopen = e => console.log('Connection opened');
     PEER_CONNECTIONS[_PeerCOUNTER].onicecandidate = function (e) {
         console.log("ICE candidate (peerConnection)", e);
@@ -510,7 +526,7 @@ async function createAnswerAndConnect_user2(_offer, _f1, _PeerCOUNTER) {
     PEER_CONNECTIONS[_PeerCOUNTER].addEventListener('datachannel', event => {
         DATA_CHANNELS[_PeerCOUNTER] = event.channel;
         DATA_CHANNELS[_PeerCOUNTER].onopen = e => console.log('Connection opened from datachannel: ', event.channel.label);
-        DATA_CHANNELS[_PeerCOUNTER].onmessage = e => console.log('Got a message: ' + e.data);
+        DATA_CHANNELS[_PeerCOUNTER].onmessage = e => handleRTC_messages(JSON.parse(e.data))
     });
     PEER_CONNECTIONS[_PeerCOUNTER].onicecandidate = function (e) {
         console.log("ICE candidate (peerConnection)", e);
