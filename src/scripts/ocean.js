@@ -72,8 +72,8 @@ vm.component("ocean-content-component", {
                 <i @click="muteVideos() ; remoteSoundsOff = !remoteSoundsOff" v-if="remoteSoundsOff ? false : true" class="fas fa-volume-xmark"></i>
                 <i @click="unmuteVideos() ; remoteSoundsOff = !remoteSoundsOff" v-if="remoteSoundsOff ? true : false" class="fas fa-volume-high"></i>
 
-                <i @click="localVideoOff = !localVideoOff" v-if="localVideoOff ? false : true" class="fas fa-video-slash"></i>
-                <i @click="localVideoOff = !localVideoOff" v-if="localVideoOff ? true : false" class="fas fa-video"></i>
+                <i @click="turnVideoOff(); localVideoOff = !localVideoOff" v-if="localVideoOff ? false : true" class="fas fa-video-slash"></i>
+                <i @click="turnVideoOn(); localVideoOff = !localVideoOff" v-if="localVideoOff ? true : false" class="fas fa-video"></i>
                 
                 <i @click="localVideoDisplayed = !localVideoDisplayed" class="fas fa-photo-film"></i>
                 
@@ -83,18 +83,30 @@ vm.component("ocean-content-component", {
            
         `,
     methods: {
+        turnVideoOff(){
+            if (!!localStream) {
+                mediaStream.getVideoTracks()[0].enabled = false;
+                this.localMicOff = true;
+            }
+        },
+        turnVideoOn(){
+            if (!!localStream) {
+                mediaStream.getVideoTracks()[0].enabled = true;
+                this.localMicOff = false;
+            }
+        },
         muteLocalMic() {
             //for all the webrtc connections
             if (!!localStream) {
                 localStream.getAudioTracks()[0].enabled = false;
-                this.localMicOff = !this.localMicOff;
+                this.localMicOff = true;
             }
         },
         unmuteLocalMic() {
             //for all the webrtc connections
             if (!!localStream) {
                 localStream.getAudioTracks()[0].enabled = true;
-                this.localMicOff = !this.localMicOff;
+                this.localMicOff = false;
             }
         },
         openFullscreen() {
