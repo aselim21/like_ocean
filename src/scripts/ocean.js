@@ -171,7 +171,7 @@ const offerOptions = {
 let msgs = [];
 // let messageBox = document.getElementById('js-message-box');
 const localVideo = document.getElementById('webcamVideo');
-
+let localStream;
 
 
 
@@ -422,7 +422,7 @@ async function startMediaSharing(_name, _PeerCOUNTER) {
     const mediaConstraints_toSend = { audio: true, video: true };
     const mediaConstraints_toDisplay = { audio: false, video: true };
 
-    let localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
+    localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
     let localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
     let remoteStream = new MediaStream();
 
