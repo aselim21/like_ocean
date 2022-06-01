@@ -66,11 +66,11 @@ vm.component("ocean-content-component", {
                 <i @click="openFullscreen(); expanded = !expanded" v-if="expanded ? false : true" class="fas fa-expand"></i>
                 <i @click="closeFullscreen(); expanded = !expanded" v-if="expanded ? true : false" class="fas fa-compress"></i>
 
-                <i @click="muteLocalMic()" v-if="localMicOff ? false : true" class="fas fa-microphone-slash"></i>
-                <i @click="unmuteLocalMic()" v-if="localMicOff ? true : false" class="fas fa-microphone"></i>
-              
                 <i @click="muteVideos() ; remoteSoundsOff = !remoteSoundsOff" v-if="remoteSoundsOff ? false : true" class="fas fa-volume-xmark"></i>
                 <i @click="unmuteVideos() ; remoteSoundsOff = !remoteSoundsOff" v-if="remoteSoundsOff ? true : false" class="fas fa-volume-high"></i>
+
+                <i @click="muteLocalMic()" v-if="localMicOff ? false : true" class="fas fa-microphone-slash"></i>
+                <i @click="unmuteLocalMic()" v-if="localMicOff ? true : false" class="fas fa-microphone"></i>
 
                 <i @click="turnVideoOff()" v-if="localVideoOff ? false : true" class="fas fa-video-slash"></i>
                 <i @click="turnVideoOn()" v-if="localVideoOff ? true : false" class="fas fa-video"></i>
@@ -152,17 +152,37 @@ vm.component("ocean-content-component", {
 
         },
         muteVideos(){
-            const _elCluster = document.getElementById("big-videos-container").childNodes;
-            _elCluster.forEach((el)=>{
-                el.setAttribute("muted","true")
-            })
+            if(DATA_CHANNELS.length >= 0){
+                
+                DATA_CHANNELS.forEach(dc=>{
+                    const dataToSend = {
+                        message:"turnForeighnMicOff"
+                    }
+                    dc.send(JSON.stringify(dataToSend));
+                })
+                remoteSoundsOff = true
+            }
+            // const _elCluster = document.getElementById("big-videos-container").childNodes;
+            // _elCluster.forEach((el)=>{
+            //     el.setAttribute("muted","true")
+            // })
         },
         unmuteVideos(){
-            const _elCluster = document.getElementById("big-videos-container").childNodes;
-            _elCluster.forEach((el)=>{
-                el.setAttribute("muted","false")
-                // el.removeAttribute("muted")
-            })
+            if(DATA_CHANNELS.length >= 0){
+                
+                DATA_CHANNELS.forEach(dc=>{
+                    const dataToSend = {
+                        message:"turnForeighnMicOn"
+                    }
+                    dc.send(JSON.stringify(dataToSend));
+                })
+                remoteSoundsOff = false
+            }
+            // const _elCluster = document.getElementById("big-videos-container").childNodes;
+            // _elCluster.forEach((el)=>{
+            //     el.setAttribute("muted","false")
+            //     // el.removeAttribute("muted")
+            // })
         }
         
     }
@@ -354,7 +374,11 @@ function setOrientationBigVideoC() {
         _el.setAttribute("orientbig-portrait", "")
     }
 }
-
+function handleRTC_messages(e){
+    const _data = e.data;
+    console.log('Got a message: ');
+    console.log(_data);
+}
 function disconnectedFishCleanScreen(_name) {
     // const remoteVideo = document.querySelector(`video[pair="${_name}"]`);
     const remoteVideoDIV = document.querySelector(`video[pair="${_name}"]`);
@@ -398,7 +422,7 @@ async function createPeerCon(_name, _PeerCOUNTER) {
 
 async function createDataChn(_name, _PeerCOUNTER) {
     DATA_CHANNELS[_PeerCOUNTER] = PEER_CONNECTIONS[_PeerCOUNTER].createDataChannel(_name);
-    DATA_CHANNELS[_PeerCOUNTER].onmessage = e => console.log('Got a message: ' + e.data);
+    DATA_CHANNELS[_PeerCOUNTER].onmessage = e => handleRTC_messages(e);
     // DATA_CHANNELS[_PeerCOUNTER].onopen = e => console.log('Connection opened');
     PEER_CONNECTIONS[_PeerCOUNTER].onicecandidate = function (e) {
         console.log("ICE candidate (peerConnection)", e);
