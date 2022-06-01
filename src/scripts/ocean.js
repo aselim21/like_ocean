@@ -93,7 +93,7 @@ vm.component("ocean-content-component", {
         turnVideoOn(){
             if (!!localStream) {
                 localStream.getVideoTracks()[0].enabled = true;
-                localStream_toDisplay.getVideoTracks()[0].enabled = false;
+                localStream_toDisplay.getVideoTracks()[0].enabled = true;
                 this.localMicOff = false;
             }
         },
@@ -187,7 +187,8 @@ let msgs = [];
 const localVideo = document.getElementById('webcamVideo');
 let localStream;
 let localStream_toDisplay;
-
+const mediaConstraints_toSend = { audio: true, video: true };
+const mediaConstraints_toDisplay = { audio: false, video: true };
 
 
 
@@ -434,8 +435,8 @@ async function startMediaSharing(_name, _PeerCOUNTER) {
     const remoteVideo = document.querySelector(`video[pair="${_name}"]`);
     // const remoteVideoDIV = document.querySelector(`div[pair="${_name}"]`);
     // const remoteVideo_btn = document.querySelector(`button[pair="${_name}"]`);
-    const mediaConstraints_toSend = { audio: true, video: true };
-    const mediaConstraints_toDisplay = { audio: false, video: true };
+    // const mediaConstraints_toSend = { audio: true, video: true };
+    // const mediaConstraints_toDisplay = { audio: false, video: true };
 
     localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
     localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
