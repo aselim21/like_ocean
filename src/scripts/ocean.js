@@ -467,11 +467,13 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                 localStream.getAudioTracks()[0].enabled = false;
                 this.localMicOff = true;
                 showMsg(`${_data.responsible} muted you.`);
+                console.log(`${_data.responsible} muted you.`)
                 break;
             case 'turnForeighnMicOn':
                 localStream.getAudioTracks()[0].enabled = true;
                 this.localMicOff = false;
                 showMsg(`${_data.responsible} unmuted you.`);
+                console.log(`${_data.responsible} unmuted you.`)
                 break;
         }
     }
