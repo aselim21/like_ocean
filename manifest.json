@@ -8,7 +8,7 @@
             "type": "image/png"
         }
     ],
-    "start_url": "/index.html",
+    "start_url": "/ocean.html",
     "display": "standalone",
     "description": "Like an Ocean- Where everyone has his own Ocean and feels free like a fish."
   }
