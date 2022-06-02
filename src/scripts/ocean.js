@@ -485,27 +485,10 @@ async function createPeerCon(_name, _PeerCOUNTER) {
     PEER_CONNECTIONS[_PeerCOUNTER] = new RTCPeerConnection({
         configuration: configuration,
         iceServers: [
-            // { 
-            //     'urls': 'stun:stun.l.google.com:19302' 
-            // },
-            {
-                urls: "stun:openrelay.metered.ca:80",
-            },
-            {
-                urls: "turn:openrelay.metered.ca:80",
-                username: "openrelayproject",
-                credential: "openrelayproject",
-            },
-            {
-                urls: "turn:openrelay.metered.ca:443",
-                username: "openrelayproject",
-                credential: "openrelayproject",
-            },
-            {
-                urls: "turn:openrelay.metered.ca:443?transport=tcp",
-                username: "openrelayproject",
-                credential: "openrelayproject",
-            }]
+            { 
+                'urls': 'stun:stun.l.google.com:19302' 
+            }
+        ]
     });
     PEER_CONNECTIONS[_PeerCOUNTER].onconnectionstatechange = function (event) {
         showMsg(`State changed of:  ${_name} = ${PEER_CONNECTIONS[_PeerCOUNTER].connectionState}`);
