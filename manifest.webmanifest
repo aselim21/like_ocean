@@ -4,11 +4,11 @@
     "icons":[
         {
             "src" : "/images/waves_icon.png",
-            "sizes": "192/192",
+            "sizes": "512x512",
             "type": "image/png"
         }
     ],
-    "start_url": "/ocean.html",
+    "start_url": "/index.html",
     "display": "standalone",
     "description": "Like an Ocean- Where everyone has his own Ocean and feels free like a fish."
   }
