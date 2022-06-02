@@ -88,6 +88,9 @@ vm.component("ocean-content-component", {
         setMessage(_data){
             this.message = _data;
         },
+        getMessage(){
+            return this.message;
+        },
         turnVideoOff() {
             if (!!localStream) {
                 localStream.getVideoTracks()[0].enabled = false;
@@ -255,7 +258,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     showMsg("Waiting for other Fish to join...")
     // setTimeout(() => {
     //     showMsg("TEST");
-    // }, 10000);
+    // }, 3000);
     setOrientationSmallVideoC();
     setOrientationBigVideoC();
 
@@ -358,7 +361,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
 });
 
-let msg_timeout = 5000;
+const MSG_TIMEOUT = 5000;
 
 //Helping Fucntions
 async function req_getFishName(_id) {
@@ -367,19 +370,18 @@ async function req_getFishName(_id) {
     return response.name;
 }
 
+//show the message for 5 sec, if the message hasn't been changed by other function call, then remove the message.
 function showMsg(_msg) {
-    console.log("-------showMsg", _msg);
-    msg_timeout += 4000;
-    // const el = document.getElementById("ocean-msg-box");
-    // el.firstChild.innerHTML = _msg;
-    // el.style.display = "fixed"
     vm._instance.refs.js_ocean.setMessage(_msg);
     setTimeout(() => {
-        // el.style.display = "none";
-        vm._instance.refs.js_ocean.setMessage(null);
-        console.log("showMsg -Timeout");
+        //if im still the same message then set me to null, else dont touch me, im not the last message
+        console.log(vm);
+        if(vm._instance.refs.js_ocean.getMessage() === _msg){
+            vm._instance.refs.js_ocean.setMessage('');
+            console.log("showMsg -Timeout");
+        }
         //5sec
-    }, msg_timeout);
+    }, MSG_TIMEOUT);
 }
 
 function getCookie(cname) {
