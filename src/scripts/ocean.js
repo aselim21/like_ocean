@@ -36,7 +36,7 @@ vm.component("ocean-content-component", {
     },
     data() {
         return {
-            message:'',
+            message: '',
             expanded: false,
             localMicOff: false,
             remoteSoundsOff: false,
@@ -85,10 +85,10 @@ vm.component("ocean-content-component", {
            
         `,
     methods: {
-        setMessage(_data){
+        setMessage(_data) {
             this.message = _data;
         },
-        getMessage(){
+        getMessage() {
             return this.message;
         },
         turnVideoOff() {
@@ -376,7 +376,7 @@ function showMsg(_msg) {
     setTimeout(() => {
         //if im still the same message then set me to null, else dont touch me, im not the last message
         console.log(vm);
-        if(vm._instance.refs.js_ocean.getMessage() === _msg){
+        if (vm._instance.refs.js_ocean.getMessage() === _msg) {
             vm._instance.refs.js_ocean.setMessage('');
             console.log("showMsg -Timeout");
         }
@@ -482,7 +482,31 @@ async function createRemoteVideoElement(_name) {
 
 //Web Socket Functions
 async function createPeerCon(_name, _PeerCOUNTER) {
-    PEER_CONNECTIONS[_PeerCOUNTER] = new RTCPeerConnection({ configuration: configuration, iceServers: [{ 'urls': 'stun:stun.l.google.com:19302' }] });
+    PEER_CONNECTIONS[_PeerCOUNTER] = new RTCPeerConnection({
+        configuration: configuration,
+        iceServers: [
+            // { 
+            //     'urls': 'stun:stun.l.google.com:19302' 
+            // },
+            {
+                urls: "stun:openrelay.metered.ca:80",
+            },
+            {
+                urls: "turn:openrelay.metered.ca:80",
+                username: "openrelayproject",
+                credential: "openrelayproject",
+            },
+            {
+                urls: "turn:openrelay.metered.ca:443",
+                username: "openrelayproject",
+                credential: "openrelayproject",
+            },
+            {
+                urls: "turn:openrelay.metered.ca:443?transport=tcp",
+                username: "openrelayproject",
+                credential: "openrelayproject",
+            }]
+    });
     PEER_CONNECTIONS[_PeerCOUNTER].onconnectionstatechange = function (event) {
         showMsg(`State changed of:  ${_name} = ${PEER_CONNECTIONS[_PeerCOUNTER].connectionState}`);
         // document.getElementById('js-message-box').innerHTML = 'State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[_PeerCOUNTER].connectionState;
