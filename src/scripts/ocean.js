@@ -97,6 +97,7 @@ vm.component("ocean-content-component", {
         },
         muteLocalMic() {
             //for all the webrtc connections
+            console.log("---------in muteLocalMic")
             if (!!localStream) {
                 localStream.getAudioTracks()[0].enabled = false;
                 this.localMicOff = true;
@@ -215,6 +216,9 @@ const mediaConstraints_toDisplay = { audio: false, video: true };
 window.addEventListener('DOMContentLoaded', async (event) => {
     console.log('DOM fully loaded and parsed');
     showMsg("Waiting for other Fish to join...")
+    // setTimeout(() => {
+    //     showMsg("TEST");
+    // }, 1000);
     setOrientationSmallVideoC();
     setOrientationBigVideoC();
     
@@ -327,12 +331,14 @@ async function req_getFishName(_id){
 }
 
 function showMsg(_msg){
+    console.log("-------showMsg",_msg);
     msg_timeout += 4000;
     const el = document.getElementById("ocean-msg-box");   
     el.firstChild.innerHTML = _msg;
     el.style.display = "fixed"
     setTimeout(() => {
-        el.style.display = "none"
+        el.style.display = "none";
+        console.log("showMsg -Timeout");
         //5sec
     }, msg_timeout);
 }
@@ -384,14 +390,18 @@ function setOrientationBigVideoC() {
 function handleRTC_messages(_data){
     switch(_data.message){
         case 'turnForeighnMicOff':
-            localStream.getAudioTracks()[0].enabled = false;
-            this.localMicOff = true;
-            showMsg("Another Fish muted you.")
+            // localStream.getAudioTracks()[0].enabled = false;
+            // this.localMicOff = true;
+            showMsg("Another Fish muted you.");
+            vm._instance.refs.js_ocean.muteLocalMic();
+            // this.vm.$refs.js_ocean.muteLocalMic(); 
             break;
         case 'turnForeighnMicOn':
-            localStream.getAudioTracks()[0].enabled = true;
-            this.localMicOff = false;
+            // localStream.getAudioTracks()[0].enabled = true;
+            // this.localMicOff = false;
             showMsg("Another Fish unmuted you.")
+            vm._instance.refs.js_ocean.unmuteLocalMic();
+            // this.vm.$refs.js_ocean.unmuteLocalMic();
             break;
     }
 }
