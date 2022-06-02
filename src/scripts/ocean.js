@@ -36,6 +36,7 @@ vm.component("ocean-content-component", {
     },
     data() {
         return {
+            message:'',
             expanded: false,
             localMicOff: false,
             remoteSoundsOff: false,
@@ -46,8 +47,11 @@ vm.component("ocean-content-component", {
         }
     },
     template: `
+    <div v-show=" !!message ? true : false" id="ocean-msg-box" >
+        <p  id="js-msg-text"> {{message}} </p>
+    </div>
     <div id="main-ocean-container">
-        
+       
         <div id="videos-container">
             <div id="big-videos-container">
         
@@ -81,6 +85,9 @@ vm.component("ocean-content-component", {
            
         `,
     methods: {
+        setMessage(_data){
+            this.message = _data;
+        },
         turnVideoOff() {
             if (!!localStream) {
                 localStream.getVideoTracks()[0].enabled = false;
@@ -245,7 +252,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     showMsg("Waiting for other Fish to join...")
     // setTimeout(() => {
     //     showMsg("TEST");
-    // }, 1000);
+    // }, 10000);
     setOrientationSmallVideoC();
     setOrientationBigVideoC();
 
@@ -360,11 +367,13 @@ async function req_getFishName(_id) {
 function showMsg(_msg) {
     console.log("-------showMsg", _msg);
     msg_timeout += 4000;
-    const el = document.getElementById("ocean-msg-box");
-    el.firstChild.innerHTML = _msg;
-    el.style.display = "fixed"
+    // const el = document.getElementById("ocean-msg-box");
+    // el.firstChild.innerHTML = _msg;
+    // el.style.display = "fixed"
+    vm._instance.refs.js_ocean.setMessage(_msg);
     setTimeout(() => {
-        el.style.display = "none";
+        // el.style.display = "none";
+        vm._instance.refs.js_ocean.setMessage(null);
         console.log("showMsg -Timeout");
         //5sec
     }, msg_timeout);
