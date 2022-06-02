@@ -431,23 +431,23 @@ function handleRTC_messages(_data) {
         case 'turnForeighnMicOff':
             // localStream.getAudioTracks()[0].enabled = false;
             // this.localMicOff = true;
-            showMsg("Another Fish muted you.");
+            showMsg(`${_data.responsible} muted you.`);
             vm._instance.refs.js_ocean.muteLocalMic(false);
             // this.vm.$refs.js_ocean.muteLocalMic(); 
             break;
         case 'turnForeighnMicOn':
             // localStream.getAudioTracks()[0].enabled = true;
             // this.localMicOff = false;
-            showMsg("Another Fish unmuted you.")
+            showMsg(`${_data.responsible} unmuted you.`)
             vm._instance.refs.js_ocean.unmuteLocalMic(false);
             // this.vm.$refs.js_ocean.unmuteLocalMic();
             break;
         case 'turnedOwnMicOff':
-            showMsg("A Fish muted itself.");
+            showMsg(`${_data.responsible} muted itself.`);
             vm._instance.refs.js_ocean.muteVideos(false);
             break;
         case 'turnedOwnMicOn':
-            showMsg("A Fish unmuted itself.");
+            showMsg(`${_data.responsible} unmuted itself.`);
             vm._instance.refs.js_ocean.unmuteVideos(false);
             break;
     }
