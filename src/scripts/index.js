@@ -204,29 +204,42 @@ vm.component("main-content-component", {
 //--------------------------------VUE-Mount--------------------------------
 vm.mount('#start-page');
 
-console.log(Notification.permission)
+//----------------TO TEST NO ADDRESS BAR OT PHONES
+window.addEventListener('load', async (event) => {
+    console.log('DOM fully loaded and parsed');
+    setTimeout(function(){
+        window.scrollTo(0,1);
+    },0)
+});
+//-------------------------------
 
-switch(Notification.permission){
-    case 'default':
-        Notification.requestPermission().then((permission) => {
-            console.log(permission)
-        })
-        break;
-    case 'denied':
-        console.log('-------Permission denied');
-        break;
-    case 'granted':
-        console.log("-----Permission granted")
-        showNotification("Like Ocean Message", "You have a new call sth")
-        break;
-}
 
-function showNotification(_title, _msg){
-    const notif = new Notification(_title,{
-        body:_msg,
-        requireInteraction: true,
-        vibrate: [200, 100, 200, 100, 200, 100, 200]
-    })
-    notif.onclick = () => window.open('https://ocean-ag.herokuapp.com');
-    console.log(notif)
-}
+// console.log(Notification.permission)
+
+// switch(Notification.permission){
+//     case 'default':
+//         Notification.requestPermission().then((permission) => {
+//             console.log(permission)
+//         })
+//         break;
+//     case 'denied':
+//         console.log('-------Permission denied');
+//         break;
+//     case 'granted':
+//         console.log("-----Permission granted")
+//         setTimeout(() => {
+//             showNotification("Like Ocean Message", "You have a new call sth")
+//         }, 10000);
+        
+//         break;
+// }
+
+// function showNotification(_title, _msg){
+//     const notif = new Notification(_title,{
+//         body:_msg,
+//         requireInteraction: true,
+//         vibrate: [200, 100, 200, 100, 200, 100, 200]
+//     })
+//     notif.onclick = () => window.open('https://ocean-ag.herokuapp.com');
+//     console.log(notif)
+// }

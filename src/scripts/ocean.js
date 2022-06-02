@@ -250,7 +250,14 @@ let localStream_toDisplay;
 const mediaConstraints_toSend = { audio: true, video: true };
 const mediaConstraints_toDisplay = { audio: false, video: true };
 
-
+//----------------TO TEST NO ADDRESS BAR OT PHONES
+window.addEventListener('load', async (event) => {
+    console.log('DOM fully loaded and parsed');
+    setTimeout(function(){
+        window.scrollTo(0,1);
+    },0)
+});
+//-------------------------------
 
 
 window.addEventListener('DOMContentLoaded', async (event) => {
