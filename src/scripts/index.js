@@ -203,3 +203,30 @@ vm.component("main-content-component", {
 
 //--------------------------------VUE-Mount--------------------------------
 vm.mount('#start-page');
+
+console.log(Notification.permission)
+
+switch(Notification.permission){
+    case 'default':
+        Notification.requestPermission().then((permission) => {
+            console.log(permission)
+        })
+        break;
+    case 'denied':
+        console.log('-------Permission denied');
+        break;
+    case 'granted':
+        console.log("-----Permission granted")
+        showNotification("Like Ocean Message", "You have a new call sth")
+        break;
+}
+
+function showNotification(_title, _msg){
+    const notif = new Notification(_title,{
+        body:_msg,
+        requireInteraction: true,
+        vibrate: [200, 100, 200, 100, 200, 100, 200]
+    })
+    notif.onclick = () => window.open('https://ocean-ag.herokuapp.com');
+    console.log(notif)
+}
