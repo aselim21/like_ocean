@@ -181,9 +181,11 @@ vm.component("ocean-content-component", {
 
         },
         muteVideos(_OwnToggle) {
-
+            console.log("--------muteVideos");
             if (DATA_CHANNELS.length >= 0) {
+                console.log("--------there are DataChannels")
                 if (_OwnToggle) {
+                    console.log("----------its OwnToggle")
                     DATA_CHANNELS.forEach(async function (dc) {
                         const dataToSend = {
                             message: "turnForeighnMicOff",
@@ -192,7 +194,8 @@ vm.component("ocean-content-component", {
                         dc.send(JSON.stringify(dataToSend));
                     })
                 }
-                remoteSoundsOff = true;
+                console.log("----------set the remoteSoundsOff to true")
+                this.remoteSoundsOff = true;
             }
 
             // const _elCluster = document.getElementById("big-videos-container").childNodes;
@@ -211,7 +214,7 @@ vm.component("ocean-content-component", {
                         dc.send(JSON.stringify(dataToSend));
                     })
                 }
-                remoteSoundsOff = false
+                this.remoteSoundsOff = false
             }
             // const _elCluster = document.getElementById("big-videos-container").childNodes;
             // _elCluster.forEach((el)=>{
