@@ -446,7 +446,7 @@ function handleRTC_messages(_data) {
             showMsg("A Fish muted itself.");
             vm._instance.refs.js_ocean.muteVideos(false);
             break;
-        case 'turnedOwnMicOff':
+        case 'turnedOwnMicOn':
             showMsg("A Fish unmuted itself.");
             vm._instance.refs.js_ocean.unmuteVideos(false);
             break;
