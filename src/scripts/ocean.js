@@ -68,8 +68,8 @@ vm.component("ocean-content-component", {
                 <i @click="openFullscreen(); expanded = !expanded" v-if="expanded ? false : true" class="fas fa-expand"></i>
                 <i @click="closeFullscreen(); expanded = !expanded" v-if="expanded ? true : false" class="fas fa-compress"></i>
 
-                <i @click="muteVideos(true) ; remoteSoundsOff = !remoteSoundsOff" v-if="remoteSoundsOff ? false : true" class="fas fa-volume-xmark"></i>
-                <i @click="unmuteVideos(true) ; remoteSoundsOff = !remoteSoundsOff" v-if="remoteSoundsOff ? true : false" class="fas fa-volume-high"></i>
+                <i @click="muteVideos(true)" v-if="remoteSoundsOff ? false : true" class="fas fa-volume-xmark"></i>
+                <i @click="unmuteVideos(true)" v-if="remoteSoundsOff ? true : false" class="fas fa-volume-high"></i>
 
                 <i @click="muteLocalMic(true)" v-if="localMicOff ? false : true" class="fas fa-microphone-slash"></i>
                 <i @click="unmuteLocalMic(true)" v-if="localMicOff ? true : false" class="fas fa-microphone"></i>
