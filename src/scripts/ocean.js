@@ -31,8 +31,8 @@ const vm = Vue.createApp({
 //     }
 // });
 vm.component("ocean-content-component", {
-    props:{
-        msgShow : Boolean
+    props: {
+        msgShow: Boolean
     },
     data() {
         return {
@@ -64,11 +64,11 @@ vm.component("ocean-content-component", {
                 <i @click="openFullscreen(); expanded = !expanded" v-if="expanded ? false : true" class="fas fa-expand"></i>
                 <i @click="closeFullscreen(); expanded = !expanded" v-if="expanded ? true : false" class="fas fa-compress"></i>
 
-                <i @click="muteVideos() ; remoteSoundsOff = !remoteSoundsOff" v-if="remoteSoundsOff ? false : true" class="fas fa-volume-xmark"></i>
-                <i @click="unmuteVideos() ; remoteSoundsOff = !remoteSoundsOff" v-if="remoteSoundsOff ? true : false" class="fas fa-volume-high"></i>
+                <i @click="muteVideos(true) ; remoteSoundsOff = !remoteSoundsOff" v-if="remoteSoundsOff ? false : true" class="fas fa-volume-xmark"></i>
+                <i @click="unmuteVideos(true) ; remoteSoundsOff = !remoteSoundsOff" v-if="remoteSoundsOff ? true : false" class="fas fa-volume-high"></i>
 
-                <i @click="muteLocalMic()" v-if="localMicOff ? false : true" class="fas fa-microphone-slash"></i>
-                <i @click="unmuteLocalMic()" v-if="localMicOff ? true : false" class="fas fa-microphone"></i>
+                <i @click="muteLocalMic(true)" v-if="localMicOff ? false : true" class="fas fa-microphone-slash"></i>
+                <i @click="unmuteLocalMic(true)" v-if="localMicOff ? true : false" class="fas fa-microphone"></i>
 
                 <i @click="turnVideoOff()" v-if="localVideoOff ? false : true" class="fas fa-video-slash"></i>
                 <i @click="turnVideoOn()" v-if="localVideoOff ? true : false" class="fas fa-video"></i>
@@ -81,34 +81,57 @@ vm.component("ocean-content-component", {
            
         `,
     methods: {
-        turnVideoOff(){
+        turnVideoOff() {
             if (!!localStream) {
                 localStream.getVideoTracks()[0].enabled = false;
                 localStream_toDisplay.getVideoTracks()[0].enabled = false;
                 this.localVideoOff = true;
             }
         },
-        turnVideoOn(){
+        turnVideoOn() {
             if (!!localStream) {
                 localStream.getVideoTracks()[0].enabled = true;
                 localStream_toDisplay.getVideoTracks()[0].enabled = true;
                 this.localVideoOff = false;
             }
         },
-        muteLocalMic() {
+        muteLocalMic(_OwnToggle) {
             //for all the webrtc connections
             console.log("---------in muteLocalMic")
-            if (!!localStream) {
+            if (DATA_CHANNELS.length >= 0 && !!localStream) {
                 localStream.getAudioTracks()[0].enabled = false;
                 this.localMicOff = true;
+                if (_OwnToggle) {
+                    //let the other user know that you are muted
+                    DATA_CHANNELS.forEach(async function (dc) {
+                        const dataToSend = {
+                            message: "turnedOwnMicOff",
+                            responsible: await req_getFishName(the_fish_id)
+                        }
+                        dc.send(JSON.stringify(dataToSend));
+                    })
+                }
+
             }
         },
-        unmuteLocalMic() {
+        unmuteLocalMic(_OwnToggle) {
             //for all the webrtc connections
             if (!!localStream) {
                 localStream.getAudioTracks()[0].enabled = true;
                 this.localMicOff = false;
+                if (_OwnToggle) {
+                    //let the other user know that you are unmuted
+                    DATA_CHANNELS.forEach(async function (dc) {
+                        const dataToSend = {
+                            message: "turnedOwnMicOn",
+                            responsible: await req_getFishName(the_fish_id)
+                        }
+                        dc.send(JSON.stringify(dataToSend));
+                    })
+                }
+
             }
+
         },
         openFullscreen() {
             const _elem = document.getElementById('main-ocean-container');
@@ -131,12 +154,12 @@ vm.component("ocean-content-component", {
                 document.msExitFullscreen();
             }
         },
-        cleanOcean(){
+        cleanOcean() {
             console.log("in the cleanOcean()")
-            if(PeerCon_COUNTER <= 0){
+            if (PeerCon_COUNTER <= 0) {
                 console.log("there is no connection");
                 return 1;
-            }else{
+            } else {
                 const data = {
                     type: 'clean',
                     fish_id: the_fish_id,
@@ -145,38 +168,42 @@ vm.component("ocean-content-component", {
                 socket.send(JSON.stringify(data));
             }
         },
-        HideShowMyVideo(){
+        HideShowMyVideo() {
             console.log(_el)
             const _elem = document.getElementById('small-video-container');
 
         },
-        muteVideos(){
-            if(DATA_CHANNELS.length >= 0){
-                
-                DATA_CHANNELS.forEach(async function(dc){
-                    const dataToSend = {
-                        message:"turnForeighnMicOff",
-                        responsible: await req_getFishName(the_fish_id)
-                    }
-                    dc.send(JSON.stringify(dataToSend));
-                })
-                remoteSoundsOff = true
+        muteVideos(_OwnToggle) {
+
+            if (DATA_CHANNELS.length >= 0) {
+                if (_OwnToggle) {
+                    DATA_CHANNELS.forEach(async function (dc) {
+                        const dataToSend = {
+                            message: "turnForeighnMicOff",
+                            responsible: await req_getFishName(the_fish_id)
+                        }
+                        dc.send(JSON.stringify(dataToSend));
+                    })
+                }
+                remoteSoundsOff = true;
             }
+
             // const _elCluster = document.getElementById("big-videos-container").childNodes;
             // _elCluster.forEach((el)=>{
             //     el.setAttribute("muted","true")
             // })
         },
-        unmuteVideos(){
-            if(DATA_CHANNELS.length >= 0){
-                
-                DATA_CHANNELS.forEach(async function(dc){
-                    const dataToSend = {
-                        message:"turnForeighnMicOn",
-                        responsible: await req_getFishName(the_fish_id)
-                    }
-                    dc.send(JSON.stringify(dataToSend));
-                })
+        unmuteVideos(_OwnToggle) {
+            if (DATA_CHANNELS.length >= 0) {
+                if (_OwnToggle) {
+                    DATA_CHANNELS.forEach(async function (dc) {
+                        const dataToSend = {
+                            message: "turnForeighnMicOn",
+                            responsible: await req_getFishName(the_fish_id)
+                        }
+                        dc.send(JSON.stringify(dataToSend));
+                    })
+                }
                 remoteSoundsOff = false
             }
             // const _elCluster = document.getElementById("big-videos-container").childNodes;
@@ -221,7 +248,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     // }, 1000);
     setOrientationSmallVideoC();
     setOrientationBigVideoC();
-    
+
 
     localVideo.addEventListener('loadedmetadata', function () {
         console.log(`Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
@@ -321,19 +348,19 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
 });
 
-let msg_timeout = 5000; 
+let msg_timeout = 5000;
 
 //Helping Fucntions
-async function req_getFishName(_id){
-    const response = await $.get(`${URL_OceanService}/fish/${_id}`) 
+async function req_getFishName(_id) {
+    const response = await $.get(`${URL_OceanService}/fish/${_id}`)
     // console.log("req_getFishInfo => ", response);
     return response.name;
 }
 
-function showMsg(_msg){
-    console.log("-------showMsg",_msg);
+function showMsg(_msg) {
+    console.log("-------showMsg", _msg);
     msg_timeout += 4000;
-    const el = document.getElementById("ocean-msg-box");   
+    const el = document.getElementById("ocean-msg-box");
     el.firstChild.innerHTML = _msg;
     el.style.display = "fixed"
     setTimeout(() => {
@@ -387,21 +414,29 @@ function setOrientationBigVideoC() {
     }
 }
 
-function handleRTC_messages(_data){
-    switch(_data.message){
+function handleRTC_messages(_data) {
+    switch (_data.message) {
         case 'turnForeighnMicOff':
             // localStream.getAudioTracks()[0].enabled = false;
             // this.localMicOff = true;
             showMsg("Another Fish muted you.");
-            vm._instance.refs.js_ocean.muteLocalMic();
+            vm._instance.refs.js_ocean.muteLocalMic(false);
             // this.vm.$refs.js_ocean.muteLocalMic(); 
             break;
         case 'turnForeighnMicOn':
             // localStream.getAudioTracks()[0].enabled = true;
             // this.localMicOff = false;
             showMsg("Another Fish unmuted you.")
-            vm._instance.refs.js_ocean.unmuteLocalMic();
+            vm._instance.refs.js_ocean.unmuteLocalMic(false);
             // this.vm.$refs.js_ocean.unmuteLocalMic();
+            break;
+        case 'turnedOwnMicOff':
+            showMsg("A Fish muted itself.");
+            vm._instance.refs.js_ocean.muteVideos(false);
+            break;
+        case 'turnedOwnMicOff':
+            showMsg("A Fish unmuted itself.");
+            vm._instance.refs.js_ocean.unmuteVideos(false);
             break;
     }
 }
@@ -418,7 +453,7 @@ async function createRemoteVideoElement(_name) {
     const remoteVideo = document.createElement('video');
     remoteVideo.setAttribute('pair', _name);
     remoteVideo.setAttribute('class', 'remoteVideo');
-    remoteVideo.setAttribute('autoplay','');
+    remoteVideo.setAttribute('autoplay', '');
     // const remoteVideo_btn = document.createElement('button');
     // remoteVideo_btn.setAttribute('pair', _name);
     // remoteVideo_btn.setAttribute('class', 'js-remote-fullscreen');
