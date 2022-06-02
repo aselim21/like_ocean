@@ -1,14 +1,14 @@
 {
     "short_name": "Ocean",
     "name": "Like an Ocean",
-    "icons":[
+    "icons": [
         {
-            "src" : "/images/waves_icon.png",
+            "src": "/images/waves_icon.png",
             "sizes": "512x512",
             "type": "image/png"
         }
     ],
     "start_url": "/index.html",
-    "display": "fullscreen",
+    "display": "standalone",
     "description": "Like an Ocean- Where everyone has his own Ocean and feels free like a fish."
-  }
+}
