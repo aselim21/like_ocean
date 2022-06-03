@@ -143,7 +143,11 @@ body{
             //     }
             // }
             img, video{
-                transform: scaleX(-1);
+                // transform: scaleX(-1);
+                transform: rotateY(180deg);
+                -webkit-transform: rotateY(180deg);
+                /* Safari and Chrome */
+                -moz-transform: rotateY(180deg); 
                 // margin-left: -%;
             }
             #big-videos-container{

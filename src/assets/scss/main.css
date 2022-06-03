@@ -730,8 +730,10 @@ body #main-ocean-container img {
 }
 
 body #main-ocean-container #videos-container img, body #main-ocean-container #videos-container video {
-  -webkit-transform: scaleX(-1);
-          transform: scaleX(-1);
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  /* Safari and Chrome */
+  -moz-transform: rotateY(180deg);
 }
 
 body #main-ocean-container #videos-container #big-videos-container {
