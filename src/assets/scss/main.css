@@ -736,6 +736,7 @@ body #main-ocean-container #videos-container img, body #main-ocean-container #vi
 
 body #main-ocean-container #videos-container #big-videos-container {
   position: relative;
+  height: 100vh;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -748,6 +749,8 @@ body #main-ocean-container #videos-container #big-videos-container {
 
 body #main-ocean-container #videos-container #big-videos-container * {
   border: 1.8px solid #012E40;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 body #main-ocean-container #videos-container #small-video-container {

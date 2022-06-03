@@ -148,7 +148,7 @@ body{
             }
             #big-videos-container{
                 position: relative;
-                // height:100%;
+                height:100vh;
                 // width: auto;
                 // height: auto;
                 // overflow: hidden;
@@ -158,6 +158,7 @@ body{
                 justify-content: space-evenly;
                 *{
                     border: 1.8px solid $color-darkest;
+                    object-fit: cover;
                 }
             }
             #small-video-container{
