@@ -389,8 +389,9 @@ function setOrientationSmallVideoC() {
     // let width_20p = width * (20 / 100);
     // let height_20p = height * (20 / 100);
     // console.log(width, height)
-
+    console.log("+++++++++Width: " + localVideo.width + "Height: " + localVideo.height )
     if (localVideo.width >= localVideo.height) {
+        
         console.log("--------orientsmall-landscape ")
         _el.setAttribute("orientsmall-landscape", "")
     } else {
