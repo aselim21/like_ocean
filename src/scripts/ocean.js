@@ -288,17 +288,16 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                                     showMsg(`New Connection name: ${new_connection_name}. Will send an offer.`)
                                     console.log("Will send offer to ", p.f2);
                                     await createPeerCon(_newPeerCOUNTER, new_connection_name, p.f1, p.f2);
-                                    // await startMediaSharing(new_connection_name, _newPeerCOUNTER);
+                                    await startMediaSharing(new_connection_name, _newPeerCOUNTER);
                                     await createDataChn(new_connection_name, _newPeerCOUNTER);
                                     await createOffer_user1(_newPeerCOUNTER);
                                     return false;
-                                } else 
+                                }
                                 if (p.f1 != the_fish_id && p.connected == false) {
                                     console.log("*************Im not f1")
                                     return false;
                                 }
-                                return true;
-                                
+
                             }
                         })
                     }
@@ -313,7 +312,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                         showMsg(`Received an offer from: ${new_connection_name}`)
                         // console.log(`Received an offer from: ${new_connection_name}`)
                         await createPeerCon(currentPeerCOUNTER, new_connection_name, _data.f1, _data.f2);
-                        // await startMediaSharing(new_connection_name, currentPeerCOUNTER);
+                        await startMediaSharing(new_connection_name, currentPeerCOUNTER);
                         await createAnswerAndConnect_user2(_data.offer, _data.f1, currentPeerCOUNTER);
                     } else
                         if (_data.type == 'f2_answer') {
@@ -591,7 +590,7 @@ async function createAnswerAndConnect_user2(_offer, _f1, _PeerCOUNTER) {
         DATA_CHANNELS[_PeerCOUNTER] = event.channel;
         DATA_CHANNELS[_PeerCOUNTER].onopen = e => console.log('Connection opened from datachannel: ', event.channel.label);
         DATA_CHANNELS[_PeerCOUNTER].onmessage = e => handleRTC_messages(JSON.parse(e.data))
-    }); 
+    });
 
     PEER_CONNECTIONS[_PeerCOUNTER].onicecandidate = function (e) {
         console.log("ICE candidate (peerConnection)", e);
@@ -601,20 +600,20 @@ async function createAnswerAndConnect_user2(_offer, _f1, _PeerCOUNTER) {
     await PEER_CONNECTIONS[_PeerCOUNTER].setRemoteDescription(remoteDesc);
     const answer = await PEER_CONNECTIONS[_PeerCOUNTER].createAnswer();
     await PEER_CONNECTIONS[_PeerCOUNTER].setLocalDescription(answer);
-    
+
     setTimeout(() => {
-            console.log("PUT ANSWER");
-            const data = {
-                type: 'f2_answer',
-                fish_id: the_fish_id,
-                ocean_id: the_ocean_id,
-                answer: PEER_CONNECTIONS[_PeerCOUNTER].localDescription,
-                f1: _f1,
-                f2: the_fish_id
-            }
-            socket.send(JSON.stringify(data));
-        }, 2000)
-    
+        console.log("PUT ANSWER");
+        const data = {
+            type: 'f2_answer',
+            fish_id: the_fish_id,
+            ocean_id: the_ocean_id,
+            answer: PEER_CONNECTIONS[_PeerCOUNTER].localDescription,
+            f1: _f1,
+            f2: the_fish_id
+        }
+        socket.send(JSON.stringify(data));
+    }, 2000)
+
 }
 
 async function processAnswerWhenReady_user1(_answer, _f2, _PeerCOUNTER) {
