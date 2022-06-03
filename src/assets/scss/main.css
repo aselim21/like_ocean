@@ -598,6 +598,8 @@ body {
 body video {
   min-width: 100%;
   min-height: 100%;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
 }
 
 body #start-page {
