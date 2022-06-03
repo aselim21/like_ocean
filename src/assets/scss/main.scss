@@ -16,9 +16,9 @@ body{
         width: 100%;
         height: auto;
         display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
     }
 
     #start-page{
@@ -148,6 +148,7 @@ body{
             }
             #big-videos-container{
                 position: relative;
+                height:100%;
                 // width: auto;
                 // height: auto;
                 // overflow: hidden;
