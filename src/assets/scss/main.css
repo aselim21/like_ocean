@@ -774,7 +774,6 @@ body #main-ocean-container #videos-container div[orientsmall-landscape] {
 
 body #main-ocean-container #videos-container div[orientsmall-portrait] {
   width: 30%;
-  height: 30%;
 }
 
 @media (orientation: landscape) {
