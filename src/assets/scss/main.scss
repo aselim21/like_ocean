@@ -203,10 +203,10 @@ body{
             }
             div[orientbig-portrait]{
                 video{
-                    transform: rotateY(180deg);
-                    -webkit-transform: rotateY(180deg);
+                    transform: rotateY(360deg);
+                    -webkit-transform: rotateY(360deg);
                     /* Safari and Chrome */
-                    -moz-transform: rotateY(180deg); 
+                    -moz-transform: rotateY(360deg); 
                 }
                 
             }
