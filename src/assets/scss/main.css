@@ -595,6 +595,11 @@ body {
   font-family: 'Nanum Gothic', sans-serif;
 }
 
+body video {
+  min-width: 100%;
+  min-height: 100%;
+}
+
 body #start-page {
   display: -ms-grid;
   display: grid;

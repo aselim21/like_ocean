@@ -6,6 +6,10 @@ body{
     color: $color-darker;
     font-size: $size-m;
     font-family: 'Nanum Gothic', sans-serif;
+    video{
+        min-width: 100%;
+    min-height: 100%;
+    }
     #start-page{
         display: grid;
         grid-template-columns: auto;
