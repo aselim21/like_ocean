@@ -245,6 +245,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
     localVideo.addEventListener('loadedmetadata', function () {
         console.log(`Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+        setOrientationSmallVideoC();
     });
 
     socket.addEventListener('open', function (event) {
@@ -557,7 +558,6 @@ async function startMediaSharing(_name, _PeerCOUNTER) {
         console.log(remoteVideo);
         remoteVideo.srcObject = remoteStream;
     }
-    setOrientationSmallVideoC();
 }
 
 async function createOffer_user1(_PeerCOUNTER) {
