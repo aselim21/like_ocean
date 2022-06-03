@@ -167,7 +167,7 @@ vm.component("ocean-content-component", {
         },
         muteVideos(_OwnToggle) {
             console.log("--------muteVideos");
-            if (DATA_CHANNELS.length >= 0) {
+            if (DATA_CHANNELS.length > 0) {
                 console.log("--------there are DataChannels")
                 if (_OwnToggle) {
                     console.log("----------its OwnToggle")
@@ -189,7 +189,7 @@ vm.component("ocean-content-component", {
             // })
         },
         unmuteVideos(_OwnToggle) {
-            if (DATA_CHANNELS.length >= 0) {
+            if (DATA_CHANNELS.length > 0) {
                 if (_OwnToggle) {
                     DATA_CHANNELS.forEach(async function (dc) {
                         const dataToSend = {
