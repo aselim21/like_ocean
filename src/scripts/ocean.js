@@ -383,7 +383,7 @@ function getCookie(cname) {
 function setOrientationSmallVideoC() {
     localVideo.width;
     localVideo.height;
-    // const _el = document.getElementById('small-video-container');
+    const _el = document.getElementById('small-video-container');
     // let width = _el.clientWidth;
     // let height = _el.clientHeight;
     // let width_20p = width * (20 / 100);
