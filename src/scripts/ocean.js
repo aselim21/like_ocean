@@ -243,10 +243,6 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     setOrientationBigVideoC();
 
 
-    //------------video TEST
-    localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
-    localVideo.srcObject = localStream_toDisplay;
-
     localVideo.addEventListener('loadedmetadata', function () {
         console.log(`Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
     });
@@ -530,7 +526,7 @@ async function startMediaSharing(_name, _PeerCOUNTER) {
     // const mediaConstraints_toDisplay = { audio: false, video: true };
 
     localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
-    // localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
+    localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
     let remoteStream = new MediaStream();
 
     // remoteVideo_btn.addEventListener("click", async (e) => {
@@ -540,7 +536,7 @@ async function startMediaSharing(_name, _PeerCOUNTER) {
         console.log(`Remote video video Width: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
     });
 
-    // localVideo.srcObject = localStream_toDisplay;
+    localVideo.srcObject = localStream_toDisplay;
     localStream.getTracks().forEach((track) => {
         console.log("tracks sent");
         PEER_CONNECTIONS[_PeerCOUNTER].addTrack(track, localStream);
