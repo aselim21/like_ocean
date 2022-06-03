@@ -12,24 +12,6 @@ const URL_OceanService = 'https://ocean-service.herokuapp.com';
 const vm = Vue.createApp({
     el: '#video-call-page'
 });
-
-
-// vm.component("logo", {
-//     props: [],
-//     data() {
-//         return {
-//             message: "Test the component works"
-//         }
-//     },
-//     template: `
-//             <div id="welcome-logo" >
-//                 <h1> <i id="wave-logo" space-around class="fas fa-water fa-solid fa-i-cursor fa-fade" style="--fa-animation-duration: 2s; --fa-fade-opacity: 0.6;"></i>LIKE <h1 class="small-word">an</h1> OCEAN</h1>
-//             </div>
-//         `,
-//     methods: {
-
-//     }
-// });
 vm.component("ocean-content-component", {
     props: {
         msgShow: Boolean
@@ -260,6 +242,10 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     setOrientationSmallVideoC();
     setOrientationBigVideoC();
 
+
+    //------------video TEST
+    localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
+    localVideo.srcObject = localStream_toDisplay;
 
     localVideo.addEventListener('loadedmetadata', function () {
         console.log(`Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
@@ -544,7 +530,7 @@ async function startMediaSharing(_name, _PeerCOUNTER) {
     // const mediaConstraints_toDisplay = { audio: false, video: true };
 
     localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints_toSend);
-    localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
+    // localStream_toDisplay = await navigator.mediaDevices.getUserMedia(mediaConstraints_toDisplay);
     let remoteStream = new MediaStream();
 
     // remoteVideo_btn.addEventListener("click", async (e) => {
@@ -554,7 +540,7 @@ async function startMediaSharing(_name, _PeerCOUNTER) {
         console.log(`Remote video video Width: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
     });
 
-    localVideo.srcObject = localStream_toDisplay;
+    // localVideo.srcObject = localStream_toDisplay;
     localStream.getTracks().forEach((track) => {
         console.log("tracks sent");
         PEER_CONNECTIONS[_PeerCOUNTER].addTrack(track, localStream);
