@@ -239,7 +239,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     // setTimeout(() => {
     //     showMsg("TEST");
     // }, 3000);
-    setOrientationSmallVideoC();
+    // setOrientationSmallVideoC();
     setOrientationBigVideoC();
 
 
@@ -557,6 +557,7 @@ async function startMediaSharing(_name, _PeerCOUNTER) {
         console.log(remoteVideo);
         remoteVideo.srcObject = remoteStream;
     }
+    setOrientationSmallVideoC();
 }
 
 async function createOffer_user1(_PeerCOUNTER) {
