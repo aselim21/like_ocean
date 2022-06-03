@@ -13,12 +13,12 @@ body{
         // flex-shrink: 0;
         // max-width:100%;
         // max-height:100%;
-        width: 100%;
-        height: auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
+        // width: 100%;
+        // height: auto;
+        // display: flex;
+        // justify-content: center;
+        // align-items: center;
+        // overflow: hidden;
     }
 
     #start-page{
@@ -148,7 +148,7 @@ body{
             }
             #big-videos-container{
                 position: relative;
-                height:100%;
+                // height:100%;
                 // width: auto;
                 // height: auto;
                 // overflow: hidden;
@@ -198,6 +198,9 @@ body{
                 i{
                     font-size: $size-l;
                 }
+                #big-videos-container{
+                    // height: 100%;
+                }
             }
             // #small-video-container{
             //     bottom: $size-xl;
@@ -208,7 +211,11 @@ body{
                  i{
                     font-size: $size-m;
                  }
+                 #big-videos-container{
+                    //  height: 100vh;
+                 }
              }
+
             //  #small-video-container{
             //     bottom: $size-xxl;
             // }
