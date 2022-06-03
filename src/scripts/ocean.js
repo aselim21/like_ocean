@@ -240,7 +240,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     //     showMsg("TEST");
     // }, 3000);
     // setOrientationSmallVideoC();
-    setOrientationBigVideoC();
+    // setOrientationBigVideoC();
 
 
     localVideo.addEventListener('loadedmetadata', function () {
@@ -407,15 +407,22 @@ function setOrientationSmallVideoC(_width, _height) {
         _el.setAttribute("orientsmall-portrait", "")
     }
 }
-function setOrientationBigVideoC() {
+function setOrientationBigVideoC(_width, _height) {
     const _el = document.getElementById('big-videos-container');
-    let width = _el.clientWidth;
-    let height = _el.clientHeight;
-    let width_20p = width * (20 / 100);
-    let height_20p = height * (20 / 100);
-    console.log(width, height)
-
-    if (width >= height) {
+    // let width = _el.clientWidth;
+    // let height = _el.clientHeight;
+    // let width_20p = width * (20 / 100);
+    // let height_20p = height * (20 / 100);
+    // console.log(width, height)
+    console.log("---------Width: " + _width + "Height: " + _height)
+    // if (_width >= _height) {
+    //     console.log("--------orientsmall-landscape ")
+    //     _el.setAttribute("orientsmall-landscape", "")
+    // } else {
+    //     console.log("--------orientsmall-portrait ")
+    //     _el.setAttribute("orientsmall-portrait", "")
+    // }
+    if (_width >= _height) {
         _el.setAttribute("orientbig-landscape", "")
     } else {
         _el.setAttribute("orientbig-portrait", "")
@@ -550,6 +557,7 @@ async function startMediaSharing(_name, _PeerCOUNTER) {
     // });
     remoteVideo.addEventListener('loadedmetadata', function () {
         console.log(`Remote video video Width: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+        setOrientationBigVideoC(this.videoWidth, this.videoHeight);
     });
 
     localVideo.srcObject = localStream_toDisplay;

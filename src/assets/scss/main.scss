@@ -144,10 +144,10 @@ body{
             // }
             img, video{
                 // transform: scaleX(-1);
-                transform: rotateY(180deg);
-                -webkit-transform: rotateY(180deg);
-                /* Safari and Chrome */
-                -moz-transform: rotateY(180deg); 
+                // transform: rotateY(180deg);
+                // -webkit-transform: rotateY(180deg);
+                // /* Safari and Chrome */
+                // -moz-transform: rotateY(180deg); 
                 // margin-left: -%;
             }
             #big-videos-container{
@@ -192,11 +192,15 @@ body{
                 
             }
             
-            // div[orientBigVC=landscape]{
+            div[orientbig-landscape]{
               
-            // }
-            // div[orientBigVC=portrait]{
-            // }
+            }
+            div[orientbig-portrait]{
+                transform: rotateY(180deg);
+                -webkit-transform: rotateY(180deg);
+                /* Safari and Chrome */
+                -moz-transform: rotateY(180deg); 
+            }
         }
         @media (orientation: landscape) {
             #control-panel-container{

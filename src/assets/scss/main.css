@@ -729,13 +729,6 @@ body #main-ocean-container img {
   position: static;
 }
 
-body #main-ocean-container #videos-container img, body #main-ocean-container #videos-container video {
-  transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg);
-  /* Safari and Chrome */
-  -moz-transform: rotateY(180deg);
-}
-
 body #main-ocean-container #videos-container #big-videos-container {
   position: relative;
   height: 100vh;
@@ -774,6 +767,13 @@ body #main-ocean-container #videos-container div[orientsmall-landscape] {
 
 body #main-ocean-container #videos-container div[orientsmall-portrait] {
   width: 30%;
+}
+
+body #main-ocean-container #videos-container div[orientbig-portrait] {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  /* Safari and Chrome */
+  -moz-transform: rotateY(180deg);
 }
 
 @media (orientation: landscape) {
