@@ -279,7 +279,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                         for (const p of oceanPairs) {
                             if (p.f1 == the_fish_id && p.connected == false) {
 
-                                const new_connection_name = p.f1 + '-' + p.f2;
+                                const new_connection_name = await req_getFishName(p.f1)+ '-' + await req_getFishName(p.f2) ;
                                 console.log(`New Connection name: ${new_connection_name}`);
                                 // messageBox.innerHTML = `New Connection name: ${new_connection_name}. Will send an offer.`;
                                 showMsg(`New Connection name: ${new_connection_name}. Will send an offer.`)
@@ -298,7 +298,8 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                     if (_data.type == 'f1_offer') {
                         const currentPeerCOUNTER = PeerCon_COUNTER;
                         //Im user 2
-                        let new_connection_name = _data.f1 + '-' + _data.f2;
+                        
+                        let new_connection_name = await req_getFishName(_data.f1)+ '-' + await req_getFishName(_data.f2);
                         console.log(`Received an offer from: ${new_connection_name}`);
                         // messageBox.innerHTML = `Received an offer from: ${new_connection_name}`;
                         showMsg(`Received an offer from: ${new_connection_name}`)
@@ -309,7 +310,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                     } else
                         if (_data.type == 'f2_answer') {
                             //Im user 1
-                            let new_connection_name = _data.f1 + '-' + _data.f2;
+                            let new_connection_name = await req_getFishName(_data.f1)+ '-' + await req_getFishName(_data.f2);
                             console.log("Received an answer from: ", _data.f2);
                             // messageBox.innerHTML = `Received an answer from: ${new_connection_name}`;
                             showMsg(`Received an answer from: ${new_connection_name}`)
