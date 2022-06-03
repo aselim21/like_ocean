@@ -761,6 +761,13 @@ body #main-ocean-container #videos-container #small-video-container {
   bottom: 5rem;
 }
 
+body #main-ocean-container #videos-container #small-video-container video {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  /* Safari and Chrome */
+  -moz-transform: rotateY(180deg);
+}
+
 body #main-ocean-container #videos-container div[orientsmall-landscape] {
   width: 30%;
 }
@@ -769,7 +776,7 @@ body #main-ocean-container #videos-container div[orientsmall-portrait] {
   width: 30%;
 }
 
-body #main-ocean-container #videos-container div[orientbig-portrait] {
+body #main-ocean-container #videos-container div[orientbig-portrait] video {
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
   /* Safari and Chrome */

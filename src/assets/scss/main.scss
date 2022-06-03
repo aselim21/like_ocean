@@ -179,6 +179,12 @@ body{
                 overflow:hidden;
                 right: $size-m;
                 bottom: $size-xxl;
+                video{
+                    transform: rotateY(180deg);
+                    -webkit-transform: rotateY(180deg);
+                    /* Safari and Chrome */
+                    -moz-transform: rotateY(180deg); 
+                }
             }
             div[orientsmall-landscape]{
                 // height: 20%;
@@ -196,10 +202,13 @@ body{
               
             }
             div[orientbig-portrait]{
-                transform: rotateY(180deg);
-                -webkit-transform: rotateY(180deg);
-                /* Safari and Chrome */
-                -moz-transform: rotateY(180deg); 
+                video{
+                    transform: rotateY(180deg);
+                    -webkit-transform: rotateY(180deg);
+                    /* Safari and Chrome */
+                    -moz-transform: rotateY(180deg); 
+                }
+                
             }
         }
         @media (orientation: landscape) {
