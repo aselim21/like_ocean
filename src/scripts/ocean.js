@@ -2,7 +2,8 @@
 // const socket_URL = 'ws://localhost:8080';
 const socket_URL = 'wss://ocean-rtc-socket.herokuapp.com';
 let socket = new WebSocket(socket_URL);
-const the_ocean_id = window.localStorage.ocean_id;
+const the_ocean_id = window.location.pathname.slice(7);
+// const the_ocean_id = window.localStorage.ocean_id;
 const the_fish_id = window.localStorage.fish_id;
 const URL_OceanService = 'https://ocean-service.herokuapp.com';
 // const URL_OceanService = 'http://localhost:3000';
@@ -24,8 +25,7 @@ vm.component("ocean-content-component", {
             remoteSoundsOff: false,
             localVideoOff: false,
             localVideoPortrait: false,
-            localVideoDisplayed: true,
-
+            localVideoDisplayed: true
         }
     },
     template: `
@@ -276,48 +276,58 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                     console.log("in the info updated")
                     const oceanPairs = _data.message;
                     // fist check the Connection Number 
-                    updatePeerCon_COUNTER(oceanPairs).then(async function (_newPeerCOUNTER) {
-                        for (const p of oceanPairs) {
-                            if (p.f1 == the_fish_id && p.connected == false) {
-
-                                const new_connection_name = await req_getFishName(p.f1)+ '-' + await req_getFishName(p.f2) ;
-                                console.log(`New Connection name: ${new_connection_name}`);
-                                // messageBox.innerHTML = `New Connection name: ${new_connection_name}. Will send an offer.`;
-                                showMsg(`New Connection name: ${new_connection_name}. Will send an offer.`)
-                                console.log("Will send offer to ", p.f2);
-                                await createPeerCon(new_connection_name, _newPeerCOUNTER);
-                                await startMediaSharing(new_connection_name, _newPeerCOUNTER);
-                                await createDataChn(new_connection_name, _newPeerCOUNTER);
-                                await createOffer_user1(_newPeerCOUNTER);
-                                return false;
-                            } if (p.f1 != the_fish_id && p.connected == false) {
-                                return false;
+                    if (oceanPairs.length >= 1) {
+                        console.log("there are pairs")
+                        updatePeerCon_COUNTER(oceanPairs).then(async function (_newPeerCOUNTER) {
+                            for (const p of oceanPairs) {
+                                if (p.f1 == the_fish_id && p.connected == false) {
+                                    console.log("*************Im f1")
+                                    const new_connection_name = await req_getFishName(p.f1) + '-' + await req_getFishName(p.f2);
+                                    console.log(`New Connection name: ${new_connection_name}`);
+                                    // messageBox.innerHTML = `New Connection name: ${new_connection_name}. Will send an offer.`;
+                                    showMsg(`New Connection name: ${new_connection_name}. Will send an offer.`)
+                                    console.log("Will send offer to ", p.f2);
+                                    await createPeerCon(_newPeerCOUNTER, new_connection_name, p.f1, p.f2);
+                                    // await startMediaSharing(new_connection_name, _newPeerCOUNTER);
+                                    await createDataChn(new_connection_name, _newPeerCOUNTER);
+                                    await createOffer_user1(_newPeerCOUNTER);
+                                    return false;
+                                } else 
+                                if (p.f1 != the_fish_id && p.connected == false) {
+                                    console.log("*************Im not f1")
+                                    return false;
+                                }
+                                return true;
+                                
                             }
-                        }
-                    })
+                        })
+                    }
                 } else
                     if (_data.type == 'f1_offer') {
                         const currentPeerCOUNTER = PeerCon_COUNTER;
                         //Im user 2
-                        
-                        let new_connection_name = await req_getFishName(_data.f1)+ '-' + await req_getFishName(_data.f2);
+
+                        let new_connection_name = await req_getFishName(_data.f1) + '-' + await req_getFishName(_data.f2);
                         console.log(`Received an offer from: ${new_connection_name}`);
                         // messageBox.innerHTML = `Received an offer from: ${new_connection_name}`;
                         showMsg(`Received an offer from: ${new_connection_name}`)
-                        console.log(`Received an offer from: ${new_connection_name}`)
-                        await createPeerCon(new_connection_name, currentPeerCOUNTER);
-                        await startMediaSharing(new_connection_name, currentPeerCOUNTER);
+                        // console.log(`Received an offer from: ${new_connection_name}`)
+                        await createPeerCon(currentPeerCOUNTER, new_connection_name, _data.f1, _data.f2);
+                        // await startMediaSharing(new_connection_name, currentPeerCOUNTER);
                         await createAnswerAndConnect_user2(_data.offer, _data.f1, currentPeerCOUNTER);
                     } else
                         if (_data.type == 'f2_answer') {
                             //Im user 1
-                            let new_connection_name = await req_getFishName(_data.f1)+ '-' + await req_getFishName(_data.f2);
+                            let new_connection_name = await req_getFishName(_data.f1) + '-' + await req_getFishName(_data.f2);
                             console.log("Received an answer from: ", _data.f2);
                             // messageBox.innerHTML = `Received an answer from: ${new_connection_name}`;
                             showMsg(`Received an answer from: ${new_connection_name}`)
                             console.log(`Received an answer from: ${new_connection_name}`)
                             const currentPeerCOUNTER = PeerCon_COUNTER;
                             await processAnswerWhenReady_user1(_data.answer, _data.f2, currentPeerCOUNTER);
+                            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                            await setStatusOfConnection(_data.f1, _data.f2, true);
+
                         }
         });
     });
@@ -357,7 +367,6 @@ function showMsg(_msg) {
     vm._instance.refs.js_ocean.setMessage(_msg);
     setTimeout(() => {
         //if im still the same message then set me to null, else dont touch me, im not the last message
-        console.log(vm);
         if (vm._instance.refs.js_ocean.getMessage() === _msg) {
             vm._instance.refs.js_ocean.setMessage('');
             console.log("showMsg -Timeout");
@@ -390,7 +399,7 @@ function setOrientationSmallVideoC(_width, _height) {
     // let width_20p = width * (20 / 100);
     // let height_20p = height * (20 / 100);
     // console.log(width, height)
-    console.log("+++++++++Width: " + _width + "Height: " + _height )
+    console.log("+++++++++Width: " + _width + "Height: " + _height)
     if (_width >= _height) {
         console.log("--------orientsmall-landscape ")
         _el.setAttribute("orientsmall-landscape", "")
@@ -467,21 +476,23 @@ async function createRemoteVideoElement(_name) {
 }
 
 //Web Socket Functions
-async function createPeerCon(_name, _PeerCOUNTER) {
+async function createPeerCon(_PeerCOUNTER, _name, _f1, _f2) {
     PEER_CONNECTIONS[_PeerCOUNTER] = new RTCPeerConnection({
         configuration: configuration,
         iceServers: [
-            { 
-                'urls': 'stun:stun.l.google.com:19302' 
+            {
+                'urls': 'stun:stun.l.google.com:19302'
             }
         ]
     });
-    PEER_CONNECTIONS[_PeerCOUNTER].onconnectionstatechange = function (event) {
+    PEER_CONNECTIONS[_PeerCOUNTER].onconnectionstatechange = async function (event) {
         showMsg(`State changed of:  ${_name} = ${PEER_CONNECTIONS[_PeerCOUNTER].connectionState}`);
         // document.getElementById('js-message-box').innerHTML = 'State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[_PeerCOUNTER].connectionState;
         console.log('State changed of: ' + _name + ' = ' + PEER_CONNECTIONS[_PeerCOUNTER].connectionState);
         if (PEER_CONNECTIONS[_PeerCOUNTER].connectionState == 'disconnected') {
             disconnectedFishCleanScreen(_name);
+            //change the status
+            await setStatusOfConnection(_f1, _f2, false)
         }
     }
     PEER_CONNECTIONS[_PeerCOUNTER].oniceconnectionstatechange = function () {
@@ -580,10 +591,18 @@ async function createAnswerAndConnect_user2(_offer, _f1, _PeerCOUNTER) {
         DATA_CHANNELS[_PeerCOUNTER] = event.channel;
         DATA_CHANNELS[_PeerCOUNTER].onopen = e => console.log('Connection opened from datachannel: ', event.channel.label);
         DATA_CHANNELS[_PeerCOUNTER].onmessage = e => handleRTC_messages(JSON.parse(e.data))
-    });
+    }); 
+
     PEER_CONNECTIONS[_PeerCOUNTER].onicecandidate = function (e) {
         console.log("ICE candidate (peerConnection)", e);
-        setTimeout(() => {
+    };
+
+    const remoteDesc = new RTCSessionDescription(_offer);
+    await PEER_CONNECTIONS[_PeerCOUNTER].setRemoteDescription(remoteDesc);
+    const answer = await PEER_CONNECTIONS[_PeerCOUNTER].createAnswer();
+    await PEER_CONNECTIONS[_PeerCOUNTER].setLocalDescription(answer);
+    
+    setTimeout(() => {
             console.log("PUT ANSWER");
             const data = {
                 type: 'f2_answer',
@@ -594,24 +613,30 @@ async function createAnswerAndConnect_user2(_offer, _f1, _PeerCOUNTER) {
                 f2: the_fish_id
             }
             socket.send(JSON.stringify(data));
-        }, 3000)
-    };
-    const remoteDesc = new RTCSessionDescription(_offer);
-    await PEER_CONNECTIONS[_PeerCOUNTER].setRemoteDescription(remoteDesc);
-    const answer = await PEER_CONNECTIONS[_PeerCOUNTER].createAnswer();
-    await PEER_CONNECTIONS[_PeerCOUNTER].setLocalDescription(answer);
+        }, 2000)
+    
 }
 
 async function processAnswerWhenReady_user1(_answer, _f2, _PeerCOUNTER) {
     const remoteDesc = new RTCSessionDescription(_answer);
     await PEER_CONNECTIONS[_PeerCOUNTER].setRemoteDescription(remoteDesc);
     console.log('ACCEPT ANSWER');
+    // const data = {
+    //     type: 'f1_connected',
+    //     fish_id: the_fish_id,
+    //     ocean_id: the_ocean_id,
+    //     f1: the_fish_id,
+    //     f2: _f2
+    // }
+    // socket.send(JSON.stringify(data));
+}
+async function setStatusOfConnection(_f1, _f2, _status) {
     const data = {
-        type: 'f1_connected',
-        fish_id: the_fish_id,
+        type: 'status',
         ocean_id: the_ocean_id,
-        f1: the_fish_id,
-        f2: _f2
+        f1: _f1,
+        f2: _f2,
+        connected: _status
     }
     socket.send(JSON.stringify(data));
 }

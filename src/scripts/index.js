@@ -1,6 +1,6 @@
 //--------------------------------Variables--------------------------------
 const URL_OceanService = 'https://ocean-service.herokuapp.com';
-// const URL_OceanService = 'http://localhost:3000';
+// const URL_OceanService = 'http://localhost:3001';
 
 //set oceanID cookie to null
 window.localStorage.setItem('ocean_id', '');
@@ -185,8 +185,8 @@ vm.component("main-content-component", {
                 const response = await axios.put(`${URL_OceanService}/login`, data, {withCredentials: true});
                 this.message = response.data.message;
                 if (response.data.type === 'message') {
-                    window.localStorage.setItem('ocean_id', response.data.oceanID);
-                    window.location.assign(`/ocean.html`);
+                    // window.localStorage.setItem('ocean_id', response.data.oceanID);
+                    window.location.assign(`/ocean/${response.data.oceanID}`);
                 }
             } else {
                 this.message = "Please first register as a Fish!"
