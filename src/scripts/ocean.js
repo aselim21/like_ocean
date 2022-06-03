@@ -381,16 +381,20 @@ function getCookie(cname) {
     return "";
 }
 function setOrientationSmallVideoC() {
-    const _el = document.getElementById('small-video-container');
-    let width = _el.clientWidth;
-    let height = _el.clientHeight;
-    let width_20p = width * (20 / 100);
-    let height_20p = height * (20 / 100);
-    console.log(width, height)
+    localVideo.width;
+    localVideo.height;
+    // const _el = document.getElementById('small-video-container');
+    // let width = _el.clientWidth;
+    // let height = _el.clientHeight;
+    // let width_20p = width * (20 / 100);
+    // let height_20p = height * (20 / 100);
+    // console.log(width, height)
 
-    if (width >= height) {
+    if (localVideo.width >= localVideo.height) {
+        console.log("--------orientsmall-landscape ")
         _el.setAttribute("orientsmall-landscape", "")
     } else {
+        console.log("--------orientsmall-portrait ")
         _el.setAttribute("orientsmall-portrait", "")
     }
 }
