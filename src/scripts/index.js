@@ -1,6 +1,6 @@
 //--------------------------------Variables--------------------------------
-// const URL_OceanService = 'https://ocean-service.herokuapp.com';
-const URL_OceanService = 'http://localhost:3001';
+const URL_OceanService = 'https://ocean-service.herokuapp.com';
+// const URL_OceanService = 'http://localhost:3001';
 let serviceWorkerRegistration;
 let pushSubscription;
 let publicKey = 'BN7lXMb9mH4fa2BBsvrfI2fv424uENFrNy7M0bJ8q9DgggRkYfxT6k2XKZ3KQ_WTHaF2RTpC0KQmd-oIB50YApE';
@@ -202,7 +202,7 @@ vm.component("main-content-component", {
                 //empty the form
                 the_form.elements[0].value = '';
                 the_form.elements[1].value = '';
-                
+
                 this.req_getOceansForFish();
                 this.req_subscribePushNotifications();
             }
