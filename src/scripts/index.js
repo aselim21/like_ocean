@@ -1,16 +1,14 @@
 //--------------------------------Variables--------------------------------
-const URL_OceanService = 'https://ocean-service.herokuapp.com';
-// const URL_OceanService = 'http://localhost:3001';
-
-//set oceanID cookie to null
-window.localStorage.setItem('ocean_id', '');
-// const the_fish_id = window.localStorage.fish_id;
+// const URL_OceanService = 'https://ocean-service.herokuapp.com';
+const URL_OceanService = 'http://localhost:3001';
+let serviceWorkerRegistration;
+let pushSubscription;
+let publicKey = 'BN7lXMb9mH4fa2BBsvrfI2fv424uENFrNy7M0bJ8q9DgggRkYfxT6k2XKZ3KQ_WTHaF2RTpC0KQmd-oIB50YApE';
 
 //--------------------------------VUE--------------------------------
 var vm = Vue.createApp({
     el: '#start-page'
 });
-
 
 vm.component("logo", {
     props: [],
@@ -81,9 +79,9 @@ vm.component("main-content-component", {
                         </p>
                         <form v-show="showFormLoginFish" ref="js-login-fish-form" id="js-login-fish-form" name="login-fish-form">
                             <p>Name</p>
-                            <input type="text" name="fish-name" id="js-fish-name"/>
+                            <input type="text" name="fish-name" id="js-fish-name" autocomplete="login-fish-name"/>
                             <p>Password</p>
-                            <input type="password" name="fish-login-pwd" id="js-fish-login-pwd"/>
+                            <input type="password" name="fish-login-pwd" id="js-fish-login-pwd" autocomplete="login-fish-pwd" />
                             <input @click="req_loginFish()" type="button" name="login-fish" id="js-login-fish-btn" class="button-dark" value="Login"/>
                         </form>
                     </div>   
@@ -95,11 +93,11 @@ vm.component("main-content-component", {
                         </p>
                         <form v-show="showFormRegFish" ref="js-register-fish-form" id="js-register-fish-form" name="register-fish-form">
                             <p>Name</p>
-                            <input type="text" name="fish-name-new" id="js-fish-name-new"/>
+                            <input type="text" name="fish-name-new" id="js-fish-name-new" autocomplete="register fish-name"/>
                             <p>Password</p>
-                            <input type="password" name="fish-reg-pwd" id="js-fish-reg-pwd"/>
+                            <input type="password" name="fish-reg-pwd" id="js-fish-reg-pwd" autocomplete="register fish-pwd"/>
                             <p>Repeat password</p>
-                            <input type="password" name="fish-reg-pwd-repeat" id="js-fish-reg-pwd-repeat"/>
+                            <input type="password" name="fish-reg-pwd-repeat" id="js-fish-reg-pwd-repeat" autocomplete="register-fish-pwd-repeat"/>
                             <input @click="req_registerFish()" type="button" name="register-fish" id="js-register-fish-btn" class="button-dark" value="Register"/>
                         </form>
                     </div>
@@ -113,9 +111,9 @@ vm.component("main-content-component", {
                         </p>
                         <form v-show="showFormEnter" id="js-enter-ocean-form" name="enter-ocean-form" >
                             <p>Ocean's name</p>
-                            <input type="text" name="ocean-name" id="js-ocean-name"/>
+                            <input type="text" name="ocean-name" id="js-ocean-name" autocomplete="enter ocean-name"/>
                             <p>Secret key</p>
-                            <input type="password" name="ocean-pwd" id="js-ocean-pwd"/>
+                            <input type="password" name="ocean-pwd" id="js-ocean-pwd" autocomplete="enter ocean-pwd"/>
                             <input  @click="req_enterOcean()" type="button" name="login" id="js-enter-ocean-btn" class="button-dark" value="Enter"/>
                             <input type="button" name="clean" id="js-clean-ocean-btn" class="button-dark" value="Clean the ocean"/>
                         </form>
@@ -128,9 +126,9 @@ vm.component("main-content-component", {
                         </p>
                         <form v-show="showFormCreate" id="js-register-ocean-form" name="register-ocean-form">
                             <p>Ocean's name</p>
-                            <input type="text" name="ocean-name-new" id="js-ocean-name-new"/>
+                            <input type="text" name="ocean-name-new" id="js-ocean-name-new" autocomplete="create ocean-name"/>
                             <p>Secret key</p>
-                            <input type="password" name="ocean-pwd-new" id="js-ocean-pwd-new"/>
+                            <input type="password" name="ocean-pwd-new" id="js-ocean-pwd-new" autocomplete="create ocean-pwd"/>
                             <p>Max Fish</p>
                             <input type="number" min="1" value="2" name="ocean-MaxFish" id="js-ocean-MaxFish"/>
                             <p @click="" class="noselect" >
@@ -208,6 +206,7 @@ vm.component("main-content-component", {
         },
         async req_registerFish() {
             const the_form = document.querySelector('#js-register-fish-form');
+            
             // check if the passwords match
             if (the_form.elements[1].value !== the_form.elements[2].value) {
                 this.message = "Your passwords don't match!";
@@ -276,6 +275,9 @@ vm.component("main-content-component", {
                 this.message = "Please first register as a Fish!"
             }
 
+        },
+        async req_subscribePushNotifications(){
+
         }
     },
     beforeMount() {
@@ -288,6 +290,58 @@ vm.component("main-content-component", {
 
 //--------------------------------VUE-Mount--------------------------------
 vm.mount('#start-page');
+
+//--------------------------------Register Service Worker and Subscribe to Push Notifications--------------------------------
+
+// Don't register the service worker
+// until the page has fully loaded
+window.addEventListener('load', async () => {
+    // Is service worker available?
+    if ('serviceWorker' in navigator) {
+        serviceWorkerRegistration = await navigator.serviceWorker.register('/sw.js')
+        console.log('SW registered!');
+    }
+
+    pushSubscription = await serviceWorkerRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicKey) //'<Your Public Key from generateVAPIDKeys()>'
+    });
+    console.log(JSON.stringify(pushSubscription))
+        const response = await axios.post(`${URL_OceanService}/subscribe`, pushSubscription);
+        console.log(response.data);
+    // await fetch(`${URL_OceanService}/subscribe`, {
+    //     method : 'POST',
+    //     body: JSON.stringify(pushSubscription),
+    //     headers: {
+    //         'content-type' : 'application/json',
+    //         'credentials' : 'include'
+    //     }
+    // }).catch((err)=>{
+    //     console.log(err)
+    // })
+
+
+});
+
+const urlBase64ToUint8Array = (base64String) => {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+        .replace(/\-/g, '+')
+        .replace(/_/g, '/');
+
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+};
+
+
+
+
+
 
 
 
