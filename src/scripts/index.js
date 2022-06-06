@@ -1,6 +1,6 @@
 //--------------------------------Variables--------------------------------
-const URL_OceanService = 'https://ocean-service.herokuapp.com';
-// const URL_OceanService = 'http://localhost:3001';
+// const URL_OceanService = 'https://ocean-service.herokuapp.com';
+const URL_OceanService = 'http://localhost:3001';
 let serviceWorkerRegistration;
 let pushSubscription;
 let publicKey = 'BN7lXMb9mH4fa2BBsvrfI2fv424uENFrNy7M0bJ8q9DgggRkYfxT6k2XKZ3KQ_WTHaF2RTpC0KQmd-oIB50YApE';
@@ -171,7 +171,7 @@ vm.component("main-content-component", {
             }
 
         },
-        async getOceansForFish(){
+        async req_getOceansForFish(){
             const the_fish_id = window.localStorage.fish_id;
             if (!!the_fish_id) {
                 const response = await axios.get(`${URL_OceanService}/oceans/fish/${the_fish_id}`, { withCredentials: true });
@@ -202,6 +202,9 @@ vm.component("main-content-component", {
                 //empty the form
                 the_form.elements[0].value = '';
                 the_form.elements[1].value = '';
+                
+                this.req_getOceansForFish();
+                this.req_subscribePushNotifications();
             }
         },
         async req_registerFish() {
@@ -277,12 +280,29 @@ vm.component("main-content-component", {
 
         },
         async req_subscribePushNotifications(){
+            const the_fish_id = window.localStorage.fish_id;
 
+            if ('serviceWorker' in navigator) {
+                serviceWorkerRegistration = await navigator.serviceWorker.register('/sw.js')
+                console.log('SW registered!');
+            }
+        
+            pushSubscription = await serviceWorkerRegistration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(publicKey) //'<Your Public Key from generateVAPIDKeys()>'
+            });
+            const dataToSend = {
+                fishID : the_fish_id,
+                sub : pushSubscription
+            }
+            console.log(JSON.stringify(pushSubscription))
+                const response = await axios.post(`${URL_OceanService}/subscribe`, dataToSend);
+                console.log(response.data);
         }
     },
     beforeMount() {
         this.req_findFishName();
-        this.getOceansForFish();
+        this.req_getOceansForFish();
     },
 });
 
@@ -295,33 +315,33 @@ vm.mount('#start-page');
 
 // Don't register the service worker
 // until the page has fully loaded
-window.addEventListener('load', async () => {
-    // Is service worker available?
-    if ('serviceWorker' in navigator) {
-        serviceWorkerRegistration = await navigator.serviceWorker.register('/sw.js')
-        console.log('SW registered!');
-    }
+// window.addEventListener('load', async () => {
+//     // Is service worker available?
+//     if ('serviceWorker' in navigator) {
+//         serviceWorkerRegistration = await navigator.serviceWorker.register('/sw.js')
+//         console.log('SW registered!');
+//     }
 
-    pushSubscription = await serviceWorkerRegistration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey) //'<Your Public Key from generateVAPIDKeys()>'
-    });
-    console.log(JSON.stringify(pushSubscription))
-        const response = await axios.post(`${URL_OceanService}/subscribe`, pushSubscription);
-        console.log(response.data);
-    // await fetch(`${URL_OceanService}/subscribe`, {
-    //     method : 'POST',
-    //     body: JSON.stringify(pushSubscription),
-    //     headers: {
-    //         'content-type' : 'application/json',
-    //         'credentials' : 'include'
-    //     }
-    // }).catch((err)=>{
-    //     console.log(err)
-    // })
+//     pushSubscription = await serviceWorkerRegistration.pushManager.subscribe({
+//         userVisibleOnly: true,
+//         applicationServerKey: urlBase64ToUint8Array(publicKey) //'<Your Public Key from generateVAPIDKeys()>'
+//     });
+//     console.log(JSON.stringify(pushSubscription))
+//         const response = await axios.post(`${URL_OceanService}/subscribe`, pushSubscription);
+//         console.log(response.data);
+//     // await fetch(`${URL_OceanService}/subscribe`, {
+//     //     method : 'POST',
+//     //     body: JSON.stringify(pushSubscription),
+//     //     headers: {
+//     //         'content-type' : 'application/json',
+//     //         'credentials' : 'include'
+//     //     }
+//     // }).catch((err)=>{
+//     //     console.log(err)
+//     // })
 
 
-});
+// });
 
 const urlBase64ToUint8Array = (base64String) => {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
