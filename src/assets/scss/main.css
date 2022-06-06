@@ -691,7 +691,7 @@ body #start-page form * {
   margin: 0.1rem;
 }
 
-body #start-page input[type=button] {
+body #start-page .button-dark {
   border: none;
   text-align: center;
   text-decoration: none;
@@ -708,8 +708,17 @@ body #start-page input[type=button] {
   color: #F2E3D5;
 }
 
-body #start-page input[type=button]:hover, body #start-page input[type=button]:active {
+body #start-page .button-dark:hover, body #start-page .button-dark:active {
   background: #038696;
+}
+
+body #start-page #fish-oceans button {
+  background-color: #3CA6A6;
+  padding: 0.3rem;
+}
+
+body #start-page #fish-oceans button:hover, body #start-page #fish-oceans button:active {
+  background: #49bdbd;
 }
 
 body #ocean-msg-box {

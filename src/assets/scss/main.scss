@@ -90,7 +90,7 @@ body{
                 margin: $size-margin-small;
             }
         }
-        input[type=button]{
+        .button-dark{
             border: none;
             text-align: center;
             text-decoration: none;
@@ -103,8 +103,17 @@ body{
             align-self: center;
             color: $color-lightest;
         }
-        input[type=button]:hover, input[type=button]:active{
+        .button-dark:hover, .button-dark:active{
             background: lighten($color-middle,7%);
+        }
+        #fish-oceans{
+            button{
+                background-color: $color-lighter;
+                padding: $size-margin-middle;
+            }
+            button:hover, button:active{
+                background: lighten($color-lighter,7%);
+            }
         }
     }
     #ocean-msg-box{
