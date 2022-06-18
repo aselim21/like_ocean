@@ -26,20 +26,40 @@ vm.component("logo", {
 
     }
 });
+vm.component("specFish", {
+    props: [],
+    data() {
+        return {
+            message: "Test the component works"
+        }
+    },
+    template: `
+            <li>
+                <input type="text" placeholder="Fish"/>
+                <i class="fas fa-trash clickable-element"></i>    
+            </li>
+        `,
+    methods: {
+
+    }
+});
+
 
 vm.component("main-content-component", {
     props: [],
     data() {
         return {
             message: 0,
-            showMyOceans:false,
+            showMyOceans: false,
             showFormLoginFish: false,
             showFormRegFish: false,
             showFormEnter: false,
             showFormCreate: false,
             fish_id_exists: false,
-            acceptedOceans : [],
-            requestedOceans : []
+            acceptedOceans: [],
+            requiredOceans: [],
+            specFishCounter: 0,
+            maxFishInput: 2,
 
         }
     },
@@ -50,7 +70,7 @@ vm.component("main-content-component", {
             
             <div class="forms">
                 <div v-show="fish_id_exists" id="fish-oceans">
-                    <p @click="showMyOceans = !showMyOceans" class="noselect" id="show-hide-icon">
+                    <p @click="showMyOceans = !showMyOceans; if(showMyOceans) req_getOceansForFish()" class="noselect show-hide-icon">
                         <i v-if="showMyOceans ? false : true" class=" fas fa-regular fa-plus"></i>
                         <i v-if="showMyOceans ? true : false" class="fas fa-minus"></i>
                         My Oceans <i class="fa-solid fa-anchor"></i>
@@ -62,8 +82,8 @@ vm.component("main-content-component", {
                                 <button @click="selectOcean(ocean)" class="button-dark" >{{ ocean }}</button>
                             </li>
                         </ul>
-                        <ul id="requested-oceans">
-                            <li v-for="ocean in requestedOceans" class="button-dark">
+                        <ul id="required-oceans">
+                            <li v-for="ocean in requiredOceans">
                                 <i class="fa-solid fa-water"></i> 
                                 <button @click="selectOcean(ocean)" class="button-dark" >{{ ocean }}</button>
                             </li>
@@ -72,7 +92,7 @@ vm.component("main-content-component", {
                 </div>
                 <div class="forms_cluster">
                     <div v-show="!fish_id_exists" id="login-fish-div">
-                        <p @click="showFormLoginFish = !showFormLoginFish" class="noselect" id="show-hide-icon">
+                        <p @click="showFormLoginFish = !showFormLoginFish" class="noselect show-hide-icon">
                             <i v-if="showFormLoginFish ? false : true" class=" fas fa-regular fa-plus"></i>
                             <i v-if="showFormLoginFish ? true : false" class="fas fa-minus"></i>
                             Login as a Fish <i class="fas fa-fish"></i>
@@ -86,7 +106,7 @@ vm.component("main-content-component", {
                         </form>
                     </div>   
                     <div v-show="!fish_id_exists" id="reg-fish-div">
-                        <p @click="showFormRegFish = !showFormRegFish" class="noselect" id="show-hide-icon">
+                        <p @click="showFormRegFish = !showFormRegFish" class="noselect show-hide-icon">
                             <i v-if="showFormRegFish ? false : true" class=" fas fa-regular fa-plus"></i>
                             <i v-if="showFormRegFish ? true : false" class="fas fa-minus"></i>
                             Register a Fish <i class="fas fa-fish"></i>
@@ -104,7 +124,7 @@ vm.component("main-content-component", {
                 </div>
                 <div class="forms_cluster">   
                 <div id="enter-ocean-div">
-                        <p @click="showFormEnter = !showFormEnter" class="noselect" id="show-hide-icon">
+                        <p @click="showFormEnter = !showFormEnter" class="noselect show-hide-icon">
                             <i v-if="showFormEnter ? false : true" class=" fas fa-regular fa-plus"></i>
                             <i v-if="showFormEnter ? true : false" class="fas fa-minus"></i>
                             Enter an Ocean <i class="fas fa-person-swimming"></i>
@@ -119,7 +139,7 @@ vm.component("main-content-component", {
                         </form>
                     </div> 
                     <div id="create-ocean-div">
-                        <p @click="showFormCreate = !showFormCreate" class="noselect" id="show-hide-icon">
+                        <p @click="showFormCreate = !showFormCreate" class="noselect show-hide-icon">
                             <i v-if="showFormCreate ? false : true" class=" fas fa-regular fa-plus"></i>
                             <i v-if="showFormCreate ? true : false" class="fas fa-minus"></i>
                             Create an Ocean <i class="fa-brands fa-drupal"></i>
@@ -130,19 +150,23 @@ vm.component("main-content-component", {
                             <p>Secret key</p>
                             <input type="password" name="ocean-pwd-new" id="js-ocean-pwd-new" autocomplete="create ocean-pwd"/>
                             <p>Max Fish</p>
-                            <input type="number" min="1" value="2" name="ocean-MaxFish" id="js-ocean-MaxFish"/>
-                            <p @click="" class="noselect" >
+                            <input v-model="maxFishInput" type="number" min="2" name="ocean-MaxFish" id="js-ocean-MaxFish"/>
+                            
+                            <p @click="addSpecFish()" class="clickable-element">
                                 <i class=" fas fa-regular fa-plus"></i>
                                 Add a specific Fish
                             </p>
-
+                            <ul ref="specFishList" class="specFishList">
+                                
+                            </ul>
+                            
                             <input @click="req_registerOcean()" type="button" name="register" id="js-register-ocean-btn" class="button-dark" value="Create"/>
                         </form>
                     </div>
                     
                 </div>
                 <div v-show="fish_id_exists" id="js-logout-fish">
-                    <p @click="logout()" class="noselect" id="show-hide-icon">
+                    <p @click="logout()" id="js-fish-logout" class="noselect show-hide-icon">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i>
                         Logout 
                     </p>
@@ -151,10 +175,84 @@ vm.component("main-content-component", {
             
         `,
     methods: {
+
+        addSpecFish() {
+
+            const the_list = this.$refs.specFishList;
+            // this.specFishCounter++; 
+
+            // // if(the_list.childElementCount > this.maxFishInput){
+            // //     this.maxFishInput = the_list.childElementCount
+            // // }
+            // console.log("after adding specFishCounter " ,this.specFishCounter )
+            // console.log("Number of elements", the_list.childElementCount)
+            this.specFishCounter++;
+            const id = this.specFishCounter;
+            const specFishCount = the_list.childElementCount + 1;
+            if (specFishCount > this.maxFishInput) {
+                this.maxFishInput = specFishCount
+            }
+
+            const liEl = document.createElement("li");
+            const inputEl = document.createElement("input");
+            const iEl = document.createElement("i");
+
+            liEl.setAttribute('specFishID', id);
+            inputEl.setAttribute('type', 'text');
+            inputEl.setAttribute('placeholder', `Fish name`);
+            iEl.setAttribute('class', 'fas fa-trash clickable-element');
+            iEl.addEventListener('click', (e) => {
+                this.deleteSpecFish(id)
+            })
+            // iEl.setAttribute('v-on:click', );
+            liEl.appendChild(inputEl);
+            liEl.appendChild(iEl);
+
+            the_list.appendChild(liEl);
+
+            console.log("Adding specFishCount ", specFishCount)
+        },
+        deleteSpecFish(_id) {
+            console.log("Deleting id", _id)
+            // const to_be_deletedEl = document.querySelector(`[id="${_id}"]`);
+            document.querySelector(`[specFishID="${_id}"]`).remove();
+            const the_list = this.$refs.specFishList;
+            // the_list.appendChild(to_be_deletedEl);
+            // document.querySelector(`[id="${_id}"]`).remove();
+
+            const specFishCount = the_list.childElementCount + 1;
+            console.log("Deleting specFishCount ", specFishCount)
+
+            // console.log(this.specFishCounter);
+            // const the_list = this.$refs.specFishList;
+            // console.log(the_list.length)
+
+            // // console.log(document.querySelector(`[count="${_counter}"]`));   
+
+        },
         async logout() {
             window.localStorage.fish_id = '';
             this.fish_id_exists = false;
-            this.req_findFishName()
+            this.req_findFishName();
+            //also delete the subscription
+            navigator.serviceWorker.ready.then(function (reg) {
+                reg.pushManager.getSubscription().then(function (subscription) {
+                    console.log(subscription)
+                    const the_endpoint = subscription.endpoint.slice(36);
+                    subscription.unsubscribe().then( async function (successful) {
+                        // You've successfully unsubscribed
+                        console.log("successfully unsubscribed")
+                        
+                        await axios.delete(`${URL_OceanService}/subscription/${the_endpoint}`);
+                        // if (response.data.type != 'error') {
+                        //    console.log("got positive response")
+                        // }
+                    }).catch(function (e) {
+                        // Unsubscribing failed
+                        console.error("couldnt unsubscribe", e)
+                    })
+                })
+            });
         },
         async req_findFishName() {
             const the_fish_id = window.localStorage.fish_id;
@@ -165,23 +263,25 @@ vm.component("main-content-component", {
                     this.message = `Ahoy, ${response.data.name}`;
                 }
             }
-            else{
+            else {
                 this.fish_id_exists = false;
                 this.message = null;
             }
 
         },
-        async req_getOceansForFish(){
+        async req_getOceansForFish() {
             const the_fish_id = window.localStorage.fish_id;
             if (!!the_fish_id) {
                 const response = await axios.get(`${URL_OceanService}/oceans/fish/${the_fish_id}`, { withCredentials: true });
                 if (response.data.type != 'error') {
                     this.acceptedOceans = response.data.acceptedOceans;
-                    this.requestedOceans = response.data.requestedOceans;
+                    this.requiredOceans = response.data.requiredOceans;
+                    console.log("Accepted", this.acceptedOceans)
+                    console.log("Requested", this.requiredOceans);
                 }
             }
         },
-        selectOcean(_name){
+        selectOcean(_name) {
             this.showFormEnter = true;
             const the_form = document.getElementById("js-enter-ocean-form");
             the_form.elements[0].value = _name;
@@ -209,7 +309,7 @@ vm.component("main-content-component", {
         },
         async req_registerFish() {
             const the_form = document.querySelector('#js-register-fish-form');
-            
+
             // check if the passwords match
             if (the_form.elements[1].value !== the_form.elements[2].value) {
                 this.message = "Your passwords don't match!";
@@ -222,12 +322,12 @@ vm.component("main-content-component", {
             const response = await axios.post(`${URL_OceanService}/fish`, data, { withCredentials: true });
             this.message = response.data.message;
             if (response.data.type === 'message') {
-                 //switch to login
+                //switch to login
                 this.showFormLoginFish = true;
                 const the_loginForm = document.querySelector('#js-login-fish-form');
                 the_loginForm.elements[0].value = the_form.elements[0].value
                 the_loginForm.elements[1].value = the_form.elements[1].value
-                
+
                 //empty the form
                 this.showFormRegFish = false;
                 the_form.elements[0].value = '';
@@ -236,13 +336,30 @@ vm.component("main-content-component", {
             }
         },
         async req_registerOcean() {
+
             const the_form = document.querySelector('#js-register-ocean-form');
+            const the_specFishList = this.$refs.specFishList;
+            const the_secFishNr = the_specFishList.childElementCount
+            // console.log(the_form.elements);
+            console.log(the_secFishNr);
+            if (the_secFishNr > the_form.elements[2].value) {
+                this.message = "You cannot have more special fish than MaxFish value."
+                return 0;
+            }
+            let specFishNamesList = [];
+            the_specFishList.childNodes.forEach(specFish => {
+                if (specFish.childNodes[0].value != '' || specFish.childNodes[0].value != ' ')
+                    specFishNamesList.push(specFish.childNodes[0].value)
+            })
+
             const data = {
                 oceanName: the_form.elements[0].value,
                 pwd: the_form.elements[1].value,
                 maxFish: the_form.elements[2].value,
-                requiredFish: []
+                requiredFish: specFishNamesList
             }
+            console.log(data)
+
             const response = await axios.post(`${URL_OceanService}/oceans`, data, { withCredentials: true });
             this.message = response.data.message;
             if (response.data.type === 'message') {
@@ -257,6 +374,9 @@ vm.component("main-content-component", {
                 the_form.elements[0].value = '';
                 the_form.elements[1].value = '';
                 the_form.elements[2].value = 2;
+                for (let i = 0; i < the_secFishNr; i++) {
+                    the_specFishList.childNodes[0].remove()
+                }
             }
         },
         async req_enterOcean() {
@@ -279,30 +399,36 @@ vm.component("main-content-component", {
             }
 
         },
-        async req_subscribePushNotifications(){
+        async req_subscribePushNotifications() {
             const the_fish_id = window.localStorage.fish_id;
 
             if ('serviceWorker' in navigator) {
                 serviceWorkerRegistration = await navigator.serviceWorker.register('/sw.js')
                 console.log('SW registered!');
+
+                // serviceWorkerRegistration.update();
             }
-        
+
             pushSubscription = await serviceWorkerRegistration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: urlBase64ToUint8Array(publicKey) //'<Your Public Key from generateVAPIDKeys()>'
             });
+
+            // document.getElementById("js-fish-logout").addEventListener("click", function() {
+            //     console.log(serviceWorkerRegistration.pushManager)
+            //   });
+
             const dataToSend = {
-                fishID : the_fish_id,
-                sub : pushSubscription
+                fishID: the_fish_id,
+                sub: pushSubscription
             }
             console.log(JSON.stringify(pushSubscription))
-                const response = await axios.post(`${URL_OceanService}/subscribe`, dataToSend);
-                console.log(response.data);
+            const response = await axios.post(`${URL_OceanService}/subscribe`, dataToSend);
+            console.log(response.data);
         }
     },
     beforeMount() {
         this.req_findFishName();
-        this.req_getOceansForFish();
     },
 });
 
@@ -394,3 +520,9 @@ const urlBase64ToUint8Array = (base64String) => {
 //     notif.onclick = () => window.open('https://ocean-ag.herokuapp.com');
 //     console.log(notif)
 // }
+if ('serviceWorker' in navigator) {
+
+    console.log(navigator.serviceWorker);
+
+    // serviceWorkerRegistration.update();
+}

@@ -6,7 +6,7 @@ const the_ocean_id = window.location.pathname.slice(7);
 // const the_ocean_id = window.localStorage.ocean_id;
 const the_fish_id = window.localStorage.fish_id;
 const URL_OceanService = 'https://ocean-service.herokuapp.com';
-// const URL_OceanService = 'http://localhost:3000';
+// const URL_OceanService = 'http://localhost:3001';
 // const my_name = await req_getFishName(the_fish_id);
 
 //--------------------------------VUE--------------------------------
@@ -25,7 +25,10 @@ vm.component("ocean-content-component", {
             remoteSoundsOff: false,
             localVideoOff: false,
             localVideoPortrait: false,
-            localVideoDisplayed: true
+            localVideoDisplayed: true,
+            showFishList : false,
+            fishNameInput : '',
+            rqrFish : []
         }
     },
     template: `
@@ -46,7 +49,23 @@ vm.component("ocean-content-component", {
         
         <div id="control-panel-container">
                 <i @click="cleanOcean()" style="color:#BE6833" class="fas fa-skull-crossbones"></i>
+
                 
+                <div>
+                    <div v-show="showFishList" id="rqrFish-list"> 
+                        <!---input v-model="fishNameInput" type="text" placeholder="Fish name"/>
+                        <input @click="callFish(fishNameInput)" type="button" value="Add" ----->
+
+                        <ul>
+                            <li v-for="fish in rqrFish" class="button-dark">
+                                <p @click="callFish(fish)" > <i class="fa-solid fa-phone"></i> {{fish}} </p> 
+                            </li>
+                        </ul>
+
+                    </div>
+                    <i @click="if(!!rqrFish.length) showFishList = !showFishList;" class="fas fa-address-book"></i>        
+                </div>
+               
                 <i @click="openFullscreen(); expanded = !expanded" v-if="expanded ? false : true" class="fas fa-expand"></i>
                 <i @click="closeFullscreen(); expanded = !expanded" v-if="expanded ? true : false" class="fas fa-compress"></i>
 
@@ -72,6 +91,15 @@ vm.component("ocean-content-component", {
         },
         getMessage() {
             return this.message;
+        },
+        async getReqFish(){
+            const response = await $.get(`${URL_OceanService}/oceans/${the_ocean_id}`);
+            
+            if(!!response.requireFish){
+                this.rqrFish = response.requireFish;
+
+            }
+            console.log(this.rqrFish)
         },
         turnVideoOff() {
             if (!!localStream) {
@@ -206,7 +234,25 @@ vm.component("ocean-content-component", {
             //     el.setAttribute("muted","false")
             //     // el.removeAttribute("muted")
             // })
+        },
+        async callFish(_fishName){
+            console.log(_fishName)
+
+            const dataToSend = {
+                oceanID : the_ocean_id,
+                fishID : the_fish_id,
+                fishToNotify : _fishName
+            }
+            // console.log(JSON.stringify(pushSubscription))
+                const response = await axios.post(`${URL_OceanService}/callFish`, dataToSend);
+                console.log(response.data);
+                if(!!response.data){
+                    showMsg(response.data.message);
+                }
         }
+    },
+    beforeMount(){
+        this.getReqFish();
     }
 });
 
@@ -359,6 +405,21 @@ async function req_getFishName(_id) {
     const response = await $.get(`${URL_OceanService}/fish/${_id}`)
     // console.log("req_getFishInfo => ", response);
     return response.name;
+}
+
+async function req_getOceanInfo() {
+    const response = await $.get(`${URL_OceanService}/oceans/${_id}`)
+    // console.log("req_getFishInfo => ", response);
+    return response;
+}
+async function loadPhonebookDetails() {
+    const response = await $.get(`${URL_OceanService}/oceans/${_id}`)
+    // console.log("req_getFishInfo => ", response);
+    // return response;
+    console.log(response);
+
+
+
 }
 
 //show the message for 5 sec, if the message hasn't been changed by other function call, then remove the message.

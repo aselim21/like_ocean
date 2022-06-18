@@ -6,7 +6,12 @@ body{
     color: $color-darker;
     font-size: $size-m;
     font-family: 'Nanum Gothic', sans-serif;
-
+    .clickable-element{
+        cursor: pointer;
+    }
+    .clickable-element:hover{
+        color: lighten($color-middle,7%);
+    }
     video{
         // min-width: 100%;
         // min-height: 100%;
@@ -53,7 +58,17 @@ body{
             -ms-user-select: none;
             user-select: none;
         }
-        #show-hide-icon{
+        .fish-adder{
+            cursor: pointer;
+            
+        }
+        .specFishList{
+            display:flex;
+            // grid-template-columns: 2rem 1rem;
+            flex-wrap: wrap;
+            flex-direction: column;
+        }
+        .show-hide-icon{
             cursor: pointer;
             margin: $size-s;
             text-align: center;
@@ -61,7 +76,7 @@ body{
             border-radius: 4px;
             padding: clamp($size-margin-small, $size-s, $size-m) clamp($size-s, $size-xl, $size-xxl);
         }
-        #show-hide-icon:hover{
+        .show-hide-icon:hover{
             color: lighten($color-middle,7%);
         }
         .message-box{
@@ -107,12 +122,25 @@ body{
             background: lighten($color-middle,7%);
         }
         #fish-oceans{
-            button{
-                background-color: $color-lighter;
-                padding: $size-margin-middle;
+            #accepted-oceans{
+                button{
+                    background-color: $color-lighter;
+                    padding: $size-margin-middle;
+                }
+                button:hover, button:active{
+                    background: lighten($color-lighter,7%);
+                    // background: $color-darker;
+                }
             }
-            button:hover, button:active{
-                background: lighten($color-lighter,7%);
+            #required-oceans{
+                button{
+                    background-color: $color-middle;
+                    padding: $size-margin-middle;
+                }
+                button:hover, button:active{
+                    background: lighten($color-middle,7%);
+                    // background: $color-lighter;
+                }
             }
         }
     }
@@ -225,27 +253,25 @@ body{
                 i{
                     font-size: $size-l;
                 }
-                #big-videos-container{
-                    // height: 100%;
+                #rqrFish-list{
+                    padding: $size-m;
+                    bottom: $size-l + $size-m + $size-m ;
+              
                 }
+               
             }
-            // #small-video-container{
-            //     bottom: $size-xl;
-            // }
           }
           @media (orientation: portrait) {
              #control-panel-container{
                  i{
                     font-size: $size-m;
                  }
-                 #big-videos-container{
-                    //  height: 100vh;
-                 }
-             }
-
-            //  #small-video-container{
-            //     bottom: $size-xxl;
-            // }
+                 #rqrFish-list{
+                    padding: $size-s;
+                    bottom: $size-m + $size-s + $size-m;
+                
+                }
+            }
           }
         #control-panel-container{
             display: flex;
@@ -261,12 +287,34 @@ body{
             i{
                 color: $color-lightest;
                 // font-size: clamp($size-m, $size-xl, $size-xxl);
-                padding: 1rem;
+                padding: $size-m;
             
             }
             i:hover{
                 color: lighten($color-lightest,7%);
                 cursor: pointer;
+            }
+            #rqrFish-list{
+                font-size:$size-m;
+                position:fixed;
+                border-radius: 4px;
+                // left: 7vw;
+                box-shadow: 0px 0px 12px -2px rgba(0,0,0,0.5);
+                background: $color-darkest;
+                i{
+                    padding: $size-zero;
+                    font-size: $size-m;
+                }
+                li{
+                   color:$color-lightest;
+                   padding: $size-s;
+                   text-align: left;
+                   p{
+                       cursor: pointer;
+                   }
+                }
+                
+         
             }
         }
     }

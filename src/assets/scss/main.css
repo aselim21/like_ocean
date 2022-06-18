@@ -595,6 +595,14 @@ body {
   font-family: 'Nanum Gothic', sans-serif;
 }
 
+body .clickable-element {
+  cursor: pointer;
+}
+
+body .clickable-element:hover {
+  color: #038696;
+}
+
 body #start-page {
   display: -ms-grid;
   display: grid;
@@ -636,7 +644,23 @@ body #start-page .noselect {
   user-select: none;
 }
 
-body #start-page #show-hide-icon {
+body #start-page .fish-adder {
+  cursor: pointer;
+}
+
+body #start-page .specFishList {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+body #start-page .show-hide-icon {
   cursor: pointer;
   margin: 0.5rem;
   text-align: center;
@@ -645,7 +669,7 @@ body #start-page #show-hide-icon {
   padding: clamp(0.1rem, 0.5rem, 1rem) clamp(0.5rem, 3rem, 5rem);
 }
 
-body #start-page #show-hide-icon:hover {
+body #start-page .show-hide-icon:hover {
   color: #038696;
 }
 
@@ -712,13 +736,22 @@ body #start-page .button-dark:hover, body #start-page .button-dark:active {
   background: #038696;
 }
 
-body #start-page #fish-oceans button {
+body #start-page #fish-oceans #accepted-oceans button {
   background-color: #3CA6A6;
   padding: 0.3rem;
 }
 
-body #start-page #fish-oceans button:hover, body #start-page #fish-oceans button:active {
+body #start-page #fish-oceans #accepted-oceans button:hover, body #start-page #fish-oceans #accepted-oceans button:active {
   background: #49bdbd;
+}
+
+body #start-page #fish-oceans #required-oceans button {
+  background-color: #026773;
+  padding: 0.3rem;
+}
+
+body #start-page #fish-oceans #required-oceans button:hover, body #start-page #fish-oceans #required-oceans button:active {
+  background: #038696;
 }
 
 body #ocean-msg-box {
@@ -796,11 +829,19 @@ body #main-ocean-container #videos-container div[orientbig-portrait] video {
   body #main-ocean-container #control-panel-container i {
     font-size: 2rem;
   }
+  body #main-ocean-container #control-panel-container #rqrFish-list {
+    padding: 1rem;
+    bottom: 4rem;
+  }
 }
 
 @media (orientation: portrait) {
   body #main-ocean-container #control-panel-container i {
     font-size: 1rem;
+  }
+  body #main-ocean-container #control-panel-container #rqrFish-list {
+    padding: 0.5rem;
+    bottom: 2.5rem;
   }
 }
 
@@ -833,6 +874,30 @@ body #main-ocean-container #control-panel-container i {
 
 body #main-ocean-container #control-panel-container i:hover {
   color: #faf5f0;
+  cursor: pointer;
+}
+
+body #main-ocean-container #control-panel-container #rqrFish-list {
+  font-size: 1rem;
+  position: fixed;
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 0px 12px -2px rgba(0, 0, 0, 0.5);
+          box-shadow: 0px 0px 12px -2px rgba(0, 0, 0, 0.5);
+  background: #012E40;
+}
+
+body #main-ocean-container #control-panel-container #rqrFish-list i {
+  padding: 0rem;
+  font-size: 1rem;
+}
+
+body #main-ocean-container #control-panel-container #rqrFish-list li {
+  color: #F2E3D5;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+body #main-ocean-container #control-panel-container #rqrFish-list li p {
   cursor: pointer;
 }
 /*# sourceMappingURL=main.css.map */
